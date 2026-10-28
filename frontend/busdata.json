@@ -1,0 +1,109 @@
+[
+  {
+    "_id": "bus_vrl_01",
+    "busName": "VRL Travels",
+    "busType": "Multi-Axle I-Shift A/C Sleeper (2+1)",
+    "departureTime": "20:30",
+    "arrivalTime": "06:30",
+    "duration": "10h 00m",
+    "fare": 1250,
+    "rating": 4.6,
+    "totalReviews": 1420,
+    "availableSeats": 18,
+    "totalSeats": 36,
+    "seats": [
+      { "seatNo": "U1", "deck": "upper", "booked": false, "price": 1250 },
+      { "seatNo": "U2", "deck": "upper", "booked": true, "price": 1250 },
+      { "seatNo": "U3", "deck": "upper", "booked": false, "price": 1250 },
+      { "seatNo": "U4", "deck": "upper", "booked": false, "price": 1250 },
+      { "seatNo": "L1", "deck": "lower", "booked": false, "price": 1150 },
+      { "seatNo": "L2", "deck": "lower", "booked": true, "price": 1150 },
+      { "seatNo": "L3", "deck": "lower", "booked": false, "price": 1150 },
+      { "seatNo": "L4", "deck": "lower", "booked": false, "price": 1150 }
+    ]
+  },
+  {
+    "_id": "bus_zing_02",
+    "busName": "Zingbus",
+    "busType": "Electric Luxury AC Sleeper (2+1)",
+    "departureTime": "21:15",
+    "arrivalTime": "07:00",
+    "duration": "09h 45m",
+    "fare": 1100,
+    "rating": 4.5,
+    "totalReviews": 980,
+    "availableSeats": 22,
+    "totalSeats": 36,
+    "seats": [
+      { "seatNo": "U1", "deck": "upper", "booked": false, "price": 1100 },
+      { "seatNo": "U2", "deck": "upper", "booked": false, "price": 1100 },
+      { "seatNo": "U3", "deck": "upper", "booked": true, "price": 1100 },
+      { "seatNo": "L1", "deck": "lower", "booked": false, "price": 1050 },
+      { "seatNo": "L2", "deck": "lower", "booked": false, "price": 1050 },
+      { "seatNo": "L3", "deck": "lower", "booked": true, "price": 1050 }
+    ]
+  },
+  {
+    "_id": "bus_intercity_03",
+    "busName": "IntrCity SmartBus",
+    "busType": "BharatBenz AC Sleeper (2+1) with Lounge Access",
+    "departureTime": "22:00",
+    "arrivalTime": "07:30",
+    "duration": "09h 30m",
+    "fare": 1399,
+    "rating": 4.8,
+    "totalReviews": 2150,
+    "availableSeats": 12,
+    "totalSeats": 36,
+    "seats": [
+      { "seatNo": "U1", "deck": "upper", "booked": true, "price": 1399 },
+      { "seatNo": "U2", "deck": "upper", "booked": false, "price": 1399 },
+      { "seatNo": "U3", "deck": "upper", "booked": false, "price": 1399 },
+      { "seatNo": "L1", "deck": "lower", "booked": false, "price": 1300 },
+      { "seatNo": "L2", "deck": "lower", "booked": true, "price": 1300 },
+      { "seatNo": "L3", "deck": "lower", "booked": false, "price": 1300 }
+    ]
+  },
+  {
+    "_id": "bus_banjara_04",
+    "busName": "Banjara Travels",
+    "busType": "Volvo Multi-Axle 9600 AC Sleeper Premium",
+    "departureTime": "22:45",
+    "arrivalTime": "08:15",
+    "duration": "09h 30m",
+    "fare": 1200,
+    "rating": 4.9,
+    "totalReviews": 840,
+    "availableSeats": 15,
+    "totalSeats": 36,
+    "seats": [
+      { "seatNo": "U1", "deck": "upper", "booked": false, "price": 1200 },
+      { "seatNo": "U2", "deck": "upper", "booked": false, "price": 1200 },
+      { "seatNo": "U3", "deck": "upper", "booked": true, "price": 1200 },
+      { "seatNo": "L1", "deck": "lower", "booked": false, "price": 1150 },
+      { "seatNo": "L2", "deck": "lower", "booked": false, "price": 1150 },
+      { "seatNo": "L3", "deck": "lower", "booked": false, "price": 1150 }
+    ]
+  },
+  {
+    "_id": "bus_srs_05",
+    "busName": "SRS Travels",
+    "busType": "Scania AC Multi-Axle Sleeper (2+1)",
+    "departureTime": "23:15",
+    "arrivalTime": "09:00",
+    "duration": "09h 45m",
+    "fare": 1050,
+    "rating": 4.3,
+    "totalReviews": 3120,
+    "availableSeats": 20,
+    "totalSeats": 36,
+    "seats": [
+      { "seatNo": "U1", "deck": "upper", "booked": false, "price": 1050 },
+      { "seatNo": "U2", "deck": "upper", "booked": false, "price": 1050 },
+      { "seatNo": "U3", "deck": "upper", "booked": false, "price": 1050 },
+      { "seatNo": "L1", "deck": "lower", "booked": true, "price": 999 },
+      { "seatNo": "L2", "deck": "lower", "booked": false, "price": 999 },
+      { "seatNo": "L3", "deck": "lower", "booked": true, "price": 999 }
+    ]
+  }
+]

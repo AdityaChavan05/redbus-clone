@@ -1,0 +1,282 @@
+.planner-page {
+  max-width: 1220px;
+  margin: 24px auto 60px;
+  padding: 0 20px;
+}
+
+.planner-header {
+  margin-bottom: 24px;
+}
+
+.planner-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.planner-header p {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.planner-grid {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.planner-controls-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: var(--elevated-shadow);
+}
+
+.planner-controls-card h4 {
+  margin: 0 0 16px;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.input-pair {
+  margin-bottom: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.input-pair label, .waypoints-block label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.input-pair input {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+}
+
+.waypoints-block {
+  margin-bottom: 14px;
+}
+
+.waypoint-pill {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--pill-bg);
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 6px;
+}
+
+.waypoint-pill button {
+  background: none;
+  border: none;
+  color: #dc2626;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.add-waypoint-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.add-waypoint-row input {
+  flex: 1;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 12px;
+  outline: none;
+}
+
+.btn-add-wp {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0 10px;
+}
+
+.planner-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.btn-calculate {
+  background: var(--accent-red);
+  color: #ffffff;
+  border: none;
+  padding: 10px 0;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.btn-save-route {
+  background: var(--pill-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 8px 0;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.saved-routes-tray {
+  margin-top: 20px;
+  border-top: 1px solid var(--border-color);
+  padding-top: 14px;
+}
+
+.saved-routes-tray h5 {
+  margin: 0 0 8px;
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.saved-routes-tray ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.saved-routes-tray li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  padding: 6px 0;
+  color: var(--text-secondary);
+  border-bottom: 1px dashed var(--border-color);
+}
+
+.saved-routes-tray li button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* Map Frame */
+.map-view-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--elevated-shadow);
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.map-header-overlay {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: var(--bg-surface);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.osm-embedded-frame {
+  width: 100%;
+  height: 320px;
+  border: none;
+}
+
+/* Route Cards */
+.routes-comparison-tray h4 {
+  margin: 0 0 14px;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.route-comparison-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: var(--elevated-shadow);
+}
+
+.route-comparison-card.highlighted {
+  border-color: var(--accent-red);
+}
+
+.route-card-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.fastest-badge {
+  background: #ecfdf5;
+  color: #059669;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 3px 6px;
+  border-radius: 4px;
+  margin-right: 8px;
+}
+
+.traffic-tag {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.traffic-low { background: #ecfdf5; color: #059669; }
+.traffic-mid { background: #fffbeb; color: #d97706; }
+.traffic-heavy { background: #fef2f2; color: #dc2626; }
+
+.route-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  background: var(--pill-bg);
+  padding: 10px 14px;
+  border-radius: 8px;
+}
+
+.stat-box span {
+  display: block;
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.stat-box strong {
+  font-size: 13px;
+  color: var(--text-primary);
+}

@@ -1,0 +1,64 @@
+<div class="notifications-page">
+  <div class="page-title-row">
+    <h2>{{ 'NOTIF.TITLE' | translate }}</h2>
+    <button type="button" class="btn-clear" (click)="clearHistory()">Clear History</button>
+  </div>
+
+  <div class="notif-grid-layout">
+    <!-- Notifications Feed -->
+    <section class="notif-list-card">
+      <div *ngIf="notifications.length === 0" class="empty-state">
+        <p>No notifications available.</p>
+      </div>
+
+      <div *ngFor="let n of notifications" class="notif-item" [class.unread]="!n.isRead" (click)="markAsRead(n)">
+        <div class="notif-icon">
+          <span *ngIf="n.type === 'booking'">🎫</span>
+          <span *ngIf="n.type === 'schedule'">⏰</span>
+          <span *ngIf="n.type === 'promotional'">🏷️</span>
+        </div>
+        <div class="notif-body">
+          <div class="notif-header">
+            <strong>{{ n.title }}</strong>
+            <span class="delivery-status" [class.delivered]="n.deliveryStatus === 'Delivered'">
+              ✔ {{ n.deliveryStatus }} via {{ n.channel }}
+            </span>
+          </div>
+          <p class="notif-msg">{{ n.message }}</p>
+          <span class="notif-time">{{ n.timestamp }}</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Channel Preferences Sidebar -->
+    <aside class="prefs-card">
+      <h4>Delivery Preferences</h4>
+      <p class="sub">Choose which channels redBus uses to send you updates.</p>
+
+      <div class="pref-switch">
+        <label>
+          <input type="checkbox" [(ngModel)]="pushEnabled" />
+          <span>Push Notifications (Real-time tracking)</span>
+        </label>
+      </div>
+
+      <div class="pref-switch">
+        <label>
+          <input type="checkbox" [(ngModel)]="emailEnabled" />
+          <span>Email E-Tickets & Invoices</span>
+        </label>
+      </div>
+
+      <div class="pref-switch">
+        <label>
+          <input type="checkbox" [(ngModel)]="promotionsOptIn" />
+          <span>Promotions & Coupon Discounts</span>
+        </label>
+      </div>
+
+      <button type="button" class="btn-save-prefs" (click)="savePreferences()">
+        Save Channel Preferences
+      </button>
+    </aside>
+  </div>
+</div>

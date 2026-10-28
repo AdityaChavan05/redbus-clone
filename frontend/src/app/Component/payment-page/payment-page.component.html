@@ -1,0 +1,347 @@
+<div class="rb-payment-viewport">
+  
+  <!-- Top Bar -->
+  <header class="payment-navbar">
+    <div class="nav-content-wrap">
+      <div class="brand-left">
+        <span class="redbus-logo">redBus</span>
+        <span class="safety-tag">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          100% Safe & Secure Checkout
+        </span>
+      </div>
+
+      <div class="nav-right-meta">
+        <span class="session-timer">Expires in: <strong>{{ formattedTime }}</strong></span>
+        <span class="booking-id-tag">ID: <strong>{{ booking.bookingId }}</strong></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Payment Workspace Layout -->
+  <main class="payment-workspace" *ngIf="!paymentSuccess">
+    <div class="checkout-grid">
+      
+      <!-- LEFT SECTION: Payment Gateways Card -->
+      <section class="payment-gateways-card">
+        
+        <!-- Tab Navigation Sidebar -->
+        <nav class="gateways-tabs-sidebar">
+          <button type="button" class="tab-item-btn" [class.active]="selectedTab === 'upi'" (click)="setTab('upi')">
+            <span class="tab-icon">⚡</span>
+            <div class="tab-txt-group">
+              <span class="tab-main">UPI & QR Code</span>
+              <span class="tab-sub">Navi, GPay, PhonePe</span>
+            </div>
+          </button>
+
+          <button type="button" class="tab-item-btn" [class.active]="selectedTab === 'card'" (click)="setTab('card')">
+            <span class="tab-icon">💳</span>
+            <div class="tab-txt-group">
+              <span class="tab-main">Credit / Debit Card</span>
+              <span class="tab-sub">Visa, MasterCard, RuPay</span>
+            </div>
+          </button>
+
+          <button type="button" class="tab-item-btn" [class.active]="selectedTab === 'netbanking'" (click)="setTab('netbanking')">
+            <span class="tab-icon">🏦</span>
+            <div class="tab-txt-group">
+              <span class="tab-main">Net Banking</span>
+              <span class="tab-sub">All Indian Banks</span>
+            </div>
+          </button>
+
+          <button type="button" class="tab-item-btn" [class.active]="selectedTab === 'wallet'" (click)="setTab('wallet')">
+            <span class="tab-icon">👛</span>
+            <div class="tab-txt-group">
+              <span class="tab-main">Wallets</span>
+              <span class="tab-sub">Amazon Pay, Paytm</span>
+            </div>
+          </button>
+        </nav>
+
+        <!-- Gateway Content Panel -->
+        <div class="gateway-body-panel">
+          
+          <!-- TAB 1: UPI & ANIMATED CUSTOM QR -->
+          <div *ngIf="selectedTab === 'upi'" class="gateway-tab-pane">
+            <div class="pane-headline">
+              <h4>Pay with Navi UPI QR Code</h4>
+              <p>Scan using Navi, Google Pay, PhonePe, Paytm, or any UPI app.</p>
+            </div>
+
+            <!-- Toggle QR Button -->
+            <div class="qr-trigger-box">
+              <button type="button" class="btn-toggle-qr" (click)="toggleQrDisplay()">
+                <span class="qr-icon-btn">📲</span>
+                <span *ngIf="!showQrAnimation">Show UPI QR Code (₹{{ booking.totalFare }})</span>
+                <span *ngIf="showQrAnimation">Hide QR Code</span>
+              </button>
+            </div>
+
+            <!-- Animated Navi QR Card -->
+            <div class="animated-qr-wrapper" [class.visible]="showQrAnimation">
+              <div class="qr-card-container animate-pop">
+                
+                <!-- Laser Scanning Animation Line -->
+                <div class="laser-scanner-line"></div>
+
+                <div class="qr-inner-card">
+                  <!-- Navi Brand Header -->
+                  <div class="qr-brand-header">
+                    <span class="navi-logo-txt"><span class="navi-n">n^</span> navi</span>
+                    <span class="qr-tagline">Pay using any UPI app</span>
+                  </div>
+
+                  <!-- Accepted App Icons Strip -->
+                  <div class="apps-icon-strip">
+                    <span class="chip-gpay">G Pay</span>
+                    <span class="chip-phonepe">PhonePe</span>
+                    <span class="chip-paytm">Paytm</span>
+                    <span class="chip-navi">navi</span>
+                  </div>
+
+                  <!-- QR Code Render -->
+                  <div class="qr-image-display">
+                    <img [src]="qrApiUrl"
+                         alt="Navi UPI QR Code" 
+                         class="actual-qr-img" />
+                  </div>
+
+                  <!-- Beneficiary Information -->
+                  <div class="qr-beneficiary-footer">
+                    <strong class="payee-name">{{ payeeName }}</strong>
+                    <span class="payee-vpa">UPI ID : {{ upiId }}</span>
+                  </div>
+                </div>
+
+                <div class="scan-cta-banner">
+                  <span class="blink-dot"></span>
+                  Waiting for passenger scan of ₹{{ booking.totalFare }}...
+                </div>
+
+                <button type="button" class="btn-done-scan" (click)="processPayment()">
+                  I have paid from my UPI App ➔
+                </button>
+              </div>
+            </div>
+
+            <div class="divider-text-line">
+              <span>OR DIRECT VPA VERIFICATION</span>
+            </div>
+
+            <div class="form-field-group">
+              <label>Beneficiary UPI ID</label>
+              <div class="upi-input-container">
+                <input type="text" [(ngModel)]="upiId" readonly class="verified-vpa-input" />
+                <button type="button" class="btn-verify-vpa" (click)="processPayment()">Pay Now</button>
+              </div>
+            </div>
+
+            <button type="button" class="btn-primary-pay" [disabled]="isProcessing" (click)="processPayment()">
+              {{ isProcessing ? 'Verifying Transaction with Bank...' : 'COMPLETE BOOKING (₹' + booking.totalFare + ')' }}
+            </button>
+          </div>
+
+          <!-- TAB 2: CREDIT / DEBIT CARD -->
+          <div *ngIf="selectedTab === 'card'" class="gateway-tab-pane">
+            <div class="pane-headline">
+              <h4>Credit or Debit Card</h4>
+              <p>Safe 256-bit encrypted card checkout.</p>
+            </div>
+
+            <div class="form-field-group">
+              <label>Card Number</label>
+              <input type="text" [(ngModel)]="cardNumber" placeholder="1234  5678  9012  3456" maxlength="19" />
+            </div>
+
+            <div class="form-split-row">
+              <div class="form-field-group">
+                <label>Valid Thru (MM/YY)</label>
+                <input type="text" [(ngModel)]="cardExpiry" placeholder="MM/YY" maxlength="5" />
+              </div>
+
+              <div class="form-field-group">
+                <label>CVV / CVC</label>
+                <input type="password" [(ngModel)]="cardCvv" placeholder="123" maxlength="4" />
+              </div>
+            </div>
+
+            <div class="form-field-group">
+              <label>Name on Card</label>
+              <input type="text" [(ngModel)]="cardHolder" placeholder="Name as displayed on card" />
+            </div>
+
+            <button type="button" class="btn-primary-pay" [disabled]="isProcessing" (click)="processPayment()">
+              {{ isProcessing ? 'Connecting to Card Gateway...' : 'PAY ₹' + booking.totalFare }}
+            </button>
+          </div>
+
+          <!-- TAB 3: NET BANKING -->
+          <div *ngIf="selectedTab === 'netbanking'" class="gateway-tab-pane">
+            <div class="pane-headline">
+              <h4>Popular Banks</h4>
+              <p>Select your internet banking service provider to proceed.</p>
+            </div>
+
+            <div class="bank-options-grid">
+              <div class="bank-selection-card" [class.selected]="selectedBank === 'HDFC'" (click)="selectedBank = 'HDFC'">
+                <span class="bank-mark">🏛️</span>
+                <span class="bank-title">HDFC Bank</span>
+              </div>
+              <div class="bank-selection-card" [class.selected]="selectedBank === 'SBI'" (click)="selectedBank = 'SBI'">
+                <span class="bank-mark">🏛️</span>
+                <span class="bank-title">State Bank of India</span>
+              </div>
+              <div class="bank-selection-card" [class.selected]="selectedBank === 'ICICI'" (click)="selectedBank = 'ICICI'">
+                <span class="bank-mark">🏛️</span>
+                <span class="bank-title">ICICI Bank</span>
+              </div>
+              <div class="bank-selection-card" [class.selected]="selectedBank === 'AXIS'" (click)="selectedBank = 'AXIS'">
+                <span class="bank-mark">🏛️</span>
+                <span class="bank-title">Axis Bank</span>
+              </div>
+            </div>
+
+            <button type="button" class="btn-primary-pay" [disabled]="isProcessing" (click)="processPayment()">
+              {{ isProcessing ? 'Redirecting to ' + selectedBank + '...' : 'PROCEED TO ' + selectedBank }}
+            </button>
+          </div>
+
+          <!-- TAB 4: WALLETS -->
+          <div *ngIf="selectedTab === 'wallet'" class="gateway-tab-pane">
+            <div class="pane-headline">
+              <h4>Mobile Wallets</h4>
+              <p>Link your wallet account for quick checkout.</p>
+            </div>
+
+            <div class="bank-options-grid">
+              <div class="bank-selection-card" [class.selected]="selectedWallet === 'Paytm'" (click)="selectedWallet = 'Paytm'">
+                <span class="bank-mark">👛</span>
+                <span class="bank-title">Paytm Wallet</span>
+              </div>
+              <div class="bank-selection-card" [class.selected]="selectedWallet === 'AmazonPay'" (click)="selectedWallet = 'AmazonPay'">
+                <span class="bank-mark">📦</span>
+                <span class="bank-title">Amazon Pay</span>
+              </div>
+              <div class="bank-selection-card" [class.selected]="selectedWallet === 'Mobikwik'" (click)="selectedWallet = 'Mobikwik'">
+                <span class="bank-mark">⚡</span>
+                <span class="bank-title">MobiKwik</span>
+              </div>
+            </div>
+
+            <button type="button" class="btn-primary-pay" [disabled]="isProcessing" (click)="processPayment()">
+              {{ isProcessing ? 'Connecting to ' + selectedWallet + '...' : 'PAY ₹' + booking.totalFare }}
+            </button>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- RIGHT SECTION: Journey & Fare Summary Sidebar -->
+      <aside class="payment-summary-card">
+        <h4 class="summary-headline">Trip Overview</h4>
+
+        <div class="operator-profile">
+          <span class="bus-company">{{ booking.busName }}</span>
+          <span class="bus-category">{{ booking.busType }}</span>
+        </div>
+
+        <div class="timeline-itinerary">
+          <div class="itinerary-node">
+            <div class="node-time">{{ booking.departureTime }}</div>
+            <div class="node-meta">
+              <strong>{{ booking.from }}</strong>
+              <span>{{ booking.boardingPoint }}</span>
+            </div>
+          </div>
+
+          <div class="itinerary-transit">
+            <span class="transit-duration">{{ booking.duration || '10h 30m' }}</span>
+          </div>
+
+          <div class="itinerary-node">
+            <div class="node-time">{{ booking.arrivalTime }}</div>
+            <div class="node-meta">
+              <strong>{{ booking.to }}</strong>
+              <span>{{ booking.droppingPoint }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="passenger-seat-strip">
+          <div class="seat-info-col">
+            <label>Journey Date</label>
+            <strong>{{ booking.date }}</strong>
+          </div>
+          <div class="seat-info-col">
+            <label>Berths ({{ booking.seats.length }})</label>
+            <strong class="highlight-seats">{{ booking.seatNumbers }}</strong>
+          </div>
+        </div>
+
+        <div class="fare-receipt">
+          <div class="receipt-row">
+            <span>Base Fare</span>
+            <span>₹{{ booking.totalFare }}</span>
+          </div>
+          <div class="receipt-row">
+            <span>GST & Convenience Fee</span>
+            <span class="waived-badge">FREE</span>
+          </div>
+          <div class="receipt-row final-payable">
+            <span>Total Payable Amount</span>
+            <span class="final-amt">₹{{ booking.totalFare }}</span>
+          </div>
+        </div>
+      </aside>
+
+    </div>
+  </main>
+
+  <!-- CONFIRMATION / SUCCESS TICKET MODAL -->
+  <div class="payment-confirmed-overlay" *ngIf="paymentSuccess">
+    <div class="ticket-pass-card">
+      <div class="stamp-icon-wrap">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+
+      <h2 class="congrats-title">Booking Confirmed!</h2>
+      <p class="congrats-sub">Your e-ticket has been generated and sent to your phone and email.</p>
+
+      <div class="e-ticket-receipt">
+        <div class="e-row">
+          <span>Booking Reference</span>
+          <strong>{{ booking.bookingId }}</strong>
+        </div>
+        <div class="e-row">
+          <span>Bus Operator</span>
+          <strong>{{ booking.busName }}</strong>
+        </div>
+        <div class="e-row">
+          <span>Route</span>
+          <strong>{{ booking.from }} ➔ {{ booking.to }}</strong>
+        </div>
+        <div class="e-row">
+          <span>Departure Date</span>
+          <strong>{{ booking.date }} at {{ booking.departureTime }}</strong>
+        </div>
+        <div class="e-row">
+          <span>Confirmed Berths</span>
+          <strong class="e-seats">{{ booking.seatNumbers }}</strong>
+        </div>
+        <div class="e-row total-paid">
+          <span>Paid via UPI ({{ upiId }})</span>
+          <strong class="e-fare">₹{{ booking.totalFare }}</strong>
+        </div>
+      </div>
+
+      <button type="button" class="btn-return-home" (click)="goToHome()">
+        Return to Home
+      </button>
+    </div>
+  </div>
+
+</div>

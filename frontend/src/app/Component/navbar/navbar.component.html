@@ -1,0 +1,46 @@
+﻿<header class="navbar-wrapper">
+  <div class="navbar-container">
+    <div class="nav-brand-group">
+      <a routerLink="/" class="nav-brand">redBus</a>
+      <nav class="nav-links">
+        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-item">
+          🚌 {{ 'NAV.BUS_TICKETS' | translate }}
+        </a>
+        <a routerLink="/planner" routerLinkActive="active" class="nav-item">
+          🗺️ {{ 'NAV.ROUTE_PLANNER' | translate }}
+        </a>
+        <a routerLink="/community" routerLinkActive="active" class="nav-item">
+          💬 {{ 'NAV.COMMUNITY' | translate }}
+        </a>
+        <a routerLink="/reviews" routerLinkActive="active" class="nav-item">
+          ⭐ {{ 'NAV.REVIEWS' | translate }}
+        </a>
+      </nav>
+    </div>
+
+    <div class="nav-controls-group">
+      <!-- Language Selector (i18n) -->
+      <div class="lang-selector">
+        <select [ngModel]="selectedLanguage" (ngModelChange)="onLanguageChange($event)">
+          <option value="en">🌐 English</option>
+          <option value="hi">🌐 हिन्दी</option>
+          <option value="kn">🌐 ಕನ್ನಡ</option>
+        </select>
+      </div>
+
+      <!-- Dark Mode Toggle Button -->
+      <button type="button" class="btn-theme-toggle" (click)="toggleTheme()" [title]="isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'">
+        {{ isDarkMode ? '☀️ ' + ('THEME.LIGHT' | translate) : '🌙 ' + ('THEME.DARK' | translate) }}
+      </button>
+
+      <!-- Notifications Bell -->
+      <a routerLink="/notifications" class="notif-bell" title="Notifications">
+        🔔
+        <span class="notif-badge" *ngIf="unreadNotificationsCount > 0">{{ unreadNotificationsCount }}</span>
+      </a>
+
+      <!-- Account Profile -->
+      <a routerLink="/profile" class="nav-account">👤 {{ 'COMMON.ACCOUNT' | translate }}</a>
+    </div>
+  </div>
+</header>

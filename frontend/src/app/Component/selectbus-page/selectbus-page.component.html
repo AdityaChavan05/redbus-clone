@@ -1,0 +1,290 @@
+<div class="rb-viewport">
+  <!-- Top Route Sub-Navigation Bar -->
+  <header class="rb-subnav">
+    <div class="subnav-container">
+      <div class="route-badge-cluster">
+        <span class="city-name">{{ departure }}</span>
+        <span class="route-arrow">➔</span>
+        <span class="city-name">{{ arrival }}</span>
+        <span class="travel-date">{{ journeyDate }}</span>
+      </div>
+      <div class="subnav-actions">
+        <button type="button" class="btn-modify-route" (click)="swapLocations()">
+          <span class="swap-icon">⇄</span> Modify Search
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="rb-main-layout">
+    <!-- Filter Bar -->
+    <section class="rb-pill-filter-bar">
+      <span class="filter-headline">FILTER BY:</span>
+      <div class="pill-scroll-tray">
+        <button type="button" class="filter-pill" [class.active]="activeFilter === 'all'" (click)="setFilter('all')">
+          All Buses
+        </button>
+        <button type="button" class="filter-pill" [class.active]="activeFilter === 'primo'" (click)="setFilter('primo')">
+          <span class="pill-icon">★</span> Primo Certified
+        </button>
+        <button type="button" class="filter-pill" [class.active]="activeFilter === 'ac'" (click)="setFilter('ac')">
+          AC
+        </button>
+        <button type="button" class="filter-pill" [class.active]="activeFilter === 'sleeper'" (click)="setFilter('sleeper')">
+          Sleeper
+        </button>
+        <button type="button" class="filter-pill" [class.active]="activeFilter === 'seater'" (click)="setFilter('seater')">
+          Seater
+        </button>
+      </div>
+      <span class="results-tally">{{ filteredBuses.length }} Buses Available</span>
+    </section>
+
+    <!-- Bus Listings Section -->
+    <section class="rb-card-feed">
+      <article *ngFor="let bus of filteredBuses" class="rb-bus-ticket-card">
+        
+        <!-- Primary Ticket Summary Row -->
+        <div class="ticket-header-row">
+          
+          <!-- Column 1: Operator Identity & Features -->
+          <div class="col-brand">
+            <h3 class="travels-title">{{ bus.operatorname }}</h3>
+            <span class="coach-type-lbl">{{ bus.bustype }}</span>
+            <div class="feature-badges">
+              <span *ngIf="bus.isPrimo" class="badge-primo">★ PRIMO</span>
+              <span *ngIf="bus.isFreeCancel" class="badge-free-cancel">Free Cancellation</span>
+              <span class="badge-layout-tag">2+1 Sleeper</span>
+            </div>
+          </div>
+
+          <!-- Column 2: Departure / Timeline / Arrival -->
+          <div class="col-schedule">
+            <div class="schedule-point">
+              <span class="time-readout">{{ bus.busdeparturetime }}</span>
+              <span class="station-lbl">{{ bus.departure }}</span>
+            </div>
+            
+            <div class="schedule-duration-track">
+              <span class="duration-counter">{{ bus.duration }}</span>
+              <div class="track-line">
+                <span class="track-dot start"></span>
+                <span class="track-dot end"></span>
+              </div>
+            </div>
+
+            <div class="schedule-point">
+              <span class="time-readout">{{ bus.busarrivaltime }}</span>
+              <span class="station-lbl">{{ bus.arrival }}</span>
+            </div>
+          </div>
+
+          <!-- Column 3: Trust & Rating -->
+          <div class="col-score">
+            <div class="rating-badge">★ {{ bus.rating }}</div>
+            <span class="reviews-count">{{ bus.totalratings }} ratings</span>
+          </div>
+
+          <!-- Column 4: Pricing & Action -->
+          <div class="col-action">
+            <div class="pricing-display">
+              <span class="currency-code">INR</span>
+              <span class="fare-num">{{ bus.seatprice }}</span>
+            </div>
+            <span class="seats-left-pill">{{ bus.seatsRemaining }} berths left</span>
+            <button type="button" class="btn-toggle-seats" [class.expanded]="bus.showSeats" (click)="toggleSeats(bus)">
+              {{ bus.showSeats ? 'Hide Seats' : 'View Seats' }}
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Collapsible 2+1 Bus Seat Canvas -->
+        <div *ngIf="bus.showSeats" class="seat-drawer-canvas">
+          <div class="canvas-header">
+            <div class="canvas-title-group">
+              <h4>Choose your berths</h4>
+              <span class="deck-indicator-txt">Authentic 2+1 Configuration</span>
+            </div>
+
+            <div class="legend-cluster">
+              <div class="legend-item"><span class="swatch available"></span> Available</div>
+              <div class="legend-item"><span class="swatch selected"></span> Selected</div>
+              <div class="legend-item"><span class="swatch booked"></span> Booked</div>
+            </div>
+          </div>
+
+          <div class="canvas-workspace">
+            <!-- Modern Sleeper Coach Interior -->
+            <div class="coach-hull">
+              <!-- Driver Cabin -->
+              <div class="cockpit-compartment">
+                <div class="steering-icon-wrap">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7e7e8c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                    <path d="M2 12h20"></path>
+                  </svg>
+                </div>
+                <span class="driver-tag">ENTRY</span>
+              </div>
+
+              <!-- Deck Layouts -->
+              <div class="deck-sections-wrapper">
+                
+                <!-- LOWER DECK -->
+                <div class="deck-capsule">
+                  <div class="deck-capsule-label">Lower Deck (2+1)</div>
+                  <div class="deck-rows-container">
+                    
+                    <!-- Row C (Upper Double Berth) -->
+                    <div class="berth-strip-row">
+                      <div *ngFor="let s of bus.lowerC"
+                           class="berth-cell"
+                           [class.booked]="s.booked"
+                           [class.selected]="isSeatChosen(bus._id, s.no)"
+                           (click)="pickSeat(bus, s)">
+                        <span class="cushion-pillow"></span>
+                        <span class="seat-id">{{ s.no }}</span>
+                        <span class="seat-fare">₹{{ s.price }}</span>
+                      </div>
+                    </div>
+
+                    <!-- Row B (Lower Double Berth) -->
+                    <div class="berth-strip-row">
+                      <div *ngFor="let s of bus.lowerB"
+                           class="berth-cell"
+                           [class.booked]="s.booked"
+                           [class.selected]="isSeatChosen(bus._id, s.no)"
+                           (click)="pickSeat(bus, s)">
+                        <span class="cushion-pillow"></span>
+                        <span class="seat-id">{{ s.no }}</span>
+                        <span class="seat-fare">₹{{ s.price }}</span>
+                      </div>
+                    </div>
+
+                    <!-- Center Gangway / Aisle -->
+                    <div class="coach-gangway">
+                      <span>WALKWAY</span>
+                    </div>
+
+                    <!-- Row A (Single Window Berth) -->
+                    <div class="berth-strip-row">
+                      <div *ngFor="let s of bus.lowerA"
+                           class="berth-cell single-berth"
+                           [class.booked]="s.booked"
+                           [class.selected]="isSeatChosen(bus._id, s.no)"
+                           (click)="pickSeat(bus, s)">
+                        <span class="cushion-pillow"></span>
+                        <span class="seat-id">{{ s.no }}</span>
+                        <span class="seat-fare">₹{{ s.price }}</span>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+                <!-- UPPER DECK -->
+                <div class="deck-capsule">
+                  <div class="deck-capsule-label">Upper Deck (2+1)</div>
+                  <div class="deck-rows-container">
+                    
+                    <!-- Row C -->
+                    <div class="berth-strip-row">
+                      <div *ngFor="let s of bus.upperC"
+                           class="berth-cell"
+                           [class.booked]="s.booked"
+                           [class.selected]="isSeatChosen(bus._id, s.no)"
+                           (click)="pickSeat(bus, s)">
+                        <span class="cushion-pillow"></span>
+                        <span class="seat-id">{{ s.no }}</span>
+                        <span class="seat-fare">₹{{ s.price }}</span>
+                      </div>
+                    </div>
+
+                    <!-- Row B -->
+                    <div class="berth-strip-row">
+                      <div *ngFor="let s of bus.upperB"
+                           class="berth-cell"
+                           [class.booked]="s.booked"
+                           [class.selected]="isSeatChosen(bus._id, s.no)"
+                           (click)="pickSeat(bus, s)">
+                        <span class="cushion-pillow"></span>
+                        <span class="seat-id">{{ s.no }}</span>
+                        <span class="seat-fare">₹{{ s.price }}</span>
+                      </div>
+                    </div>
+
+                    <!-- Center Gangway / Aisle -->
+                    <div class="coach-gangway">
+                      <span>WALKWAY</span>
+                    </div>
+
+                    <!-- Row A -->
+                    <div class="berth-strip-row">
+                      <div *ngFor="let s of bus.upperA"
+                           class="berth-cell single-berth"
+                           [class.booked]="s.booked"
+                           [class.selected]="isSeatChosen(bus._id, s.no)"
+                           (click)="pickSeat(bus, s)">
+                        <span class="cushion-pillow"></span>
+                        <span class="seat-id">{{ s.no }}</span>
+                        <span class="seat-fare">₹{{ s.price }}</span>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Booking Confirmation Sidebar -->
+            <aside class="sidebar-checkout-tray">
+              <div class="pickup-select-card">
+                <h5 class="tray-title">Boarding & Dropping</h5>
+                
+                <div class="control-group">
+                  <label>Boarding Point</label>
+                  <select class="custom-select" [(ngModel)]="bus.chosenBoarding">
+                    <option *ngFor="let bp of bus.boarding_points" [value]="bp">{{ bp }}</option>
+                  </select>
+                </div>
+
+                <div class="control-group">
+                  <label>Dropping Point</label>
+                  <select class="custom-select" [(ngModel)]="bus.chosenDropping">
+                    <option *ngFor="let dp of bus.dropping_points" [value]="dp">{{ dp }}</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="fare-tally-box">
+                <div class="tally-line">
+                  <span>Selected Berths</span>
+                  <strong class="selected-seat-names">
+                    {{ (selectedSeatsMap[bus._id] || []).join(', ') || 'None selected' }}
+                  </strong>
+                </div>
+
+                <div class="tally-line total">
+                  <span>Total Amount</span>
+                  <strong class="total-figure">₹{{ getComputedTotal(bus) }}</strong>
+                </div>
+
+                <button type="button" 
+                        class="btn-proceed-pay" 
+                        [disabled]="(selectedSeatsMap[bus._id] || []).length === 0"
+                        (click)="checkout(bus)">
+                  CONTINUE TO BOOK
+                </button>
+              </div>
+            </aside>
+
+          </div>
+        </div>
+
+      </article>
+    </section>
+  </main>
+</div>

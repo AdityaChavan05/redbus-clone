@@ -1,0 +1,22 @@
+.reviews-wrapper { max-width: 800px; margin: 24px auto; padding: 0 16px; }
+.reviews-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.rating-strip { display: flex; gap: 8px; align-items: center; margin-top: 4px; font-size: 13px; }
+.badge-star { background: #108435; color: white; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
+.btn-write { background: #d84e55; color: white; border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+.review-form-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 20px; }
+.error-box { background: #fee2e2; color: #b91c1c; padding: 6px 10px; border-radius: 4px; font-size: 12px; margin-bottom: 10px; }
+.form-row { display: flex; gap: 10px; margin-bottom: 10px; }
+.form-row input { flex: 2; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; }
+.form-row select { flex: 1; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; }
+textarea { width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; }
+.btn-submit-rev { background: #108435; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 8px; }
+.review-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; margin-bottom: 12px; }
+.rev-head { display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+.pnr-tag { background: #f1f5f9; padding: 1px 5px; border-radius: 3px; font-size: 10px; margin-left: 6px; }
+.trusted-tag { background: #fef3c7; color: #b45309; font-size: 10px; padding: 1px 5px; border-radius: 3px; font-weight: bold; margin-left: 4px; }
+.stars { color: #108435; font-weight: bold; }
+.rev-comment { margin: 8px 0; font-size: 13px; color: #1e293b; }
+.rev-foot { display: flex; justify-content: space-between; align-items: center; font-size: 11px; }
+.text-green { color: #108435; font-weight: bold; }
+.text-muted { color: #94a3b8; }
+.btn-mini { background: #f8fafc; border: 1px solid #e2e8f0; padding: 3px 8px; border-radius: 4px; font-size: 11px; cursor: pointer; margin-left: 4px; }

@@ -1,0 +1,176 @@
+<div class="right-container">
+  <!-- Header Bar -->
+  <div class="results-header" *ngIf="busdetails.length > 0">
+    <span class="route-title">{{ (departurevar || 'Bengaluru') | titlecase }} ➔ {{ (arrival || 'Humnabad') | titlecase }}</span>
+    <span class="bus-count">{{ busdetails.length }} Buses Available</span>
+  </div>
+
+  <!-- Bus Cards -->
+  <div class="bus-card" *ngFor="let bus of busdetails">
+    <div class="bus-main-row">
+      <div class="bus-operator-col">
+        <h4 class="operator-name">{{ bus.busName }}</h4>
+        <span class="bus-category">{{ bus.busType }}</span>
+        <div class="rating-badge">★ {{ bus.rating || '4.5' }}</div>
+      </div>
+
+      <div class="bus-timing-col">
+        <div class="time-block">
+          <span class="time">{{ bus.departureTime || '20:30' }}</span>
+          <span class="city">{{ (departurevar || 'Bengaluru') | titlecase }}</span>
+        </div>
+        <div class="duration-block">
+          <span class="duration">{{ bus.duration || '09h 15m' }}</span>
+          <div class="duration-line"></div>
+        </div>
+        <div class="time-block">
+          <span class="time">{{ bus.arrivalTime || '05:45' }}</span>
+          <span class="city">{{ (arrival || 'Humnabad') | titlecase }}</span>
+        </div>
+      </div>
+
+      <div class="bus-fare-col">
+        <span class="fare-prefix">Starts from</span>
+        <span class="fare-amount">₹{{ bus.price }}</span>
+        <button 
+          type="button" 
+          class="btn-view-seats" 
+          [class.active]="selectedBusId === bus._id"
+          (click)="toggleSeatView(bus)">
+          {{ selectedBusId === bus._id ? 'HIDE SEATS' : 'VIEW SEATS' }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Collapsible Booking Section -->
+    <div class="booking-expanded-panel" *ngIf="selectedBusId === bus._id">
+      <!-- Custom Seat Layout Component -->
+      <app-view-seats 
+        [bus]="bus" 
+        (seatSelected)="onSeatsChanged($event)">
+      </app-view-seats>
+
+      <!-- Boarding / Dropping Selector -->
+      <div class="bp-dp-container" *ngIf="selectedSeats.length > 0">
+        <div class="bp-dp-tabs">
+          <button 
+            type="button" 
+            class="tab-btn" 
+            [class.active]="activePointTab === 'boarding'" 
+            (click)="activePointTab = 'boarding'">
+            1. BOARDING POINT
+            <span *ngIf="selectedBoardingPoint" class="selected-pill">✓</span>
+          </button>
+          <button 
+            type="button" 
+            class="tab-btn" 
+            [class.active]="activePointTab === 'dropping'" 
+            (click)="activePointTab = 'dropping'">
+            2. DROPPING POINT
+            <span *ngIf="selectedDroppingPoint" class="selected-pill">✓</span>
+          </button>
+        </div>
+
+        <div class="points-list" *ngIf="activePointTab === 'boarding'">
+          <div 
+            class="point-item" 
+            *ngFor="let point of (bus.boarding_points?.length ? bus.boarding_points : defaultBoardingPoints)"
+            [class.selected]="selectedBoardingPoint === point"
+            (click)="chooseBoardingPoint(point)">
+            <div class="radio-indicator">
+              <div class="inner-circle" *ngIf="selectedBoardingPoint === point"></div>
+            </div>
+            <div class="point-details">
+              <span class="point-name">{{ point }}</span>
+              <span class="point-sub">{{ bus.departureTime }} • Pickup Terminal</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="points-list" *ngIf="activePointTab === 'dropping'">
+          <div 
+            class="point-item" 
+            *ngFor="let point of (bus.dropping_points?.length ? bus.dropping_points : defaultDroppingPoints)"
+            [class.selected]="selectedDroppingPoint === point"
+            (click)="chooseDroppingPoint(point)">
+            <div class="radio-indicator">
+              <div class="inner-circle" *ngIf="selectedDroppingPoint === point"></div>
+            </div>
+            <div class="point-details">
+              <span class="point-name">{{ point }}</span>
+              <span class="point-sub">{{ bus.arrivalTime }} • Drop-off Circle</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="bp-dp-footer">
+          <div class="selected-summary">
+            <span *ngIf="selectedBoardingPoint"><strong>Boarding:</strong> {{ selectedBoardingPoint }}</span>
+            <span *ngIf="selectedDroppingPoint"> • <strong>Dropping:</strong> {{ selectedDroppingPoint }}</span>
+          </div>
+          <button 
+            type="button" 
+            class="btn-proceed" 
+            [disabled]="!selectedBoardingPoint || !selectedDroppingPoint"
+            (click)="proceedToPassengerDetails()">
+            CONTINUE
+          </button>
+        </div>
+      </div>
+
+      <!-- Passenger Form Drawer -->
+      <div class="passenger-drawer" *ngIf="showPassengerForm">
+        <h4>Passenger Details</h4>
+        <div class="passenger-card" *ngFor="let seat of selectedSeats; let i = index">
+          <div class="passenger-card-header">Passenger {{ i + 1 }} (Seat {{ seat }})</div>
+          <div class="form-grid">
+            <div class="field-item">
+              <label>Name</label>
+              <input type="text" [(ngModel)]="passengerList[i].name" placeholder="Full Name" />
+            </div>
+            <div class="field-item">
+              <label>Age</label>
+              <input type="number" [(ngModel)]="passengerList[i].age" placeholder="Age" min="1" max="110" />
+            </div>
+            <div class="field-item">
+              <label>Gender</label>
+              <select [(ngModel)]="passengerList[i].gender">
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="contact-section">
+          <h4>Contact Information</h4>
+          <div class="contact-grid">
+            <div class="field-item">
+              <label>Email</label>
+              <input type="email" [(ngModel)]="contactEmail" placeholder="e.g. name@domain.com" />
+            </div>
+            <div class="field-item">
+              <label>Mobile</label>
+              <input type="tel" [(ngModel)]="contactPhone" placeholder="10-digit number" maxlength="10" />
+            </div>
+          </div>
+        </div>
+
+        <div class="drawer-footer">
+          <div class="fare-total">
+            <span>Total Payable:</span>
+            <strong>₹{{ calculateTotalFare() }}</strong>
+          </div>
+          <button 
+            type="button" 
+            class="btn-proceed-pay" 
+            (click)="proceedToPayment($event)">
+            PROCEED TO PAY
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

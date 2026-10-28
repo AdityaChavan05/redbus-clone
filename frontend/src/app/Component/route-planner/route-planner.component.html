@@ -1,0 +1,172 @@
+<div class="planner-page-wrapper">
+  
+  <div class="planner-header">
+    <h2>{{ 'PLANNER.TITLE' | translate }}</h2>
+    <p>{{ 'PLANNER.SUBTITLE' | translate }}</p>
+  </div>
+
+  <div class="planner-grid">
+    
+    <!-- Left Column: Inputs, Waypoints & Alternate Route Cards -->
+    <div class="planner-controls-col">
+      
+      <!-- Input Panel -->
+      <div class="planner-card">
+        <h3>Journey Waypoints</h3>
+
+        <div class="input-stack">
+          <!-- Origin -->
+          <div class="location-row origin-row">
+            <span class="marker-dot green"></span>
+            <div class="input-wrap">
+              <label>{{ 'PLANNER.ORIGIN' | translate }}</label>
+              <input type="text" [(ngModel)]="origin" (keyup.enter)="planJourney()" placeholder="Enter origin city" />
+            </div>
+          </div>
+
+          <!-- Waypoints -->
+          <div class="waypoint-list">
+            <div *ngFor="let wp of waypoints; let i = index" class="location-row waypoint-row">
+              <span class="marker-dot orange"></span>
+              <div class="waypoint-display">
+                <span>Stop {{ i + 1 }}: <strong>{{ wp }}</strong></span>
+                <button type="button" class="btn-remove-stop" (click)="removeWaypoint(i)">?</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Add Waypoint Input -->
+          <div class="add-waypoint-row">
+            <input 
+              type="text" 
+              [(ngModel)]="newWaypointInput" 
+              (keyup.enter)="addWaypoint()" 
+              placeholder="+ Add intermediate stop (e.g. Hubli, Pune)" />
+            <button type="button" class="btn-add-stop" (click)="addWaypoint()">+ Add Stop</button>
+          </div>
+
+          <!-- Destination -->
+          <div class="location-row dest-row">
+            <span class="marker-dot red"></span>
+            <div class="input-wrap">
+              <label>{{ 'PLANNER.DESTINATION' | translate }}</label>
+              <input type="text" [(ngModel)]="destination" (keyup.enter)="planJourney()" placeholder="Enter destination city" />
+            </div>
+          </div>
+        </div>
+
+        <div class="planner-action-bar">
+          <button type="button" class="btn-calc-route" (click)="planJourney()" [disabled]="isLoading">
+            {{ isLoading ? 'Calculating Routes...' : ('PLANNER.CALCULATE' | translate) }}
+          </button>
+          <button type="button" class="btn-save-route" (click)="saveCurrentRoute()">
+            ? Save Route
+          </button>
+        </div>
+      </div>
+
+      <!-- Suggested Route Cards (Comparison Engine) -->
+      <div class="suggested-routes-section" *ngIf="routeOptions.length > 0">
+        <h4>Available Route Options</h4>
+
+        <div 
+          *ngFor="let opt of routeOptions; let idx = index" 
+          class="route-card" 
+          [class.active]="selectedRouteIndex === idx"
+          (click)="selectRoute(idx)">
+          
+          <div class="route-card-top">
+            <div class="route-title-group">
+              <strong>{{ opt.name }}</strong>
+              <span class="badge-rec" *ngIf="opt.recommended">? Fastest Option</span>
+            </div>
+            <span class="traffic-tag" [ngClass]="opt.trafficStatus.toLowerCase()">
+              {{ opt.trafficStatus }} Traffic
+              <span *ngIf="opt.delayMinutes > 0">(+{{ opt.delayMinutes }}m)</span>
+            </span>
+          </div>
+
+          <div class="route-metrics-bar">
+            <span>??? Distance: <strong>{{ opt.distance }}</strong></span>
+            <span>?? Travel Time: <strong>{{ opt.duration }}</strong></span>
+            <span>?? Toll: <strong>{{ opt.tollEstimate }}</strong></span>
+          </div>
+
+          <div class="route-stops-preview">
+            <span class="stops-label">Waypoints:</span>
+            <div class="stop-chips">
+              <span *ngFor="let s of opt.stops; let isLast = last">
+                {{ s }}<span *ngIf="!isLast" class="arrow"> ? </span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Saved Frequently Used Routes -->
+      <div class="saved-routes-card" *ngIf="savedRoutes.length > 0">
+        <h4>Frequently Used Routes</h4>
+        <div class="saved-routes-list">
+          <div *ngFor="let sr of savedRoutes; let idx = index" class="saved-route-pill" (click)="loadSavedRoute(sr)">
+            <div>
+              <strong>{{ sr.origin }} ? {{ sr.destination }}</strong>
+              <span class="saved-sub">({{ sr.waypoints.length }} stops) � Saved {{ sr.savedAt }}</span>
+            </div>
+            <button class="btn-del-saved" (click)="deleteSavedRoute(idx, $event)" title="Delete Route">?</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right Column: Interactive Map Preview Container -->
+    <div class="planner-map-col">
+      <div class="map-view-card">
+        <div class="map-header-strip">
+          <span>Live Interactive GPS Route & Highway Elevation</span>
+          <span class="live-pulse">?? Real-Time Traffic Sync</span>
+        </div>
+
+        <div class="mock-map-canvas">
+          <div class="route-corridor-vis" *ngIf="routeOptions.length > 0">
+            <div class="corridor-banner-summary">
+              <h3>{{ routeOptions[selectedRouteIndex].name }}</h3>
+              <p>
+                Estimated Transit: <strong>{{ routeOptions[selectedRouteIndex].duration }}</strong> 
+                | Total Coverage: <strong>{{ routeOptions[selectedRouteIndex].distance }}</strong>
+              </p>
+            </div>
+
+            <!-- Route Step Nodes Progression -->
+            <div class="corridor-timeline">
+              <div 
+                *ngFor="let stop of routeOptions[selectedRouteIndex].stops; let first = first; let last = last" 
+                class="timeline-node">
+                <div class="node-pin" [class.origin-pin]="first" [class.dest-pin]="last"></div>
+                <div class="node-label">
+                  <strong>{{ stop }}</strong>
+                  <span *ngIf="first" class="node-sub">Departure Terminal</span>
+                  <span *ngIf="last" class="node-sub">Destination Terminal</span>
+                  <span *ngIf="!first && !last" class="node-sub">Scheduled Highway Halt</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Live Congestion Monitor Bar -->
+            <div class="live-condition-alert" [ngClass]="routeOptions[selectedRouteIndex].trafficStatus.toLowerCase()">
+              <span>?? Corridor Status: <strong>{{ routeOptions[selectedRouteIndex].trafficStatus }} Congestion</strong></span>
+              <span *ngIf="routeOptions[selectedRouteIndex].delayMinutes > 0">
+                Expected delay: +{{ routeOptions[selectedRouteIndex].delayMinutes }} minutes near toll plazas.
+              </span>
+              <span *ngIf="routeOptions[selectedRouteIndex].delayMinutes === 0">
+                Smooth flow with zero highway blockages detected.
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>

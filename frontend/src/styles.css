@@ -1,0 +1,353 @@
+/* =======================================================
+   TASK 5: DYNAMIC THEMING & CSS VARIABLES SYSTEM
+   ======================================================= */
+
+:root, body.theme-light {
+  --bg-primary: #f8f9fa;
+  --bg-secondary: #ffffff;
+  --bg-card: #ffffff;
+  --bg-elevated: #f1f5f9;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+  --border-color: #e2e8f0;
+  --border-focus: #d84e55;
+  --input-bg: #ffffff;
+  --input-text: #1e293b;
+  --accent-red: #d84e55;
+  --accent-red-hover: #b9383e;
+  --card-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  --modal-bg: #ffffff;
+  --tag-bg: #fee2e2;
+  --tag-text: #991b1b;
+  background-color: #f8f9fa !important;
+  color: #1e293b !important;
+}
+
+body.theme-dark {
+  --bg-primary: #0b1120;
+  --bg-secondary: #131c31;
+  --bg-card: #18233c;
+  --bg-elevated: #1e2d4d;
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --border-color: #2a3b5c;
+  --border-focus: #ef4444;
+  --input-bg: #131c31;
+  --input-text: #f8fafc;
+  --accent-red: #ef4444;
+  --accent-red-hover: #dc2626;
+  --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  --modal-bg: #131c31;
+  --tag-bg: #3f1818;
+  --tag-text: #fca5a5;
+  background-color: #0b1120 !important;
+  color: #f8fafc !important;
+}
+
+body.theme-high-contrast {
+  --bg-primary: #000000;
+  --bg-secondary: #121212;
+  --bg-card: #181818;
+  --bg-elevated: #242424;
+  --text-primary: #ffffff;
+  --text-secondary: #ffff00;
+  --text-muted: #e2e8f0;
+  --border-color: #ffffff;
+  --border-focus: #ffff00;
+  --input-bg: #000000;
+  --input-text: #ffffff;
+  --accent-red: #ff3333;
+  --accent-red-hover: #ff0000;
+  --card-shadow: 0 0 0 2px #ffffff;
+  --modal-bg: #121212;
+  --tag-bg: #333333;
+  --tag-text: #ffff00;
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.25s ease, color 0.25s ease;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+/* =======================================================
+   DARK MODE COMPONENT OVERRIDES
+   ======================================================= */
+
+body.theme-dark .navbar-wrapper,
+body.theme-high-contrast .navbar-wrapper {
+  background-color: var(--bg-secondary) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+body.theme-dark .nav-dropdown,
+body.theme-high-contrast .nav-dropdown {
+  background-color: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+body.theme-dark .search-bar-container,
+body.theme-high-contrast .search-bar-container {
+  background-color: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  box-shadow: var(--card-shadow) !important;
+}
+
+body.theme-dark .search-input-field input,
+body.theme-high-contrast .search-input-field input {
+  background-color: transparent !important;
+  color: var(--text-primary) !important;
+}
+
+body.theme-dark .sidebar-filters,
+body.theme-dark .official-bus-card,
+body.theme-dark .input-card,
+body.theme-dark .route-card,
+body.theme-dark .post-card,
+body.theme-dark .post-form-card,
+body.theme-dark .ProfilePannel,
+body.theme-dark .SingleTrip {
+  background-color: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+  box-shadow: var(--card-shadow) !important;
+}
+
+body.theme-dark input,
+body.theme-dark select,
+body.theme-dark textarea {
+  background-color: var(--input-bg) !important;
+  color: var(--input-text) !important;
+  border-color: var(--border-color) !important;
+}
+
+body.theme-dark .filter-chip {
+  background-color: var(--bg-elevated) !important;
+  color: var(--text-secondary) !important;
+  border-color: var(--border-color) !important;
+}
+
+body.theme-dark .filter-chip.selected {
+  background-color: var(--accent-red) !important;
+  color: #ffffff !important;
+}
+
+body.theme-dark .badge-verified,
+body.theme-dark .traffic-tag.Low {
+  background-color: #064e3b !important;
+  color: #6ee7b7 !important;
+}
+
+body.theme-dark .traffic-tag.Moderate {
+  background-color: #78350f !important;
+  color: #fcd34d !important;
+}
+
+body.theme-dark .traffic-tag.Heavy {
+  background-color: #7f1d1d !important;
+  color: #fca5a5 !important;
+}
+
+/* =======================================================
+   RESPONSIVE DESIGN RULES (MOBILE & TABLET SUPPORT)
+   ======================================================= */
+
+@media (max-width: 992px) {
+  .results-layout-grid {
+    grid-template-columns: 1fr !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .sidebar-filters {
+    width: 100% !important;
+    margin-bottom: 20px;
+  }
+
+  .planner-layout {
+    flex-direction: column !important;
+  }
+
+  .planner-layout .sidebar {
+    width: 100% !important;
+    max-height: none !important;
+  }
+
+  .planner-layout .map-view {
+    height: 420px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar-container {
+    padding: 10px 16px !important;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .nav-menu {
+    order: 3;
+    width: 100%;
+    justify-content: space-around !important;
+    border-top: 1px solid var(--border-color);
+    padding-top: 8px;
+  }
+
+  .navbar-actions {
+    gap: 8px !important;
+  }
+
+  .search-bar-container {
+    flex-direction: column !important;
+    border-radius: 16px !important;
+    padding: 12px !important;
+    gap: 10px;
+  }
+
+  .search-divider {
+    display: none !important;
+  }
+
+  .search-input-field {
+    width: 100% !important;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 8px;
+  }
+
+  .btn-hero-search {
+    width: 100% !important;
+    border-radius: 10px !important;
+    height: 48px !important;
+  }
+
+  .card-primary-content {
+    flex-direction: column !important;
+    gap: 16px !important;
+  }
+
+  .col-cta {
+    align-items: flex-start !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    width: 100%;
+    border-top: 1px dashed var(--border-color);
+    padding-top: 12px;
+  }
+
+  .SingleTrip {
+    flex-direction: column !important;
+  }
+
+  .community-container {
+    padding: 16px 12px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: 1.5rem !important;
+  }
+
+  .hero-subtitle {
+    font-size: 0.95rem !important;
+  }
+
+  .col-schedule {
+    gap: 12px !important;
+  }
+}
+/* Global Dark Mode Overrides */
+body.dark-theme {
+  background-color: #0f172a !important;
+  color: #f1f5f9 !important;
+}
+
+body.dark-theme .navbar,
+body.dark-theme header,
+body.dark-theme .header-container {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+  border-bottom: 1px solid #334155 !important;
+}
+
+body.dark-theme .payment-card,
+body.dark-theme .ticket-slip-container,
+body.dark-theme .route-planner-card,
+body.dark-theme .review-card,
+body.dark-theme .community-post,
+body.dark-theme .notification-modal,
+body.dark-theme .mat-card {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+  border-color: #334155 !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
+}
+
+body.dark-theme input,
+body.dark-theme select,
+body.dark-theme textarea {
+  background-color: #0f172a !important;
+  color: #ffffff !important;
+  border: 1px solid #475569 !important;
+}
+
+body.dark-theme .corridor-banner,
+body.dark-theme .order-summary-strip,
+body.dark-theme .points-summary {
+  background-color: #0f172a !important;
+  border-color: #334155 !important;
+}
+
+:root {
+  --bg-primary: #f7f7f8;
+  --bg-surface: #ffffff;
+  --bg-card: #ffffff;
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --text-muted: #9ca3af;
+  --border-color: #e5e7eb;
+  --accent-red: #d84e55;
+  --accent-hover: #b8333a;
+  --pill-bg: #f3f4f6;
+  --elevated-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+body.dark-theme {
+  --bg-primary: #0f172a;
+  --bg-surface: #1e293b;
+  --bg-card: #1e293b;
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #64748b;
+  --border-color: #334155;
+  --accent-red: #ef4444;
+  --accent-hover: #dc2626;
+  --pill-bg: #334155;
+  --elevated-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+* {
+  box-sizing: border-box;
+}

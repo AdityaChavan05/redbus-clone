@@ -1,0 +1,101 @@
+<div class="community-page">
+  <div class="community-header">
+    <div class="header-inner">
+      <h2>{{ 'COMMUNITY.TITLE' | translate }}</h2>
+      <p>{{ 'COMMUNITY.SUBTITLE' | translate }}</p>
+    </div>
+    <div class="mod-toggle-bar">
+      <button type="button" class="btn-mod-toggle" (click)="isModerationView = !isModerationView">
+        🛡️ {{ isModerationView ? 'View Feed' : ('COMMUNITY.MODERATION_QUEUE' | translate) }}
+      </button>
+    </div>
+  </div>
+
+  <div class="community-layout">
+    <!-- Left Form / Creator -->
+    <aside class="composer-card">
+      <h4>Create Travel Story</h4>
+      <p class="verified-tag">✔ Verified Travelers Only</p>
+
+      <div class="composer-field">
+        <label>Topic</label>
+        <select [(ngModel)]="newPostTopic">
+          <option value="Routes">Routes</option>
+          <option value="Tips">Tips & Hacks</option>
+          <option value="Destinations">Destinations</option>
+        </select>
+      </div>
+
+      <div class="composer-field">
+        <label>Title</label>
+        <input type="text" [(ngModel)]="newPostTitle" placeholder="e.g. Bangalore to Goa Sleeper Highlights" />
+      </div>
+
+      <div class="composer-field">
+        <label>Image URL (Optional)</label>
+        <input type="text" [(ngModel)]="newPostImage" placeholder="https://example.com/bus.jpg" />
+      </div>
+
+      <div class="composer-field">
+        <label>Your Story</label>
+        <textarea rows="4" [(ngModel)]="newPostContent" placeholder="Describe the comfort, stops, and tips..."></textarea>
+      </div>
+
+      <button type="button" class="btn-publish" (click)="createPost()">
+        {{ 'COMMUNITY.SHARE_BTN' | translate }}
+      </button>
+    </aside>
+
+    <!-- Right Feed -->
+    <main class="feed-container">
+      <!-- Topics Navigation -->
+      <div class="topic-filter-tabs" *ngIf="!isModerationView">
+        <button type="button" [class.active]="activeTopic === 'All'" (click)="activeTopic = 'All'">All Posts</button>
+        <button type="button" [class.active]="activeTopic === 'Routes'" (click)="activeTopic = 'Routes'">🛣️ Routes</button>
+        <button type="button" [class.active]="activeTopic === 'Tips'" (click)="activeTopic = 'Tips'">💡 Travel Tips</button>
+        <button type="button" [class.active]="activeTopic === 'Destinations'" (click)="activeTopic = 'Destinations'">🏖️ Destinations</button>
+      </div>
+
+      <div *ngIf="displayedPosts.length === 0" class="empty-feed">
+        <p>No community posts found under this topic.</p>
+      </div>
+
+      <article *ngFor="let post of displayedPosts" class="feed-post-card">
+        <div class="post-meta-header">
+          <div class="author-meta">
+            <span class="author-avatar">{{ post.author.charAt(0) }}</span>
+            <div>
+              <strong class="author-name">{{ post.author }}</strong>
+              <span class="badge-verified" *ngIf="post.isVerified">✔ Verified</span>
+              <span class="post-time">{{ post.createdAt }}</span>
+            </div>
+          </div>
+          <span class="topic-chip">{{ post.topic }}</span>
+        </div>
+
+        <h3 class="post-title">{{ post.title }}</h3>
+        <p class="post-text">{{ post.content }}</p>
+
+        <div *ngIf="post.imageUrl" class="post-media">
+          <img [src]="post.imageUrl" alt="Travel Post Media" />
+        </div>
+
+        <div class="post-actions-row">
+          <button type="button" class="action-btn" [class.liked]="post.userLiked" (click)="toggleLike(post)">
+            ❤️ {{ post.likes }} Likes
+          </button>
+          <span class="action-count">💬 {{ post.commentsCount }} Comments</span>
+          <button type="button" class="action-btn" (click)="shareExternal(post)">
+            🔗 {{ post.shares }} Share
+          </button>
+          <button type="button" class="action-btn report-btn" (click)="reportPost(post)" title="Report inappropriate content">
+            🚩 Report ({{ post.reportsCount }})
+          </button>
+          <button *ngIf="isModerationView" type="button" class="action-btn delete-btn" (click)="removePost(post.id)">
+            🗑️ Remove
+          </button>
+        </div>
+      </article>
+    </main>
+  </div>
+</div>

@@ -1,0 +1,54 @@
+<div class="reviews-wrapper">
+  <div class="reviews-header">
+    <div>
+      <h2>{{ 'REVIEWS.TITLE' | translate }}</h2>
+      <div class="rating-strip">
+        <span class="badge-star">? {{ stats.averageRating }} / 5</span>
+        <span>{{ stats.totalReviews }} {{ 'REVIEWS.TOTAL_REVIEWS' | translate }}</span>
+      </div>
+    </div>
+    <button class="btn-write" (click)="showForm = !showForm">
+      {{ showForm ? 'Cancel' : ('REVIEWS.WRITE_REVIEW' | translate) }}
+    </button>
+  </div>
+
+  <div class="review-form-card" *ngIf="showForm">
+    <h4>Verified Journey Review</h4>
+    <div *ngIf="errorMessage" class="error-box">{{ errorMessage }}</div>
+    <div class="form-row">
+      <input type="text" [(ngModel)]="verifiedPnr" placeholder="Completed PNR (e.g. RB94821034)" />
+      <select [(ngModel)]="newRating">
+        <option [ngValue]="5">5 Stars - Outstanding</option>
+        <option [ngValue]="4">4 Stars - Very Good</option>
+        <option [ngValue]="3">3 Stars - Average</option>
+      </select>
+    </div>
+    <textarea [(ngModel)]="newReviewText" placeholder="Write at least 30 characters about punctuality and cleanliness..." rows="3"></textarea>
+    <button class="btn-submit-rev" (click)="submitReview()">Submit Review</button>
+  </div>
+
+  <div class="reviews-list">
+    <ng-container *ngFor="let item of reviews">
+      <div class="review-card" *ngIf="!item.reported">
+        <div class="rev-head">
+          <div>
+            <strong>{{ item.reviewerName }}</strong>
+            <span class="pnr-tag">PNR: {{ item.pnr }}</span>
+            <span class="trusted-tag" *ngIf="item.isTrusted">? Trusted</span>
+          </div>
+          <span class="stars">? {{ item.rating }}.0</span>
+        </div>
+        <p class="rev-comment">{{ item.comment }}</p>
+        <div class="rev-foot">
+          <span [class.text-green]="isEditable(item)" [class.text-muted]="!isEditable(item)">
+            {{ isEditable(item) ? '? 24-hr edit window active' : '?? Rating locked' }}
+          </span>
+          <div>
+            <button (click)="upvote(item)" class="btn-mini">?? Helpful ({{ item.upvotes }})</button>
+            <button (click)="report(item)" class="btn-mini">?? Report</button>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</div>

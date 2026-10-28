@@ -1,0 +1,166 @@
+.login-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.login-modal-card {
+  background: #ffffff;
+  width: 100%;
+  max-width: 420px;
+  border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+  font-family: inherit;
+}
+
+.close-btn {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #64748b;
+  cursor: pointer;
+}
+
+.login-header {
+  padding: 24px 24px 16px;
+  text-align: center;
+  background: #fffafa;
+  border-bottom: 1px solid #fee2e2;
+}
+
+.redbus-brand-badge {
+  display: inline-block;
+  background: #d84e55;
+  color: #ffffff;
+  font-weight: 900;
+  padding: 3px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.login-header h3 {
+  margin: 4px 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.login-header p {
+  margin: 0;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.login-body {
+  padding: 20px 24px 24px;
+}
+
+.phone-input-group {
+  display: flex;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+.country-code {
+  background: #f1f5f9;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #475569;
+  border-right: 1px solid #cbd5e1;
+}
+
+.login-input {
+  flex: 1;
+  padding: 10px 12px;
+  border: none;
+  outline: none;
+  font-size: 13px;
+}
+
+.btn-send-otp {
+  width: 100%;
+  padding: 12px;
+  background: #d84e55;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  margin: 18px 0;
+  color: #94a3b8;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.auth-divider::before, .auth-divider::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.auth-divider span {
+  padding: 0 10px;
+}
+
+.social-login-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.btn-social {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-social:hover {
+  background: #f8fafc;
+}
+
+.social-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.disclaimer {
+  font-size: 11px;
+  color: #94a3b8;
+  text-align: center;
+  margin-top: 16px;
+  line-height: 1.4;
+}
+
+.disclaimer a {
+  color: #64748b;
+  text-decoration: underline;
+}

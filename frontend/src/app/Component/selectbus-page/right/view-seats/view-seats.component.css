@@ -1,0 +1,870 @@
+.redbus-expanded-pane {
+  display: grid;
+  grid-template-columns: 370px 1fr;
+  gap: 24px;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #1e293b;
+}
+
+@media (max-width: 1024px) {
+  .redbus-expanded-pane {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ====================================================
+   LEFT: SEAT SELECTION & BERTH CAPSULES
+   ==================================================== */
+.seat-selection-block {
+  border-right: 1.5px dashed #e2e8f0;
+  padding-right: 22px;
+}
+
+@media (max-width: 1024px) {
+  .seat-selection-block {
+    border-right: none;
+    padding-right: 0;
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1.5px dashed #e2e8f0;
+  }
+}
+
+.deck-columns-container {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+}
+
+.deck-frame {
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 22px 22px 10px 10px;
+  padding: 14px 10px 18px;
+  width: 146px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.deck-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  padding: 0 4px;
+}
+
+.deck-label {
+  font-size: 11px;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.bus-aisle-grid {
+  display: flex;
+  justify-content: space-between;
+}
+
+.column-single {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.column-double {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.double-pair-row {
+  display: flex;
+  gap: 6px;
+}
+
+.bus-aisle {
+  width: 12px;
+}
+
+.berth-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+}
+
+/* Authentic redBus Elongated Berth Capsule */
+.berth-box {
+  width: 27px;
+  height: 52px;
+  border-radius: 5px;
+  background: #ffffff;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.berth-box .berth-pillow {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  border-top: 1px solid currentColor;
+  border-radius: 0 0 4px 4px;
+}
+
+.berth-box.available {
+  border: 1.5px solid #108435;
+  color: #108435;
+}
+
+.berth-box.booked {
+  border: 1.5px solid #e2e8f0;
+  background: #eeeeee;
+  color: #cbd5e1;
+  cursor: not-allowed;
+}
+
+.berth-box.female-available {
+  border: 1.5px solid #e91e63;
+  color: #e91e63;
+}
+
+.berth-box.female-booked {
+  border: 1.5px solid #fce7f3;
+  background: #fdf2f8;
+  color: #f472b6;
+  cursor: not-allowed;
+}
+
+.berth-box.selected {
+  border: 2px solid #1e88e5 !important;
+  color: #1e88e5 !important;
+  box-shadow: 0 0 0 2px rgba(30, 136, 229, 0.25);
+}
+
+.gender-icon {
+  font-size: 10px;
+}
+
+.gender-icon.female {
+  color: #e91e63;
+}
+
+.gender-icon.selected-icon {
+  color: #1e88e5;
+}
+
+.berth-price {
+  font-size: 10px;
+  font-weight: 700;
+  color: #475569;
+  margin-top: 3px;
+}
+
+.berth-price.sold {
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.redbus-seat-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 18px;
+  font-size: 11px;
+  color: #475569;
+  justify-content: center;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-color {
+  width: 12px;
+  height: 18px;
+  border-radius: 3px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+}
+
+.legend-color.avail { border: 1.5px solid #108435; }
+.legend-color.booked { background: #eeeeee; border: 1.5px solid #e2e8f0; }
+.legend-color.female-avail { border: 1.5px solid #e91e63; color: #e91e63; }
+.legend-color.selected-c { border: 1.5px solid #1e88e5; color: #1e88e5; }
+
+/* ====================================================
+   RIGHT: 10-TAB REDBUS NAVIGATION & PANELS
+   ==================================================== */
+.redbus-tabs-block {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.tabs-navigation {
+  display: flex;
+  gap: 4px;
+  border-bottom: 2px solid #f1f5f9;
+  overflow-x: auto;
+  white-space: nowrap;
+  padding-bottom: 6px;
+  margin-bottom: 16px;
+}
+
+.tabs-navigation::-webkit-scrollbar {
+  height: 4px;
+}
+
+.tabs-navigation::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.tabs-navigation button {
+  background: none;
+  border: none;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748b;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.15s ease;
+}
+
+.tabs-navigation button.active {
+  color: #d84e55;
+}
+
+.tabs-navigation button.active::after {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #d84e55;
+}
+
+.tabs-content-pane {
+  flex: 1;
+}
+
+.tab-card {
+  animation: fadeIn 0.25s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.section-title {
+  margin: 0 0 12px;
+  font-size: 16px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+/* ====================================================
+   TAB 1: HIGHLIGHTS & BUS PHOTOS
+   ==================================================== */
+.gallery-container {
+  overflow-x: auto;
+  margin-bottom: 16px;
+  border-radius: 12px;
+}
+
+.gallery-scroll {
+  display: flex;
+  gap: 12px;
+  width: max-content;
+  padding: 4px 0;
+}
+
+.bus-photo-card {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+}
+
+.bus-photo {
+  height: 140px;
+  width: 220px;
+  object-fit: cover;
+  display: block;
+}
+
+.photo-tag {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  background: rgba(15, 23, 42, 0.8);
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  backdrop-filter: blur(4px);
+}
+
+.photo-tag.highlighted {
+  background: #d84e55;
+}
+
+.description-blurb {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #475569;
+  margin-bottom: 16px;
+}
+
+.amenities-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.amenity-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #334155;
+  background: #f8fafc;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #f1f5f9;
+}
+
+/* ====================================================
+   TAB 2: CANCELLATION POLICY
+   ==================================================== */
+.policy-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  margin-bottom: 14px;
+}
+
+.policy-table th {
+  background: #f8fafc;
+  padding: 10px 14px;
+  text-align: left;
+  border-bottom: 1.5px solid #e2e8f0;
+  color: #64748b;
+  font-weight: 700;
+}
+
+.policy-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #334155;
+}
+
+.refund-green { color: #108435; font-weight: 700; }
+.refund-orange { color: #ea580c; font-weight: 700; }
+.refund-red { color: #dc2626; font-weight: 700; }
+
+.free-cancel-promo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  border-radius: 8px;
+  padding: 12px 16px;
+}
+
+.shield-icon {
+  font-size: 24px;
+}
+
+.free-cancel-promo strong {
+  font-size: 13px;
+  color: #065f46;
+  display: block;
+}
+
+.free-cancel-promo p {
+  margin: 2px 0 0;
+  font-size: 11px;
+  color: #047857;
+}
+
+/* ====================================================
+   TAB 3: RESCHEDULE POLICY
+   ==================================================== */
+.step-guide {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.guide-item {
+  display: flex;
+  gap: 12px;
+  background: #f8fafc;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.guide-badge {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #3b82f6;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.guide-badge.green { background: #108435; }
+.guide-badge.red { background: #dc2626; }
+
+.guide-item strong {
+  font-size: 13px;
+  color: #0f172a;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.guide-item p {
+  margin: 0;
+  font-size: 12px;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+/* ====================================================
+   TAB 4: ROUTE TIMELINE
+   ==================================================== */
+.route-timeline {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding-left: 10px;
+}
+
+.timeline-station {
+  display: flex;
+  gap: 16px;
+  padding-bottom: 18px;
+  position: relative;
+}
+
+.time-col {
+  width: 50px;
+  font-size: 12px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.dot-col {
+  position: relative;
+  width: 14px;
+  display: flex;
+  justify-content: center;
+}
+
+.timeline-station::before {
+  content: "";
+  position: absolute;
+  left: 72px;
+  top: 10px;
+  bottom: -8px;
+  width: 2px;
+  background: #cbd5e1;
+}
+
+.timeline-station:last-child::before {
+  display: none;
+}
+
+.station-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #3b82f6;
+  border: 2px solid #ffffff;
+  z-index: 2;
+  margin-top: 4px;
+}
+
+.timeline-station.start .station-dot { background: #108435; }
+.timeline-station.destination .station-dot { background: #dc2626; }
+.timeline-station.dinner .station-dot { background: #ea580c; }
+
+.info-col strong {
+  font-size: 13px;
+  color: #0f172a;
+  display: block;
+}
+
+.info-col p {
+  margin: 2px 0 0;
+  font-size: 11px;
+  color: #64748b;
+}
+
+/* ====================================================
+   TAB 5: BOARDING & DROPPING SELECTOR
+   ==================================================== */
+.points-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 600px) {
+  .points-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.pane-title {
+  font-size: 11px;
+  font-weight: 800;
+  color: #64748b;
+  display: block;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.point-row {
+  display: flex;
+  gap: 12px;
+  padding: 10px 12px;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.point-row:hover {
+  border-color: #cbd5e1;
+}
+
+.point-row.active {
+  border-color: #d84e55;
+  background: #fff8f8;
+}
+
+.point-time {
+  font-size: 12px;
+  font-weight: 800;
+  color: #d84e55;
+}
+
+.point-details strong {
+  font-size: 12px;
+  color: #0f172a;
+  display: block;
+}
+
+.point-details p {
+  margin: 2px 0 0;
+  font-size: 10px;
+  color: #64748b;
+}
+
+/* ====================================================
+   TAB 6: REST STOP
+   ==================================================== */
+.rest-stop-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.rest-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.rest-badge {
+  background: #fee2e2;
+  color: #d84e55;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.rest-time {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.rest-stop-box h4 {
+  margin: 0 0 6px;
+  font-size: 14px;
+  color: #0f172a;
+}
+
+.rest-note {
+  font-size: 12px;
+  color: #475569;
+  line-height: 1.5;
+  margin: 0 0 12px;
+}
+
+.rest-amenities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.rest-amenities span {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+/* ====================================================
+   TAB 7: FEATURES
+   ==================================================== */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.feature-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.f-icon {
+  font-size: 20px;
+  margin-bottom: 6px;
+}
+
+.feature-card strong {
+  font-size: 12px;
+  color: #0f172a;
+  display: block;
+}
+
+.feature-card p {
+  margin: 4px 0 0;
+  font-size: 11px;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+/* ====================================================
+   TAB 8: REVIEWS
+   ==================================================== */
+.review-score-banner {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  background: #f8fafc;
+  padding: 16px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 16px;
+}
+
+.rating-number {
+  text-align: center;
+}
+
+.rating-number strong {
+  font-size: 28px;
+  font-weight: 900;
+  color: #108435;
+  display: block;
+}
+
+.rating-number span {
+  font-size: 11px;
+  color: #64748b;
+}
+
+.rating-breakdown {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.bar-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: #475569;
+}
+
+.bar-line .progress {
+  flex: 1;
+  height: 6px;
+  background: #e2e8f0;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.bar-line .progress .fill {
+  height: 100%;
+  background: #108435;
+}
+
+.customer-review-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.review-author {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.review-author strong {
+  font-size: 12px;
+  color: #0f172a;
+}
+
+.review-author .tag {
+  background: #ecfdf5;
+  color: #059669;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.review-text {
+  margin: 0;
+  font-size: 12px;
+  color: #475569;
+  line-height: 1.5;
+}
+
+/* ====================================================
+   TAB 9: BUS SAFETY
+   ==================================================== */
+.safety-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.vahan-plate-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #f8fafc;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.plate-box {
+  display: inline-flex;
+  align-items: center;
+  background: #fbbf24;
+  border: 2px solid #000000;
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-family: monospace;
+  font-weight: 900;
+  font-size: 13px;
+}
+
+.plate-box .ind {
+  background: #1e3a8a;
+  color: #ffffff;
+  font-size: 8px;
+  padding: 1px 3px;
+  border-radius: 2px;
+  margin-right: 6px;
+}
+
+.vahan-tag {
+  margin: 0;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.safety-checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.check-item {
+  font-size: 12px;
+  color: #334155;
+  background: #f8fafc;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #f1f5f9;
+}
+
+/* ====================================================
+   TAB 10: OTHER POLICIES
+   ==================================================== */
+.other-policies-accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.policy-block {
+  background: #f8fafc;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.policy-block strong {
+  font-size: 12px;
+  color: #0f172a;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.policy-block p {
+  margin: 0;
+  font-size: 11px;
+  color: #64748b;
+  line-height: 1.5;
+}
