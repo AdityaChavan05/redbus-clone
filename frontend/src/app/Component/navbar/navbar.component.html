@@ -1,46 +1,64 @@
-﻿<header class="navbar-wrapper">
-  <div class="navbar-container">
-    <div class="nav-brand-group">
-      <a routerLink="/" class="nav-brand">redBus</a>
-      <nav class="nav-links">
-        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-item">
-          🚌 {{ 'NAV.BUS_TICKETS' | translate }}
-        </a>
-        <a routerLink="/planner" routerLinkActive="active" class="nav-item">
-          🗺️ {{ 'NAV.ROUTE_PLANNER' | translate }}
-        </a>
-        <a routerLink="/community" routerLinkActive="active" class="nav-item">
-          💬 {{ 'NAV.COMMUNITY' | translate }}
-        </a>
-        <a routerLink="/reviews" routerLinkActive="active" class="nav-item">
-          ⭐ {{ 'NAV.REVIEWS' | translate }}
-        </a>
-      </nav>
+﻿<nav class="navbar-wrapper">
+  <div class="nav-container">
+    
+    <!-- BRAND LOGO -->
+    <a routerLink="/" class="brand-link">
+      <span class="brand-red-txt">red</span><span class="brand-dark-txt">Bus</span>
+      <span class="badge-pro">PRO</span>
+    </a>
+
+    <!-- NAV LINKS -->
+    <div class="nav-menu">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-item">
+        <span class="icon">🚌</span>
+        <span>{{ 'NAV.BUS_TICKETS' | translate }}</span>
+      </a>
+      <a routerLink="/planner" routerLinkActive="active" class="nav-item">
+        <span class="icon">🗺️</span>
+        <span>{{ 'NAV.ROUTE_PLANNER' | translate }}</span>
+      </a>
+      <a routerLink="/community" routerLinkActive="active" class="nav-item">
+        <span class="icon">💬</span>
+        <span>{{ 'NAV.COMMUNITY' | translate }}</span>
+      </a>
+      <a routerLink="/reviews" routerLinkActive="active" class="nav-item">
+        <span class="icon">⭐</span>
+        <span>{{ 'NAV.REVIEWS' | translate }}</span>
+      </a>
     </div>
 
-    <div class="nav-controls-group">
-      <!-- Language Selector (i18n) -->
-      <div class="lang-selector">
-        <select [ngModel]="selectedLanguage" (ngModelChange)="onLanguageChange($event)">
-          <option value="en">🌐 English</option>
-          <option value="hi">🌐 हिन्दी</option>
-          <option value="kn">🌐 ಕನ್ನಡ</option>
+    <!-- RIGHT UTILITIES -->
+    <div class="nav-actions">
+      
+      <!-- LANGUAGE SWITCHER DROPDOWN -->
+      <div class="lang-selector-box">
+        <span class="globe-icon">🌐</span>
+        <select [ngModel]="selectedLanguage" (ngModelChange)="onLanguageChange($event)" class="lang-select">
+          <option value="en">English (EN)</option>
+          <option value="hi">हिंदी (Hindi)</option>
+          <option value="kn">ಕನ್ನಡ (Kannada)</option>
         </select>
       </div>
 
-      <!-- Dark Mode Toggle Button -->
-      <button type="button" class="btn-theme-toggle" (click)="toggleTheme()" [title]="isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'">
-        {{ isDarkMode ? '☀️ ' + ('THEME.LIGHT' | translate) : '🌙 ' + ('THEME.DARK' | translate) }}
+      <!-- FULL-SCREEN DARK/LIGHT TOGGLE BUTTON -->
+      <button type="button" class="theme-toggle-btn" (click)="toggleTheme()" [title]="isDarkMode ? 'Switch to Light' : 'Switch to Dark'">
+        <span class="theme-icon">{{ isDarkMode ? '☀️' : '🌙' }}</span>
+        <span class="theme-label">{{ isDarkMode ? ('THEME.LIGHT' | translate) : ('THEME.DARK' | translate) }}</span>
       </button>
 
-      <!-- Notifications Bell -->
-      <a routerLink="/notifications" class="notif-bell" title="Notifications">
-        🔔
+      <!-- NOTIFICATIONS BELL -->
+      <a routerLink="/notifications" class="notif-btn" title="Notifications">
+        <span class="bell-icon">🔔</span>
         <span class="notif-badge" *ngIf="unreadNotificationsCount > 0">{{ unreadNotificationsCount }}</span>
       </a>
 
-      <!-- Account Profile -->
-      <a routerLink="/profile" class="nav-account">👤 {{ 'COMMON.ACCOUNT' | translate }}</a>
+      <!-- ACCOUNT PROFILE BUTTON -->
+      <a routerLink="/profile" class="account-btn">
+        <span class="avatar-circle">👤</span>
+        <span class="account-txt">{{ 'NAV.ACCOUNT' | translate }}</span>
+      </a>
+
     </div>
+
   </div>
-</header>
+</nav>

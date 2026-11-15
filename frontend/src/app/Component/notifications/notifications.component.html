@@ -1,31 +1,79 @@
 <div class="notifications-page">
+  
+  <!-- TOAST BANNER -->
+  <div class="toast-banner" *ngIf="toastMessage">
+    <span>🔔 {{ toastMessage }}</span>
+  </div>
+
   <div class="page-title-row">
-    <h2>{{ 'NOTIF.TITLE' | translate }}</h2>
-    <button type="button" class="btn-clear" (click)="clearHistory()">Clear History</button>
+    <div>
+      <h2>🔔 Notification Center</h2>
+      <p class="subtitle">Real-time trip alerts, booking confirmations, schedules & offers</p>
+    </div>
+    <div class="header-action-group">
+      <button type="button" class="btn-mark-all" (click)="markAllAsRead()">Mark All as Read</button>
+      <button type="button" class="btn-clear" (click)="clearHistory()">Clear History</button>
+    </div>
+  </div>
+
+  <!-- FILTER CHIPS -->
+  <div class="notif-filter-chips">
+    <button type="button" class="chip-btn" [class.active]="activeFilter === 'all'" (click)="setFilter('all')">
+      All ({{ notifications.length }})
+    </button>
+    <button type="button" class="chip-btn" [class.active]="activeFilter === 'unread'" (click)="setFilter('unread')">
+      Unread
+    </button>
+    <button type="button" class="chip-btn" [class.active]="activeFilter === 'booking'" (click)="setFilter('booking')">
+      Bookings
+    </button>
+    <button type="button" class="chip-btn" [class.active]="activeFilter === 'schedule'" (click)="setFilter('schedule')">
+      Schedules
+    </button>
+    <button type="button" class="chip-btn" [class.active]="activeFilter === 'reminder'" (click)="setFilter('reminder')">
+      Reminders
+    </button>
+    <button type="button" class="chip-btn" [class.active]="activeFilter === 'promotional'" (click)="setFilter('promotional')">
+      Promotions
+    </button>
+    <button type="button" class="chip-btn" [class.active]="activeFilter === 'cancellation'" (click)="setFilter('cancellation')">
+      Refunds
+    </button>
   </div>
 
   <div class="notif-grid-layout">
     <!-- Notifications Feed -->
     <section class="notif-list-card">
-      <div *ngIf="notifications.length === 0" class="empty-state">
-        <p>No notifications available.</p>
+      <div *ngIf="filteredNotifications.length === 0" class="empty-state">
+        <span class="empty-icon">📭</span>
+        <p>No notifications found in this view.</p>
       </div>
 
-      <div *ngFor="let n of notifications" class="notif-item" [class.unread]="!n.isRead" (click)="markAsRead(n)">
+      <div *ngFor="let n of filteredNotifications" class="notif-item" [class.unread]="!n.isRead" (click)="markAsRead(n)">
         <div class="notif-icon">
           <span *ngIf="n.type === 'booking'">🎫</span>
           <span *ngIf="n.type === 'schedule'">⏰</span>
+          <span *ngIf="n.type === 'reminder'">🚌</span>
           <span *ngIf="n.type === 'promotional'">🏷️</span>
+          <span *ngIf="n.type === 'cancellation'">⚠️</span>
         </div>
         <div class="notif-body">
           <div class="notif-header">
-            <strong>{{ n.title }}</strong>
-            <span class="delivery-status" [class.delivered]="n.deliveryStatus === 'Delivered'">
+            <strong class="title-txt">{{ n.title }}</strong>
+            <span class="delivery-status" [class.delivered]="n.deliveryStatus === 'Delivered'" [class.retried]="n.deliveryStatus === 'Retried'">
               ✔ {{ n.deliveryStatus }} via {{ n.channel }}
             </span>
           </div>
           <p class="notif-msg">{{ n.message }}</p>
-          <span class="notif-time">{{ n.timestamp }}</span>
+          <div class="notif-footer-row">
+            <span class="notif-time">{{ n.timestamp }}</span>
+            <button *ngIf="n.deliveryStatus === 'Failed' || n.deliveryStatus === 'Retried'" 
+                    type="button" 
+                    class="btn-retry" 
+                    (click)="retryNotification(n, $event)">
+              ↻ Retry Delivery
+            </button>
+          </div>
         </div>
       </div>
     </section>
@@ -33,32 +81,43 @@
     <!-- Channel Preferences Sidebar -->
     <aside class="prefs-card">
       <h4>Delivery Preferences</h4>
-      <p class="sub">Choose which channels redBus uses to send you updates.</p>
+      <p class="sub">Manage how TedBus delivers booking updates, cancellations & alerts to your devices.</p>
 
       <div class="pref-switch">
         <label>
-          <input type="checkbox" [(ngModel)]="pushEnabled" />
-          <span>Push Notifications (Real-time tracking)</span>
+          <input type="checkbox" [(ngModel)]="pushEnabled" (change)="togglePushPermission()" />
+          <span>Browser Push Notifications (Instant Live Tracking)</span>
         </label>
       </div>
 
       <div class="pref-switch">
         <label>
           <input type="checkbox" [(ngModel)]="emailEnabled" />
-          <span>Email E-Tickets & Invoices</span>
+          <span>Email Confirmations & Tax Invoices</span>
+        </label>
+      </div>
+
+      <div class="pref-switch">
+        <label>
+          <input type="checkbox" [(ngModel)]="inAppEnabled" />
+          <span>In-App Real-time Socket.IO Stream</span>
         </label>
       </div>
 
       <div class="pref-switch">
         <label>
           <input type="checkbox" [(ngModel)]="promotionsOptIn" />
-          <span>Promotions & Coupon Discounts</span>
+          <span>Promotions & Weekend Deals (Opt-In)</span>
         </label>
       </div>
 
       <button type="button" class="btn-save-prefs" (click)="savePreferences()">
         Save Channel Preferences
       </button>
+
+      <div class="prefs-info-box">
+        <small>🛡️ Notifications are authenticated and audited. Failure logs trigger automatic retry mechanisms.</small>
+      </div>
     </aside>
   </div>
 </div>

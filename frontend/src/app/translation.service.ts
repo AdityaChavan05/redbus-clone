@@ -1,411 +1,647 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
-
-// Embedded fallback dictionaries ensure instant zero-latency translations and fallback
-const EMBEDDED_TRANSLATIONS: { [lang: string]: any } = {
-  en: {
-    COMMON: {
-      APP_NAME: 'TedBus',
-      BUS_TICKETS: 'Bus Tickets',
-      ROUTE_PLANNER: 'Route Planner',
-      COMMUNITY: 'Community & Stories',
-      NOTIFICATIONS: 'Notifications',
-      ACCOUNT: 'Account',
-      LANGUAGE: 'Language',
-      THEME: 'Theme',
-      SEARCH: 'Search',
-      CLOSE: 'Close',
-      CANCEL: 'Cancel',
-      SUBMIT: 'Submit',
-      SAVE: 'Save',
-      DELETE: 'Delete',
-      EDIT: 'Edit',
-      RETRY: 'Retry',
-      SHARE: 'Share',
-      REPORT: 'Report',
-      HELPFUL: 'Helpful',
-      VERIFIED: 'Verified Traveler',
-      TRUSTED_REVIEWER: 'Trusted Reviewer'
-    },
-    NAV: {
-      BUS_TICKETS: 'Bus Tickets',
-      ROUTE_PLANNER: 'Route Planner',
-      COMMUNITY: 'Community & Reviews',
-      NOTIFICATIONS: 'Notifications',
-      LIGHT_MODE: 'Light Mode',
-      DARK_MODE: 'Dark Mode'
-    },
-    HERO: {
-      TITLE: "India's No. 1 Online Bus Ticket Booking Site",
-      SUBTITLE: "Over 36 million happy customers worldwide",
-      FROM: "FROM",
-      TO: "TO",
-      DATE: "DATE",
-      SEARCH_BUSES: "SEARCH BUSES",
-      TRENDING_OFFERS: "TRENDING OFFERS",
-      SAFETY_TITLE: "SAFETY+",
-      SAFETY_DESC: "Sanitized buses, mandatory checks, and verified operators.",
-      SERVICE_TITLE: "SUPERIOR SERVICE",
-      SERVICE_DESC: "Round-the-clock live support, resolution within 24 hours.",
-      PRICE_TITLE: "LOWEST PRICES",
-      PRICE_DESC: "Best ticket fares guaranteed across 35+ verified operators."
-    },
-    PLANNER: {
-      TITLE: "Interactive Route Planner & Live Traffic",
-      SUBTITLE: "Add stops, compare highway options, and view live highway congestion.",
-      ORIGIN: "Origin (Start City)",
-      DESTINATION: "Destination (End City)",
-      ADD_STOP: "Add Intermediate Stop",
-      CALCULATE: "Calculate Best Route",
-      SUGGESTED_ROUTES: "Suggested Highway Corridors",
-      SAVE_ROUTE: "Save to My Routes",
-      SAVED_ROUTES: "Saved Quick Routes",
-      SIMULATE_TRAFFIC: "Simulate Live Traffic Fluctuation",
-      TRAFFIC_LOW: "Clear Highway (Low Traffic)",
-      TRAFFIC_MODERATE: "Moderate Congestion",
-      TRAFFIC_HEAVY: "Heavy Traffic Delay"
-    },
-    COMMUNITY: {
-      TITLE: "Traveler Community & Journey Stories",
-      SUBTITLE: "Authentic reviews, travel tips, and journey stories shared by verified travelers.",
-      SHARE_EXP: "Share Your Bus Experience",
-      STORY_TITLE: "Story Title",
-      CATEGORY: "Category",
-      CONTENT_PLACEHOLDER: "Share your journey experience (punctuality, rest stops, seating comfort)...",
-      PHOTO_URL: "Photo URL (Optional)",
-      PUBLISH: "Publish Story",
-      TRENDING: "🔥 Trending Stories",
-      FORUMS: "Discussion Forums",
-      TOPIC_ALL: "All Stories",
-      TOPIC_STORIES: "Journey Stories",
-      TOPIC_TIPS: "Travel Tips",
-      TOPIC_DESTINATIONS: "Destinations",
-      TOPIC_ROUTES: "Route Advice",
-      MODERATION_QUEUE: "Moderation Queue",
-      COMMENTS: "Comments",
-      ADD_COMMENT: "Write a comment..."
-    },
-    REVIEWS: {
-      TITLE: "Route Ratings & Verified Reviews",
-      SUBTITLE: "Only travelers with completed journeys can rate routes.",
-      AVG_RATING: "Average Rating",
-      TOTAL_REVIEWS: "Verified Reviews",
-      WRITE_REVIEW: "Rate & Review This Route",
-      SELECT_TRIP: "Select Completed Journey",
-      RATING_STARS: "Your Rating",
-      REVIEW_TEXT: "Your Travel Feedback (Min. 20 chars)",
-      EDIT_WINDOW_NOTE: "You can edit your review within 24 hours of submission.",
-      EDIT_EXPIRED: "24-hour edit window has expired.",
-      UPVOTE_HELPFUL: "Helpful",
-      REPORT_REVIEW: "Report Violation"
-    },
-    NOTIFICATIONS: {
-      TITLE: "Notification Center",
-      MARK_ALL_READ: "Mark All as Read",
-      NO_NOTIFS: "No notifications yet.",
-      CHANNELS: "Channels",
-      PREFERENCES: "Notification Preferences",
-      EMAIL: "Email Alerts",
-      PUSH: "Push Notifications",
-      IN_APP: "In-App Alerts",
-      PROMOTIONAL: "Promotional Offers",
-      TEST_EVENTS: "Simulate Test Alerts"
-    }
-  },
-  hi: {
-    COMMON: {
-      APP_NAME: 'टेडबस',
-      BUS_TICKETS: 'बस टिकट',
-      ROUTE_PLANNER: 'रूट प्लानर',
-      COMMUNITY: 'कम्युनिटी और कहानियां',
-      NOTIFICATIONS: 'सूचनाएं',
-      ACCOUNT: 'खाता',
-      LANGUAGE: 'भाषा',
-      THEME: 'थीम',
-      SEARCH: 'खोजें',
-      CLOSE: 'बंद करें',
-      CANCEL: 'रद्द करें',
-      SUBMIT: 'जमा करें',
-      SAVE: 'सहेजें',
-      DELETE: 'हटाएं',
-      EDIT: 'संपादित करें',
-      RETRY: 'पुनः प्रयास करें',
-      SHARE: 'साझा करें',
-      REPORT: 'रिपोर्ट करें',
-      HELPFUL: 'उपयोगी',
-      VERIFIED: 'सत्यापित यात्री',
-      TRUSTED_REVIEWER: 'विश्वसनीय समीक्षक'
-    },
-    NAV: {
-      BUS_TICKETS: 'बस टिकट',
-      ROUTE_PLANNER: 'रूट प्लानर',
-      COMMUNITY: 'कम्युनिटी और समीक्षाएं',
-      NOTIFICATIONS: 'सूचनाएं',
-      LIGHT_MODE: 'लाइट मोड',
-      DARK_MODE: 'डार्क मोड'
-    },
-    HERO: {
-      TITLE: "भारत की नंबर 1 ऑनलाइन बस टिकट बुकिंग साइट",
-      SUBTITLE: "दुनिया भर में 3.6 करोड़ से अधिक संतुष्ट ग्राहक",
-      FROM: "कहाँ से",
-      TO: "कहाँ तक",
-      DATE: "दिनांक",
-      SEARCH_BUSES: "बसें खोजें",
-      TRENDING_OFFERS: "शानदार ऑफ़र",
-      SAFETY_TITLE: "सुरक्षा+",
-      SAFETY_DESC: "सैनिटाइज्ड बसें, अनिवार्य जांच और तनाव मुक्त यात्रा के लिए सत्यापित ऑपरेटर।",
-      SERVICE_TITLE: "उत्कृष्ट सेवा",
-      SERVICE_DESC: "24 घंटे लाइव सहायता, 24 घंटे में समाधान और त्वरित रिफंड।",
-      PRICE_TITLE: "सबसे कम किराया",
-      PRICE_DESC: "35+ सत्यापित ऑपरेटरों पर बिना किसी छिपे शुल्क के सर्वोत्तम टिकट मूल्य।"
-    },
-    PLANNER: {
-      TITLE: "इंटरएक्टिव रूट प्लानर और लाइव ट्रैफिक",
-      SUBTITLE: "स्टॉप जोड़ें, हाईवे विकल्पों की तुलना करें और लाइव ट्रैफिक देखें।",
-      ORIGIN: "प्रारंभिक शहर (कहाँ से)",
-      DESTINATION: "गंतव्य शहर (कहाँ तक)",
-      ADD_STOP: "मध्यवर्ती स्टॉप जोड़ें",
-      CALCULATE: "सर्वोत्तम रूट खोजें",
-      SUGGESTED_ROUTES: "सुझाए गए हाईवे कॉरिडोर",
-      SAVE_ROUTE: "मेरे रूट में सहेजें",
-      SAVED_ROUTES: "सहेजे गए त्वरित रूट",
-      SIMULATE_TRAFFIC: "लाइव ट्रैफिक में बदलाव सिमुलेट करें",
-      TRAFFIC_LOW: "साफ हाईवे (कम ट्रैफिक)",
-      TRAFFIC_MODERATE: "मध्यम ट्रैफिक",
-      TRAFFIC_HEAVY: "भारी ट्रैफिक जाम"
-    },
-    COMMUNITY: {
-      TITLE: "यात्री कम्युनिटी और यात्रा कहानियां",
-      SUBTITLE: "सत्यापित यात्रियों द्वारा साझा की गई प्रामाणिक समीक्षाएं और यात्रा सुझाव।",
-      SHARE_EXP: "अपना बस अनुभव साझा करें",
-      STORY_TITLE: "कहानी का शीर्षक",
-      CATEGORY: "श्रेणी",
-      CONTENT_PLACEHOLDER: "अपनी यात्रा का अनुभव साझा करें (समय की पाबंदी, स्टॉप, सीट आराम)...",
-      PHOTO_URL: "फोटो लिंक (वैकल्पिक)",
-      PUBLISH: "कहानी प्रकाशित करें",
-      TRENDING: "🔥 लोकप्रिय कहानियां",
-      FORUMS: "चर्चा मंच",
-      TOPIC_ALL: "सभी कहानियां",
-      TOPIC_STORIES: "यात्रा कहानियां",
-      TOPIC_TIPS: "यात्रा सुझाव",
-      TOPIC_DESTINATIONS: "गंतव्य गाइड",
-      TOPIC_ROUTES: "रूट सलाह",
-      MODERATION_QUEUE: "मॉडरेशन कतार",
-      COMMENTS: "टिप्पणियां",
-      ADD_COMMENT: "टिप्पणी लिखें..."
-    },
-    REVIEWS: {
-      TITLE: "रूट रेटिंग और सत्यापित समीक्षाएं",
-      SUBTITLE: "केवल पूर्ण यात्रा वाले यात्री ही रूट की समीक्षा कर सकते हैं।",
-      AVG_RATING: "औसत रेटिंग",
-      TOTAL_REVIEWS: "सत्यापित समीक्षाएं",
-      WRITE_REVIEW: "इस रूट की समीक्षा करें",
-      SELECT_TRIP: "पूर्ण यात्रा चुनें",
-      RATING_STARS: "आपकी रेटिंग",
-      REVIEW_TEXT: "आपकी प्रतिक्रिया (कम से कम 20 अक्षर)",
-      EDIT_WINDOW_NOTE: "आप सबमिशन के 24 घंटों के भीतर अपनी समीक्षा संपादित कर सकते हैं।",
-      EDIT_EXPIRED: "24 घंटे की संपादन अवधि समाप्त हो गई है।",
-      UPVOTE_HELPFUL: "उपयोगी",
-      REPORT_REVIEW: "उल्लंघन की रिपोर्ट करें"
-    },
-    NOTIFICATIONS: {
-      TITLE: "सूचना केंद्र",
-      MARK_ALL_READ: "सभी को पढ़ा हुआ चिह्नित करें",
-      NO_NOTIFS: "अभी कोई सूचना नहीं है।",
-      CHANNELS: "माध्यम",
-      PREFERENCES: "सूचना प्राथमिकताएं",
-      EMAIL: "ईमेल सूचनाएं",
-      PUSH: "पुश सूचनाएं",
-      IN_APP: "इन-ऐप सूचनाएं",
-      PROMOTIONAL: "प्रचारक ऑफ़र",
-      TEST_EVENTS: "परीक्षण सूचनाएं सिमुलेट करें"
-    }
-  },
-  kn: {
-    COMMON: {
-      APP_NAME: 'ಟೆಡ್‌ಬಸ್',
-      BUS_TICKETS: 'ಬಸ್ ಟಿಕೆಟ್‌ಗಳು',
-      ROUTE_PLANNER: 'ಮಾರ್ಗ ಯೋಜನೆ',
-      COMMUNITY: 'ಪ್ರಯಾಣ ಸಮುದಾಯ',
-      NOTIFICATIONS: 'ಅಧಿಸೂಚನೆಗಳು',
-      ACCOUNT: 'ಖಾತೆ',
-      LANGUAGE: 'ಭಾಷೆ',
-      THEME: 'ಥೀಮ್',
-      SEARCH: 'ಹುಡುಕಿ',
-      CLOSE: 'ಮುಚ್ಚಿ',
-      CANCEL: 'ರದ್ದುಮಾಡಿ',
-      SUBMIT: 'ಸಲ್ಲಿಸಿ',
-      SAVE: 'ಉಳಿಸಿ',
-      DELETE: 'ಅಳಿಸಿ',
-      EDIT: 'ಸಂಪಾದಿಸಿ',
-      RETRY: 'ಮರುಪ್ರಯತ್ನಿಸಿ',
-      SHARE: 'ಹಂಚಿಕೊಳ್ಳಿ',
-      REPORT: 'ವರದಿ ಮಾಡಿ',
-      HELPFUL: 'ಉಪಯುಕ್ತ',
-      VERIFIED: 'ದೃಢೀಕೃತ ಪ್ರಯಾಣಿಕ',
-      TRUSTED_REVIEWER: 'ವಿಶ್ವಾಸಾರ್ಹ ವಿಮರ್ಶಕ'
-    },
-    NAV: {
-      BUS_TICKETS: 'ಬಸ್ ಟಿಕೆಟ್‌ಗಳು',
-      ROUTE_PLANNER: 'ಮಾರ್ಗ ಯೋಜನೆ',
-      COMMUNITY: 'ಸಮುದಾಯ ಮತ್ತು ವಿಮರ್ಶೆಗಳು',
-      NOTIFICATIONS: 'ಅಧಿಸೂಚನೆಗಳು',
-      LIGHT_MODE: 'ಲೈಟ್ ಮೋಡ್',
-      DARK_MODE: 'ಡಾರ್ಕ್ ಮೋಡ್'
-    },
-    HERO: {
-      TITLE: "ಭಾರತದ ನಂ. 1 ಆನ್‌ಲೈನ್ ಬಸ್ ಟಿಕೆಟ್ ಬುಕಿಂಗ್ ತಾಣ",
-      SUBTITLE: "ವಿಶ್ವಾದ್ಯಂತ 3.6 ಕೋಟಿಗೂ ಹೆಚ್ಚು ಸಂತೃಪ್ತ ಗ್ರಾಹಕರು",
-      FROM: "ಎಲ್ಲಿಂದ",
-      TO: "ಎಲ್ಲಿಗೆ",
-      DATE: "ದಿನಾಂಕ",
-      SEARCH_BUSES: "ಬಸ್‌ಗಳನ್ನು ಹುಡುಕಿ",
-      TRENDING_OFFERS: "ಜನಪ್ರಿಯ ಆಫರ್‌ಗಳು",
-      SAFETY_TITLE: "ಸುರಕ್ಷತೆ+",
-      SAFETY_DESC: "ಸ್ವಚ್ಛಗೊಳಿಸಿದ ಬಸ್‌ಗಳು ಮತ್ತು ಸುರಕ್ಷಿತ ಪ್ರಯಾಣ.",
-      SERVICE_TITLE: "ಉತ್ತಮ ಸೇವೆ",
-      SERVICE_DESC: "24 ಗಂಟೆಗಳ ಲೈವ್ ಬೆಂಬಲ ಮತ್ತು ತ್ವರಿತ ಮರುಪಾವತಿ.",
-      PRICE_TITLE: "ಕಡಿಮೆ ದರ",
-      PRICE_DESC: "ಯಾವುದೇ ಗುಪ್ತ ಶುಲ್ಕಗಳಿಲ್ಲದೆ ಅತ್ಯುತ್ತಮ ಬೆಲೆ."
-    },
-    PLANNER: {
-      TITLE: "ಮಾರ್ಗ ಯೋಜನೆ ಮತ್ತು ಲೈವ್ ಟ್ರಾಫಿಕ್",
-      SUBTITLE: "ಸ್ಟಾಪ್‌ಗಳನ್ನು ಸೇರಿಸಿ, ಹೆದ್ದಾರಿ ಮಾರ್ಗಗಳನ್ನು ಹೋಲಿಕೆ ಮಾಡಿ ಮತ್ತು ಲೈವ್ ಟ್ರಾಫಿಕ್ ವೀಕ್ಷಿಸಿ.",
-      ORIGIN: "ಪ್ರಾರಂಭ ನಗರ (ಎಲ್ಲಿಂದ)",
-      DESTINATION: "ಗಮ್ಯಸ್ಥಾನ ನಗರ (ಎಲ್ಲಿಗೆ)",
-      ADD_STOP: "ಮಧ್ಯಂತರ ನಿಲುಗಡೆ ಸೇರಿಸಿ",
-      CALCULATE: "ಉತ್ತಮ ಮಾರ್ಗ ಲೆಕ್ಕಹಾಕಿ",
-      SUGGESTED_ROUTES: "ಸೂಚಿಸಲಾದ ಹೆದ್ದಾರಿ ಮಾರ್ಗಗಳು",
-      SAVE_ROUTE: "ನನ್ನ ಮಾರ್ಗಗಳಿಗೆ ಉಳಿಸಿ",
-      SAVED_ROUTES: "ಉಳಿಸಲಾದ ತ್ವರಿತ ಮಾರ್ಗಗಳು",
-      SIMULATE_TRAFFIC: "ಲೈವ್ ಟ್ರಾಫಿಕ್ ಬದಲಾವಣೆ ಪರೀಕ್ಷಿಸಿ",
-      TRAFFIC_LOW: "ಮುಕ್ತ ಹೆದ್ದಾರಿ (ಕಡಿಮೆ ಟ್ರಾಫಿಕ್)",
-      TRAFFIC_MODERATE: "ಮಧ್ಯಮ ದಟ್ಟಣೆ",
-      TRAFFIC_HEAVY: "ಭಾರೀ ಟ್ರಾಫಿಕ್ ವಿಳಂಬ"
-    },
-    COMMUNITY: {
-      TITLE: "ಪ್ರಯಾಣಿಕರ ಸಮುದಾಯ ಮತ್ತು ಕಥೆಗಳು",
-      SUBTITLE: "ದೃಢೀಕೃತ ಪ್ರಯಾಣಿಕರು ಹಂಚಿಕೊಂಡ ಅಧಿಕೃತ ವಿಮರ್ಶೆಗಳು ಮತ್ತು ಸಲಹೆಗಳು.",
-      SHARE_EXP: "ನಿಮ್ಮ ಬಸ್ ಅನುಭವವನ್ನು ಹಂಚಿಕೊಳ್ಳಿ",
-      STORY_TITLE: "ಕಥೆಯ ಶೀರ್ಷಿಕೆ",
-      CATEGORY: "ವರ್ಗ",
-      CONTENT_PLACEHOLDER: "ನಿಮ್ಮ ಪ್ರಯಾಣದ ಅನುಭವವನ್ನು ಹಂಚಿಕೊಳ್ಳಿ...",
-      PHOTO_URL: "ಫೋಟೋ ಲಿಂಕ್ (ಐಚ್ಛಿಕ)",
-      PUBLISH: "ಕಥೆಯನ್ನು ಪ್ರಕಟಿಸಿ",
-      TRENDING: "🔥 ಜನಪ್ರಿಯ ಕಥೆಗಳು",
-      FORUMS: "ಚರ್ಚಾ ವೇದಿಕೆಗಳು",
-      TOPIC_ALL: "ಎಲ್ಲಾ ಕಥೆಗಳು",
-      TOPIC_STORIES: "ಪ್ರಯಾಣ ಕಥೆಗಳು",
-      TOPIC_TIPS: "ಪ್ರಯಾಣ ಸಲಹೆಗಳು",
-      TOPIC_DESTINATIONS: "ತಾಣಗಳ ಮಾರ್ಗದರ್ಶಿ",
-      TOPIC_ROUTES: "ಮಾರ್ಗ ಸಲಹೆ",
-      MODERATION_QUEUE: "ಮಾಡರೇಶನ್ ಸಾಲು",
-      COMMENTS: "ಕಾಮೆಂಟ್‌ಗಳು",
-      ADD_COMMENT: "ಕಾಮೆಂಟ್ ಬರೆಯಿರಿ..."
-    },
-    REVIEWS: {
-      TITLE: "ಮಾರ್ಗ ರೇಟಿಂಗ್ ಮತ್ತು ದೃಢೀಕೃತ ವಿಮರ್ಶೆಗಳು",
-      SUBTITLE: "ಪೂರ್ಣಗೊಂಡ ಪ್ರಯಾಣ ಹೊಂದಿರುವ ಪ್ರಯಾಣಿಕರು ಮಾತ್ರ ಮಾರ್ಗಗಳನ್ನು ರೇಟ್ ಮಾಡಬಹುದು.",
-      AVG_RATING: "ಸರಾಸರಿ ರೇಟಿಂಗ್",
-      TOTAL_REVIEWS: "ದೃಢೀಕೃತ ವಿಮರ್ಶೆಗಳು",
-      WRITE_REVIEW: "ಈ ಮಾರ್ಗವನ್ನು ವಿಮರ್ಶಿಸಿ",
-      SELECT_TRIP: "ಪೂರ್ಣಗೊಂಡ ಪ್ರಯಾಣವನ್ನು ಆಯ್ಕೆಮಾಡಿ",
-      RATING_STARS: "ನಿಮ್ಮ ರೇಟಿಂಗ್",
-      REVIEW_TEXT: "ನಿಮ್ಮ ಪ್ರತಿಕ್ರಿಯೆ (ಕನಿಷ್ಠ 20 ಅಕ್ಷರಗಳು)",
-      EDIT_WINDOW_NOTE: "ಸಲ್ಲಿಸಿದ 24 ಗಂಟೆಗಳ ಒಳಗೆ ನಿಮ್ಮ ವಿಮರ್ಶೆಯನ್ನು ನೀವು ಸಂಪಾದಿಸಬಹುದು.",
-      EDIT_EXPIRED: "24 ಗಂಟೆಗಳ ಸಂಪಾದನೆ ಅವಧಿ ಮುಗಿದಿದೆ.",
-      UPVOTE_HELPFUL: "ಉಪಯುಕ್ತ",
-      REPORT_REVIEW: "ಉಲ್ಲಂಘನೆ ವರದಿ ಮಾಡಿ"
-    },
-    NOTIFICATIONS: {
-      TITLE: "ಅಧಿಸೂಚನೆ ಕೇಂದ್ರ",
-      MARK_ALL_READ: "ಎಲ್ಲವನ್ನೂ ಓದಿದಂತೆ ಗುರುತಿಸಿ",
-      NO_NOTIFS: "ಯಾವುದೇ ಹೊಸ ಅಧಿಸೂಚನೆಗಳಿಲ್ಲ.",
-      CHANNELS: "ಮಾಧ್ಯಮಗಳು",
-      PREFERENCES: "ಅಧಿಸೂಚನೆ ಆದ್ಯತೆಗಳು",
-      EMAIL: "ಇಮೇಲ್ ಅಧಿಸೂಚನೆಗಳು",
-      PUSH: "ಪುಶ್ ಅಧಿಸೂಚನೆಗಳು",
-      IN_APP: "ಇನ್-ಆ್ಯಪ್ ಅಧಿಸೂಚನೆಗಳು",
-      PROMOTIONAL: "ಪ್ರಚಾರ ಕೊಡುಗೆಗಳು",
-      TEST_EVENTS: "ಪರೀಕ್ಷಾ ಅಧಿಸೂಚನೆಗಳು"
-    }
-  }
-};
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TranslationService {
-  private currentLangSubject = new BehaviorSubject<string>(
-    localStorage.getItem('preferred_lang') || 'en'
-  );
-  currentLang$: Observable<string> = this.currentLangSubject.asObservable();
 
-  private translations: { [key: string]: any } = {};
+  private langSubject = new BehaviorSubject<string>(localStorage.getItem('rb_language') || 'en');
+  currentLang$ = this.langSubject.asObservable();
 
-  constructor(private http: HttpClient) {
-    this.loadLanguage(this.currentLangSubject.value);
-  }
+  private dictionary: { [lang: string]: { [key: string]: string } } = {
+    en: {
+      // Common & Global Words
+      'COMMON.ONWARDS': 'Onwards',
+      'COMMON.TODAY': 'Today',
+      'COMMON.TOMORROW': 'Tomorrow',
+      'COMMON.SEATS': 'Seats',
+      'COMMON.SEAT': 'Seat',
+      'COMMON.TOTAL': 'Total',
+      'COMMON.FARE': 'Fare',
+      'COMMON.RATINGS': 'ratings',
+      'COMMON.RATING': 'rating',
+      'COMMON.HOURS': 'hrs',
+      'COMMON.MINUTES': 'mins',
+      'COMMON.DEPARTURE': 'Departure',
+      'COMMON.ARRIVAL': 'Arrival',
+      'COMMON.DURATION': 'Duration',
+      'COMMON.PROCEED': 'Proceed',
+      'COMMON.CANCEL': 'Cancel',
+      'COMMON.SUBMIT': 'Submit',
+      'COMMON.CONFIRM': 'Confirm',
+      'COMMON.CLOSE': 'Close',
+      'COMMON.YES': 'Yes',
+      'COMMON.NO': 'No',
+      'COMMON.VIEW': 'View',
+      'COMMON.HIDE': 'Hide',
+      'COMMON.BACK': 'Back',
+      'COMMON.KM': 'km',
 
-  get currentLang(): string {
-    return this.currentLangSubject.value;
+      // Navbar
+      'NAV.BUS_TICKETS': 'Bus Tickets',
+      'NAV.ROUTE_PLANNER': 'Route Planner',
+      'NAV.COMMUNITY': 'Community',
+      'NAV.REVIEWS': 'Reviews',
+      'NAV.ACCOUNT': 'Account',
+      'NAV.PROFILE': 'My Profile',
+      'NAV.BOOKINGS': 'My Bookings',
+      'NAV.LOGOUT': 'Logout',
+      'THEME.LIGHT': 'Light',
+      'THEME.DARK': 'Dark',
+
+      // Cities & Locations
+      'CITY.Bengaluru': 'Bengaluru',
+      'CITY.Mumbai': 'Mumbai',
+      'CITY.Goa': 'Goa',
+      'CITY.Panaji': 'Panaji',
+      'CITY.Pune': 'Pune',
+      'CITY.Hyderabad': 'Hyderabad',
+      'CITY.Chennai': 'Chennai',
+      'CITY.Bidar': 'Bidar',
+      'CITY.Kalaburagi': 'Kalaburagi',
+      'CITY.Humnabad': 'Humnabad',
+      'CITY.Hubli': 'Hubli',
+      'CITY.Belagavi': 'Belagavi',
+      'CITY.Kolhapur': 'Kolhapur',
+      'CITY.Satara': 'Satara',
+      'CITY.Solapur': 'Solapur',
+      'CITY.Mangaluru': 'Mangaluru',
+      'CITY.Mysuru': 'Mysuru',
+      'CITY.Coimbatore': 'Coimbatore',
+      'CITY.Vijayawada': 'Vijayawada',
+
+      // Landing Page & Hero
+      'HERO.KICKER': "INDIA'S #1 BUS TICKET RESERVATION NETWORK",
+      'HERO.TITLE': 'Book Intercity Buses, AC Sleepers & Volvos',
+      'HERO.SUBTITLE': 'Over 3,500+ private operators and official state transport fleets at zero extra cost',
+      'SEARCH.FROM': 'FROM',
+      'SEARCH.TO': 'TO',
+      'SEARCH.DATE': 'DATE OF JOURNEY',
+      'SEARCH.BTN': 'SEARCH BUSES',
+      'SEARCH.HINT_FROM': 'Enter Origin City',
+      'SEARCH.HINT_TO': 'Enter Destination City',
+
+      // Filter Bar (Left Component)
+      'FILTER.TITLE': 'FILTERS',
+      'FILTER.CLEAR': 'Clear All',
+      'FILTER.DEPARTURE_TIME': 'DEPARTURE TIME',
+      'FILTER.BEFORE_6AM': 'Before 6 AM',
+      'FILTER.6AM_TO_12PM': '6 AM to 12 PM',
+      'FILTER.12PM_TO_6PM': '12 PM to 6 PM',
+      'FILTER.AFTER_6PM': 'After 6 PM',
+      'FILTER.BUS_TYPES': 'BUS TYPES',
+      'FILTER.SEATER': 'Seater',
+      'FILTER.SLEEPER': 'Sleeper',
+      'FILTER.AC': 'AC',
+      'FILTER.NON_AC': 'Non AC',
+      'FILTER.SINGLE_SEATS': 'Single Seats',
+      'FILTER.LIVE_TRACKING': 'Live Tracking',
+      'FILTER.FREE_CANCELLATION': 'Free Cancellation',
+      'FILTER.OPERATORS': 'OPERATORS',
+      'FILTER.BOARDING_POINTS': 'BOARDING POINTS',
+      'FILTER.DROPPING_POINTS': 'DROPPING POINTS',
+
+      // Sorting Bar
+      'SORT.BUSES_FOUND': 'Buses found',
+      'SORT.SORT_BY': 'SORT BY:',
+      'SORT.DEPARTURE': 'Departure',
+      'SORT.DURATION': 'Duration',
+      'SORT.ARRIVAL': 'Arrival',
+      'SORT.RATINGS': 'Ratings',
+      'SORT.FARE': 'Fare',
+
+      // Bus Box & Seats
+      'BUS.VIEW_SEATS': 'View seats',
+      'BUS.HIDE_SEATS': 'Hide seats',
+      'BUS.SELECT_SEATS': 'Select seats',
+      'BUS.BOARD_DROP': 'Board/Drop point',
+      'BUS.PASSENGER_INFO': 'Passenger Info',
+      'BUS.LOWER_DECK': 'Lower Deck',
+      'BUS.UPPER_DECK': 'Upper Deck',
+      'BUS.AISLE': 'AISLE',
+      'BUS.FRONT_CABIN': 'Driver Cabin / Front',
+      'BUS.AVAILABLE': 'Available',
+      'BUS.SELECTED': 'Selected',
+      'BUS.SOLD': 'Sold',
+      'BUS.SEAT_SELECTED': 'Seat Selected',
+      'BUS.SEATS_SELECTED': 'Seats Selected',
+      'BUS.HIGHLIGHTS': 'Highlights',
+      'BUS.CANCELLATION': 'Cancellation policy',
+      'BUS.RESCHEDULE': 'Reschedule Policy',
+      'BUS.ROUTE': 'Bus route',
+      'BUS.PHOTOS': 'Bus Photos',
+      'BUS.BOARDING_DROPPING': 'Boarding/Dropping',
+      'BUS.PREMIUM_BUS': 'Premium Bus',
+      'BUS.PREMIUM_DESC': 'Volvo 9600 Multi-Axle 15m Luxury Fleet',
+      'BUS.CERTIFIED': 'VRL Certified',
+      'BUS.CONTINUE_PAYMENT': 'Continue to Payment',
+
+      // Route Planner
+      'PLANNER.HEADER_KICKER': 'REAL HIGHWAY TELEMATICS & MAPPING',
+      'PLANNER.TITLE': 'Smart Route Planner & Live Map',
+      'PLANNER.SUBTITLE': 'Explore actual national highway corridors, real-time traffic status, intermediate halts, and FASTag toll gates.',
+      'PLANNER.SAVED_ROUTES': 'Saved Route(s)',
+      'PLANNER.WAYPOINTS': 'Journey Waypoints',
+      'PLANNER.ORIGIN': 'ORIGIN CITY',
+      'PLANNER.HALT': 'INTERMEDIATE HALT',
+      'PLANNER.ADD_HALT_PLACEHOLDER': '+ Add halt (e.g. Hubli, Pune, Belagavi)',
+      'PLANNER.ADD_STOP_BTN': '+ Add Stop',
+      'PLANNER.DESTINATION': 'DESTINATION CITY',
+      'PLANNER.CALCULATE_BTN': '⚡ Trace Real Highway',
+      'PLANNER.CALCULATING': 'Routing on Real Roads...',
+      'PLANNER.SAVE_BTN': '★ Save Route',
+      'PLANNER.SAVED_BTN': '✓ Saved',
+      'PLANNER.SAVED_ROUTES_TITLE': 'Saved Routes',
+      'PLANNER.AVAILABLE_CORRIDORS': 'Available Highway Corridors',
+      'PLANNER.DISTANCE': 'Road Distance',
+      'PLANNER.DURATION': 'Transit Time',
+      'PLANNER.TOLL': 'FASTag Toll',
+      'PLANNER.DIRECTIONS_TITLE': '🧭 Highway Directions (Turn-by-Turn)',
+      'PLANNER.LIVE_OPERATOR': 'LIVE OPERATOR CORRIDOR',
+      'PLANNER.CORRIDOR_STATUS': 'Corridor Status',
+      'PLANNER.ESTIMATED_TOLL': 'Estimated FASTag Toll',
+      'PLANNER.FOOD_TITLE': 'Verified Bus Operator Food Stops',
+      'PLANNER.FOOD_SUB': 'Designated hygiene halts utilized by official fleet operators',
+      'PLANNER.TYPICAL_STOP': 'Halt Duration',
+      'PLANNER.OPERATORS_STOP': 'Operators',
+      'PLANNER.CORRIDOR_BREAKDOWN': 'Transit Waypoints Breakdown',
+
+      // Community
+      'COMMUNITY.HEADER_KICKER': 'INDIA-WIDE TRAVELER NETWORK',
+      'COMMUNITY.TITLE': 'Traveler Community & Fleet Reviews',
+      'COMMUNITY.SUBTITLE': 'Real passenger experiences, sleeper bus fleet showcases, highway diner reviews, and tips.',
+      'COMMUNITY.CREATE_POST': '✍️ Share Trip Story / Review',
+      'COMMUNITY.MODERATION_QUEUE': 'Moderation Queue',
+      'COMMUNITY.FILTER_ALL': 'All Stories',
+      'COMMUNITY.FILTER_OPERATORS': 'Fleet Showcases',
+      'COMMUNITY.FILTER_FOOD': 'Highway Food Halts',
+      'COMMUNITY.FILTER_ROUTES': 'Route Conditions',
+      'COMMUNITY.VERIFIED_PASSENGER': 'Verified Traveler',
+      'COMMUNITY.LIKE': 'Helpful',
+      'COMMUNITY.REPLY': 'Comment',
+      'COMMUNITY.SHARE': 'Share',
+      'COMMUNITY.POST_MODAL_TITLE': 'Share Your Travel Experience',
+      'COMMUNITY.POST_SUB_TITLE': 'Help millions of highway passengers pick the best bus operators and sleeper berths',
+      'COMMUNITY.MODAL_OPERATOR': 'Select Bus Operator',
+      'COMMUNITY.MODAL_ROUTE': 'Route Traveled',
+      'COMMUNITY.MODAL_RATING': 'Operator Rating',
+      'COMMUNITY.MODAL_CONTENT': 'Write your journey review, berth comfort, and driving review...',
+      'COMMUNITY.MODAL_SUBMIT': 'Publish Post',
+      'COMMUNITY.MODAL_CANCEL': 'Cancel',
+
+      // Payment Page
+      'PAY.TITLE': 'Select Payment Mode',
+      'PAY.UPI': 'UPI Payments',
+      'PAY.CARDS': 'Credit / Debit Card',
+      'PAY.NETBANKING': 'Net Banking',
+      'PAY.WALLETS': 'Digital Wallets',
+      'PAY.CONFIRM_BTN': 'Confirm Paid',
+      'PAY.SUMMARY_HEAD': 'Fare Summary',
+      'PAY.BASE_FARE': 'Base Ticket Fare',
+      'PAY.OPERATOR_CHARGES': 'Operator Surcharge',
+      'PAY.GST': 'GST (5%)',
+      'PAY.DISCOUNT': 'Coupon Discount',
+      'PAY.TOTAL': 'Total Amount',
+      'PAY.TIME_REMAINING': 'Seats reserved for booking. Complete transaction in:',
+      'PAY.BUS_DETAILS': 'Bus & Journey Details',
+      'PAY.BOARDING': 'Boarding Point',
+      'PAY.DROPPING': 'Dropping Point',
+      'PAY.SEATS_BOOKED': 'Berth Numbers',
+      'PAY.PAYMENT_SUCCESS': 'Payment Successful!',
+      'PAY.TICKET_SENT': 'E-Ticket SMS and WhatsApp confirmed.'
+    },
+
+    hi: {
+      // Common & Global Words
+      'COMMON.ONWARDS': 'से शुरू',
+      'COMMON.TODAY': 'आज',
+      'COMMON.TOMORROW': 'कल',
+      'COMMON.SEATS': 'सीटें',
+      'COMMON.SEAT': 'सीट',
+      'COMMON.TOTAL': 'कुल',
+      'COMMON.FARE': 'किराया',
+      'COMMON.RATINGS': 'रेटिंग्स',
+      'COMMON.RATING': 'रेटिंग',
+      'COMMON.HOURS': 'घंटे',
+      'COMMON.MINUTES': 'मिनट',
+      'COMMON.DEPARTURE': 'प्रस्थान',
+      'COMMON.ARRIVAL': 'आगमन',
+      'COMMON.DURATION': 'समय',
+      'COMMON.PROCEED': 'आगे बढ़ें',
+      'COMMON.CANCEL': 'रद्द करें',
+      'COMMON.SUBMIT': 'जमा करें',
+      'COMMON.CONFIRM': 'पुष्टि करें',
+      'COMMON.CLOSE': 'बंद करें',
+      'COMMON.YES': 'हाँ',
+      'COMMON.NO': 'नहीं',
+      'COMMON.VIEW': 'देखें',
+      'COMMON.HIDE': 'छुपाएं',
+      'COMMON.BACK': 'वापस',
+      'COMMON.KM': 'किमी',
+
+      // Navbar
+      'NAV.BUS_TICKETS': 'बस टिकट',
+      'NAV.ROUTE_PLANNER': 'रूट प्लानर',
+      'NAV.COMMUNITY': 'कम्युनिटी',
+      'NAV.REVIEWS': 'समीक्षाएं',
+      'NAV.ACCOUNT': 'खाता',
+      'NAV.PROFILE': 'मेरी प्रोफाइल',
+      'NAV.BOOKINGS': 'मेरी बुकिंग',
+      'NAV.LOGOUT': 'लॉग आउट',
+      'THEME.LIGHT': 'लाइट मोड',
+      'THEME.DARK': 'डार्क मोड',
+
+      // Cities & Locations
+      'CITY.Bengaluru': 'बेंगलुरु',
+      'CITY.Mumbai': 'मुंबई',
+      'CITY.Goa': 'गोवा',
+      'CITY.Panaji': 'पणजी',
+      'CITY.Pune': 'पुणे',
+      'CITY.Hyderabad': 'हैदराबाद',
+      'CITY.Chennai': 'चेन्नई',
+      'CITY.Bidar': 'बीदर',
+      'CITY.Kalaburagi': 'कलबुर्गी',
+      'CITY.Humnabad': 'हुमनाबाद',
+      'CITY.Hubli': 'हुबली',
+      'CITY.Belagavi': 'बेलगावी',
+      'CITY.Kolhapur': 'कोल्हापुर',
+      'CITY.Satara': 'सतारा',
+      'CITY.Solapur': 'सोलापुर',
+      'CITY.Mangaluru': 'मंगलुरु',
+      'CITY.Mysuru': 'मैसूरु',
+      'CITY.Coimbatore': 'कोयंबटूर',
+      'CITY.Vijayawada': 'विजयवाड़ा',
+
+      // Hero & Search Console
+      'HERO.KICKER': 'भारत का नंबर 1 बस टिकट बुकिंग नेटवर्क',
+      'HERO.TITLE': 'इंटरसिटी बसें, एसी स्लीपर और वोल्वो बुक करें',
+      'HERO.SUBTITLE': '3,500 से अधिक निजी ऑपरेटर और सरकारी बस सेवाएं सबसे कम किराए पर',
+      'SEARCH.FROM': 'प्रारंभिक शहर',
+      'SEARCH.TO': 'गंतव्य शहर',
+      'SEARCH.DATE': 'यात्रा की तिथि',
+      'SEARCH.BTN': 'बसें खोजें',
+      'SEARCH.HINT_FROM': 'प्रस्थान शहर दर्ज करें',
+      'SEARCH.HINT_TO': 'पहुंचने का शहर दर्ज करें',
+
+      // Filter Bar
+      'FILTER.TITLE': 'फ़िल्टर',
+      'FILTER.CLEAR': 'सभी हटाएं',
+      'FILTER.DEPARTURE_TIME': 'प्रस्थान समय',
+      'FILTER.BEFORE_6AM': 'सुबह 6 बजे से पहले',
+      'FILTER.6AM_TO_12PM': 'सुबह 6 से दोपहर 12 बजे',
+      'FILTER.12PM_TO_6PM': 'दोपहर 12 से शाम 6 बजे',
+      'FILTER.AFTER_6PM': 'शाम 6 बजे के बाद',
+      'FILTER.BUS_TYPES': 'बस के प्रकार',
+      'FILTER.SEATER': 'सीटर',
+      'FILTER.SLEEPER': 'स्लीपर',
+      'FILTER.AC': 'एसी',
+      'FILTER.NON_AC': 'नॉन एसी',
+      'FILTER.SINGLE_SEATS': 'सिंगल सीट',
+      'FILTER.LIVE_TRACKING': 'लाइव ट्रैकिंग',
+      'FILTER.FREE_CANCELLATION': 'मुफ़्त रद्दीकरण',
+      'FILTER.OPERATORS': 'बस ऑपरेटर',
+      'FILTER.BOARDING_POINTS': 'बोर्डिंग पॉइंट',
+      'FILTER.DROPPING_POINTS': 'ड्रॉपिंग पॉइंट',
+
+      // Sorting Bar
+      'SORT.BUSES_FOUND': 'बसें मिलीं',
+      'SORT.SORT_BY': 'क्रमबद्ध करें:',
+      'SORT.DEPARTURE': 'प्रस्थान समय',
+      'SORT.DURATION': 'कुल समय',
+      'SORT.ARRIVAL': 'आगमन समय',
+      'SORT.RATINGS': 'रेटिंग्स',
+      'SORT.FARE': 'किराया',
+
+      // Bus Box & Seats
+      'BUS.VIEW_SEATS': 'सीटें देखें',
+      'BUS.HIDE_SEATS': 'सीटें छुपाएं',
+      'BUS.SELECT_SEATS': 'सीट चुनें',
+      'BUS.BOARD_DROP': 'बोर्डिंग/ड्रॉपिंग पॉइंट',
+      'BUS.PASSENGER_INFO': 'यात्री विवरण',
+      'BUS.LOWER_DECK': 'निचला डेक (Lower)',
+      'BUS.UPPER_DECK': 'ऊपरी डेक (Upper)',
+      'BUS.AISLE': 'रास्ता (AISLE)',
+      'BUS.FRONT_CABIN': 'ड्राइवर केबिन / आगे',
+      'BUS.AVAILABLE': 'उपलब्ध',
+      'BUS.SELECTED': 'चुनी हुई',
+      'BUS.SOLD': 'बुक हो चुकी',
+      'BUS.SEAT_SELECTED': 'सीट चुनी गई',
+      'BUS.SEATS_SELECTED': 'सीटें चुनी गईं',
+      'BUS.HIGHLIGHTS': 'सुविधाएं व विवरण',
+      'BUS.CANCELLATION': 'रद्दीकरण नीति',
+      'BUS.RESCHEDULE': 'तिथि बदलाव नीति',
+      'BUS.ROUTE': 'बस मार्ग',
+      'BUS.PHOTOS': 'बस तस्वीरें',
+      'BUS.BOARDING_DROPPING': 'बोर्डिंग / ड्रॉपिंग पॉइंट',
+      'BUS.PREMIUM_BUS': 'प्रीमियम बस',
+      'BUS.PREMIUM_DESC': 'वोल्वो 9600 मल्टी-एक्सल 15 मीटर लक्जरी फ्लीट',
+      'BUS.CERTIFIED': 'वीआरएल प्रमाणित',
+      'BUS.CONTINUE_PAYMENT': 'भुगतान के लिए आगे बढ़ें',
+
+      // Route Planner
+      'PLANNER.HEADER_KICKER': 'राजमार्ग टेलीमैटिक्स एवं लाइव मैपिंग',
+      'PLANNER.TITLE': 'स्मार्ट रूट प्लानर और लाइव मैप',
+      'PLANNER.SUBTITLE': 'राष्ट्रीय राजमार्ग, लाइव ट्रैफ़िक स्थिति, भोजन स्टॉप और फास्टैग टोल शुल्क का विवरण देखें।',
+      'PLANNER.SAVED_ROUTES': 'सहेजे गए रूट',
+      'PLANNER.WAYPOINTS': 'यात्रा के मुख्य स्टॉप्स',
+      'PLANNER.ORIGIN': 'प्रारंभिक शहर',
+      'PLANNER.HALT': 'मध्यवर्ती स्टॉप',
+      'PLANNER.ADD_HALT_PLACEHOLDER': '+ स्टॉप जोड़ें (उदा. हुबली, पुणे, बेलगावी)',
+      'PLANNER.ADD_STOP_BTN': '+ स्टॉप जोड़ें',
+      'PLANNER.DESTINATION': 'गंतव्य शहर',
+      'PLANNER.CALCULATE_BTN': '⚡ वास्तविक राजमार्ग खोजें',
+      'PLANNER.CALCULATING': 'सड़क मार्ग की गणना जारी है...',
+      'PLANNER.SAVE_BTN': '★ रूट सेव करें',
+      'PLANNER.SAVED_BTN': '✓ सुरक्षित',
+      'PLANNER.SAVED_ROUTES_TITLE': 'सहेजे गए रूट',
+      'PLANNER.AVAILABLE_CORRIDORS': 'उपलब्ध राजमार्ग गलियारे',
+      'PLANNER.DISTANCE': 'सड़क दूरी',
+      'PLANNER.DURATION': 'यात्रा समय',
+      'PLANNER.TOLL': 'फास्टैग टोल',
+      'PLANNER.DIRECTIONS_TITLE': '🧭 राजमार्ग दिशा-निर्देश (मोड़-दर-मोड़)',
+      'PLANNER.LIVE_OPERATOR': 'लाइव ऑपरेटर कॉरिडोर',
+      'PLANNER.CORRIDOR_STATUS': 'कॉरिडोर स्थिति',
+      'PLANNER.ESTIMATED_TOLL': 'अनुमानित फास्टैग टोल',
+      'PLANNER.FOOD_TITLE': 'सत्यापित बस ऑपरेटर भोजन स्टॉप',
+      'PLANNER.FOOD_SUB': 'प्रमुख निजी और सरकारी बसों द्वारा चुने गए स्वच्छ रेस्टोरेंट',
+      'PLANNER.TYPICAL_STOP': 'रुकने का समय',
+      'PLANNER.OPERATORS_STOP': 'बस ऑपरेटर',
+      'PLANNER.CORRIDOR_BREAKDOWN': 'मार्ग ठहराव विवरण',
+
+      // Community
+      'COMMUNITY.HEADER_KICKER': 'अखिल भारतीय यात्री नेटवर्क',
+      'COMMUNITY.TITLE': 'यात्री समुदाय और बस फ्लीट समीक्षाएं',
+      'COMMUNITY.SUBTITLE': 'यात्रियों के वास्तविक अनुभव, स्लीपर बसों के फोटो, हाइवे भोजनालय समीक्षाएं और टिप्स।',
+      'COMMUNITY.CREATE_POST': '✍️ अपनी यात्रा का अनुभव साझा करें',
+      'COMMUNITY.MODERATION_QUEUE': 'मॉडरेशन कतार',
+      'COMMUNITY.FILTER_ALL': 'सभी कहानियां',
+      'COMMUNITY.FILTER_OPERATORS': 'बस फ्लीट गैलरी',
+      'COMMUNITY.FILTER_FOOD': 'हाइवे भोजन स्टॉप्स',
+      'COMMUNITY.FILTER_ROUTES': 'सड़क और मार्ग की स्थिति',
+      'COMMUNITY.VERIFIED_PASSENGER': 'सत्यापित यात्री',
+      'COMMUNITY.LIKE': 'मददगार',
+      'COMMUNITY.REPLY': 'टिप्पणी',
+      'COMMUNITY.SHARE': 'शेयर करें',
+      'COMMUNITY.POST_MODAL_TITLE': 'अपना यात्रा अनुभव साझा करें',
+      'COMMUNITY.POST_SUB_TITLE': 'अन्य यात्रियों को सर्वश्रेष्ठ बस ऑपरेटर और स्लीपर बर्थ चुनने में मदद करें',
+      'COMMUNITY.MODAL_OPERATOR': 'बस ऑपरेटर चुनें',
+      'COMMUNITY.MODAL_ROUTE': 'यात्रा का मार्ग',
+      'COMMUNITY.MODAL_RATING': 'रेटिंग',
+      'COMMUNITY.MODAL_CONTENT': 'अपनी यात्रा, बर्थ के आराम और ड्राइविंग का अनुभव लिखें...',
+      'COMMUNITY.MODAL_SUBMIT': 'समीक्षा प्रकाशित करें',
+      'COMMUNITY.MODAL_CANCEL': 'रद्द करें',
+
+      // Payment
+      'PAY.TITLE': 'भुगतान का तरीका चुनें',
+      'PAY.UPI': 'यूपीआई भुगतान',
+      'PAY.CARDS': 'क्रेडिट / डेबिट कार्ड',
+      'PAY.NETBANKING': 'नेट बैंकिंग',
+      'PAY.WALLETS': 'डिजिटल वॉलेट',
+      'PAY.CONFIRM_BTN': 'भुगतान की पुष्टि करें',
+      'PAY.SUMMARY_HEAD': 'किराया विवरण',
+      'PAY.BASE_FARE': 'मूल टिकट किराया',
+      'PAY.OPERATOR_CHARGES': 'ऑपरेटर अधिभार',
+      'PAY.GST': 'जीएसटी (5%)',
+      'PAY.DISCOUNT': 'कूपन छूट',
+      'PAY.TOTAL': 'कुल देय राशि',
+      'PAY.TIME_REMAINING': 'सीट सुरक्षित है। भुगतान पूरा करने का समय:',
+      'PAY.BUS_DETAILS': 'बस और यात्रा विवरण',
+      'PAY.BOARDING': 'बोर्डिंग पॉइंट',
+      'PAY.DROPPING': 'ड्रॉपिंग पॉइंट',
+      'PAY.SEATS_BOOKED': 'बर्थ संख्या',
+      'PAY.PAYMENT_SUCCESS': 'भुगतान सफल हुआ!',
+      'PAY.TICKET_SENT': 'ई-टिकट एसएमएस और व्हाट्सएप पर भेज दिया गया है।'
+    },
+
+    kn: {
+      // Common & Global Words
+      'COMMON.ONWARDS': 'ಪ್ರಾರಂಭಿಕ ದರ',
+      'COMMON.TODAY': 'ಇಂದು',
+      'COMMON.TOMORROW': 'ನಾಳೆ',
+      'COMMON.SEATS': 'ಆಸನಗಳು',
+      'COMMON.SEAT': 'ಆಸನ',
+      'COMMON.TOTAL': 'ಒಟ್ಟು',
+      'COMMON.FARE': 'ದರ',
+      'COMMON.RATINGS': 'ರೇಟಿಂಗ್‌ಗಳು',
+      'COMMON.RATING': 'ರೇಟಿಂಗ್',
+      'COMMON.HOURS': 'ಗಂಟೆ',
+      'COMMON.MINUTES': 'ನಿಮಿಷ',
+      'COMMON.DEPARTURE': 'ಹೊರಡುವ ಸಮಯ',
+      'COMMON.ARRIVAL': 'ತಲುಪುವ ಸಮಯ',
+      'COMMON.DURATION': 'ಅವಧಿ',
+      'COMMON.PROCEED': 'ಮುಂದುವರಿಯಿರಿ',
+      'COMMON.CANCEL': 'ರದ್ದುಮಾಡಿ',
+      'COMMON.SUBMIT': 'ಸಲ್ಲಿಸಿ',
+      'COMMON.CONFIRM': 'ಖಚಿತಪಡಿಸಿ',
+      'COMMON.CLOSE': 'ಮುಚ್ಚಿ',
+      'COMMON.YES': 'ಹೌದು',
+      'COMMON.NO': 'ಇಲ್ಲ',
+      'COMMON.VIEW': 'ನೋಡಿ',
+      'COMMON.HIDE': 'ಮರೆಮಾಡಿ',
+      'COMMON.BACK': 'ಹಿಂದಕ್ಕೆ',
+      'COMMON.KM': 'ಕಿ.ಮೀ',
+
+      // Navbar
+      'NAV.BUS_TICKETS': 'ಬಸ್ ಟಿಕೆಟ್‌ಗಳು',
+      'NAV.ROUTE_PLANNER': 'ಮಾರ್ಗ ಯೋಜಕ',
+      'NAV.COMMUNITY': 'ಸಮುದಾಯ',
+      'NAV.REVIEWS': 'ವಿಮರ್ಶೆಗಳು',
+      'NAV.ACCOUNT': 'ಖಾತೆ',
+      'NAV.PROFILE': 'ನನ್ನ ಪ್ರೊಫೈಲ್',
+      'NAV.BOOKINGS': 'ನನ್ನ ಬುಕಿಂಗ್‌ಗಳು',
+      'NAV.LOGOUT': 'ಲಾಗ್ ಔಟ್',
+      'THEME.LIGHT': 'ಬೆಳಕು ಮೋಡ್',
+      'THEME.DARK': 'ಕತ್ತಲೆ ಮೋಡ್',
+
+      // Cities & Locations
+      'CITY.Bengaluru': 'ಬೆಂಗಳೂರು',
+      'CITY.Mumbai': 'ಮುಂಬೈ',
+      'CITY.Goa': 'ಗೋವಾ',
+      'CITY.Panaji': 'ಪಣಜಿ',
+      'CITY.Pune': 'ಪುಣೆ',
+      'CITY.Hyderabad': 'ಹೈದರಾಬಾದ್',
+      'CITY.Chennai': 'ಚೆನ್ನೈ',
+      'CITY.Bidar': 'ಬೀದರ್',
+      'CITY.Kalaburagi': 'ಕಲಬುರಗಿ',
+      'CITY.Humnabad': 'ಹುಮ್ನಾಬಾದ್',
+      'CITY.Hubli': 'ಹುಬ್ಬಳ್ಳಿ',
+      'CITY.Belagavi': 'ಬೆಳಗಾವಿ',
+      'CITY.Kolhapur': 'ಕೊಲ್ಹಾಪುರ',
+      'CITY.Satara': 'ಸತಾರಾ',
+      'CITY.Solapur': 'ಸೋಲಾಪುರ',
+      'CITY.Mangaluru': 'ಮಂಗಳೂರು',
+      'CITY.Mysuru': 'ಮೈಸೂರು',
+      'CITY.Coimbatore': 'ಕೊಯಮತ್ತೂರು',
+      'CITY.Vijayawada': 'ವಿಜಯವಾಡ',
+
+      // Hero & Search Console
+      'HERO.KICKER': 'ಭಾರತದ ನಂ.1 ಬಸ್ ಟಿಕೆಟ್ ಬುಕಿಂಗ್ ಜಾಲ',
+      'HERO.TITLE': 'ಇಂಟರ್‌ಸಿಟಿ ಬಸ್‌ಗಳು, ಎಸಿ ಸ್ಲೀಪರ್ ಮತ್ತು ವೋಲ್ವೋ ಬುಕ್ ಮಾಡಿ',
+      'HERO.SUBTITLE': '3,500 ಕ್ಕೂ ಹೆಚ್ಚು ಖಾಸಗಿ ಮತ್ತು ಸಾರಿಗೆ ಸಂಸ್ಥೆಯ ಬಸ್‌ಗಳು ಯಾವುದೇ ಹೆಚ್ಚುವರಿ ಶುಲ್ಕವಿಲ್ಲದೆ',
+      'SEARCH.FROM': 'ಹೊರಡುವ ಸ್ಥಳ',
+      'SEARCH.TO': 'ತಲುಪುವ ಸ್ಥಳ',
+      'SEARCH.DATE': 'ಪ್ರಯಾಣದ ದಿನಾಂಕ',
+      'SEARCH.BTN': 'ಬಸ್‌ಗಳನ್ನು ಹುಡುಕಿ',
+      'SEARCH.HINT_FROM': 'ಹೊರಡುವ ನಗರ ನಮೂದಿಸಿ',
+      'SEARCH.HINT_TO': 'ತಲುಪುವ ನಗರ ನಮೂದಿಸಿ',
+
+      // Filter Bar
+      'FILTER.TITLE': 'ಫಿಲ್ಟರ್‌ಗಳು',
+      'FILTER.CLEAR': 'ಎಲ್ಲವನ್ನೂ ತೆರವುಗೊಳಿಸಿ',
+      'FILTER.DEPARTURE_TIME': 'ಹೊರಡುವ ಸಮಯ',
+      'FILTER.BEFORE_6AM': 'ಬೆಳಿಗ್ಗೆ 6 ಗಂಟೆಗಿಂತ ಮುಂಚೆ',
+      'FILTER.6AM_TO_12PM': 'ಬೆಳಿಗ್ಗೆ 6 ರಿಂದ ಮಧ್ಯಾಹ್ನ 12',
+      'FILTER.12PM_TO_6PM': 'ಮಧ್ಯಾಹ್ನ 12 ರಿಂದ ಸಂಜೆ 6',
+      'FILTER.AFTER_6PM': 'ಸಂಜೆ 6 ಗಂಟೆಯ ನಂತರ',
+      'FILTER.BUS_TYPES': 'ಬಸ್ಸುಗಳ ಪ್ರಕಾರ',
+      'FILTER.SEATER': 'ಸೀಟರ್',
+      'FILTER.SLEEPER': 'ಸ್ಲೀಪರ್',
+      'FILTER.AC': 'ಎಸಿ',
+      'FILTER.NON_AC': 'ನಾನ್ ಎಸಿ',
+      'FILTER.SINGLE_SEATS': 'ಸಿಂಗಲ್ ಸೀಟುಗಳು',
+      'FILTER.LIVE_TRACKING': 'ಲೈವ್ ಟ್ರ್ಯಾಕಿಂಗ್',
+      'FILTER.FREE_CANCELLATION': 'ಉಚಿತ ರದ್ದತಿ',
+      'FILTER.OPERATORS': 'ಬಸ್ ಆಪರೇಟರ್‌ಗಳು',
+      'FILTER.BOARDING_POINTS': 'ಬೋರ್ಡಿಂಗ್ ಸ್ಥಳಗಳು',
+      'FILTER.DROPPING_POINTS': 'ಡ್ರಾಪಿಂಗ್ ಸ್ಥಳಗಳು',
+
+      // Sorting Bar
+      'SORT.BUSES_FOUND': 'ಬಸ್‌ಗಳು ಲಭ್ಯವಿದೆ',
+      'SORT.SORT_BY': 'ವಿಂಗಡಿಸಿ:',
+      'SORT.DEPARTURE': 'ಹೊರಡುವ ಸಮಯ',
+      'SORT.DURATION': 'ಪ್ರಯಾಣದ ಸಮಯ',
+      'SORT.ARRIVAL': 'ತಲುಪುವ ಸಮಯ',
+      'SORT.RATINGS': 'ರೇಟಿಂಗ್‌ಗಳು',
+      'SORT.FARE': 'ದರ',
+
+      // Bus Box & Seats
+      'BUS.VIEW_SEATS': 'ಆಸನಗಳನ್ನು ನೋಡಿ',
+      'BUS.HIDE_SEATS': 'ಆಸನಗಳನ್ನು ಮರೆಮಾಡಿ',
+      'BUS.SELECT_SEATS': 'ಆಸನ ಆಯ್ಕೆಮಾಡಿ',
+      'BUS.BOARD_DROP': 'ಬೋರ್ಡಿಂಗ್/ಡ್ರಾಪಿಂಗ್ ಸ್ಥಳ',
+      'BUS.PASSENGER_INFO': 'ಪ್ರಯಾಣಿಕರ ಮಾಹಿತಿ',
+      'BUS.LOWER_DECK': 'ಕೆಳಗಿನ ಡೆಕ್ (Lower)',
+      'BUS.UPPER_DECK': 'ಮೇಲಿನ ಡೆಕ್ (Upper)',
+      'BUS.AISLE': 'ನಡೆಯುವ ದಾರಿ',
+      'BUS.FRONT_CABIN': 'ಚಾಲಕರ ಕ್ಯಾಬಿನ್ / ಮುಂಭಾಗ',
+      'BUS.AVAILABLE': 'ಲಭ್ಯವಿದೆ',
+      'BUS.SELECTED': 'ಆಯ್ಕೆಮಾಡಲಾಗಿದೆ',
+      'BUS.SOLD': 'ಬುಕ್ ಆಗಿದೆ',
+      'BUS.SEAT_SELECTED': 'ಆಸನ ಆಯ್ಕೆಮಾಡಲಾಗಿದೆ',
+      'BUS.SEATS_SELECTED': 'ಆಸನಗಳು ಆಯ್ಕೆಮಾಡಲಾಗಿವೆ',
+      'BUS.HIGHLIGHTS': 'ವಿಶೇಷತೆಗಳು',
+      'BUS.CANCELLATION': 'ರದ್ದತಿ ನಿಯಮಗಳು',
+      'BUS.RESCHEDULE': 'ದಿನಾಂಕ ಬದಲಾವಣೆ ನಿಯಮ',
+      'BUS.ROUTE': 'ಬಸ್ ಮಾರ್ಗ',
+      'BUS.PHOTOS': 'ಬಸ್ ಫೋಟೋಗಳು',
+      'BUS.BOARDING_DROPPING': 'ಬೋರ್ಡಿಂಗ್ / ಡ್ರಾಪಿಂಗ್ ವಿವರ',
+      'BUS.PREMIUM_BUS': 'ಪ್ರೀಮಿಯಂ ಬಸ್',
+      'BUS.PREMIUM_DESC': 'ವೋಲ್ವೋ 9600 ಮಲ್ಟಿ-ಆಕ್ಸಲ್ 15 ಮೀಟರ್ ಐಷಾರಾಮಿ ಬಸ್',
+      'BUS.CERTIFIED': 'ವಿಆರ್‌ಎಲ್ ಪ್ರಮಾಣೀಕೃತ',
+      'BUS.CONTINUE_PAYMENT': 'ಪಾವತಿಗೆ ಮುಂದುವರಿಯಿರಿ',
+
+      // Route Planner
+      'PLANNER.HEADER_KICKER': 'ನೈಜ ಹೆದ್ದಾರಿ ಟೆಲಿಮ್ಯಾಟಿಕ್ಸ್ ಮತ್ತು ಮ್ಯಾಪಿಂಗ್',
+      'PLANNER.TITLE': 'ಸ್ಮಾರ್ಟ್ ಮಾರ್ಗ ಯೋಜಕ ಮತ್ತು ಲೈವ್ ಮ್ಯಾಪ್',
+      'PLANNER.SUBTITLE': 'ರಾಷ್ಟ್ರೀಯ ಹೆದ್ದಾರಿ ಮಾರ್ಗಗಳು, ಲೈವ್ ಟ್ರಾಫಿಕ್, ಊಟದ ನಿಲ್ದಾಣಗಳು ಮತ್ತು ಫಾಸ್ಟ್‌ಟ್ಯಾಗ್ ಟೋಲ್ ಪರಿಶೀಲಿಸಿ.',
+      'PLANNER.SAVED_ROUTES': 'ಉಳಿಸಿದ ಮಾರ್ಗಗಳು',
+      'PLANNER.WAYPOINTS': 'ಪ್ರಯಾಣದ ನಿಲುಗಡೆಗಳು',
+      'PLANNER.ORIGIN': 'ಪ್ರಾರಂಭದ ಊರು',
+      'PLANNER.HALT': 'ಮಧ್ಯಂತರ ನಿಲುಗಡೆ',
+      'PLANNER.ADD_HALT_PLACEHOLDER': '+ ನಿಲುಗಡೆ ಸೇರಿಸಿ (ಉದಾ: ಹುಬ್ಬಳ್ಳಿ, ಪುಣೆ)',
+      'PLANNER.ADD_STOP_BTN': '+ ನಿಲುಗಡೆ ಸೇರಿಸಿ',
+      'PLANNER.DESTINATION': 'ತಲುಪುವ ಊರು',
+      'PLANNER.CALCULATE_BTN': '⚡ ನೈಜ ಹೆದ್ದಾರಿ ಮಾರ್ಗ ನೋಡಿ',
+      'PLANNER.CALCULATING': 'ರಸ್ತೆ ಮಾರ್ಗ ಲೆಕ್ಕಹಾಕಲಾಗುತ್ತಿದೆ...',
+      'PLANNER.SAVE_BTN': '★ ಮಾರ್ಗ ಉಳಿಸಿ',
+      'PLANNER.SAVED_BTN': '✓ ಉಳಿಸಲಾಗಿದೆ',
+      'PLANNER.SAVED_ROUTES_TITLE': 'ಉಳಿಸಿದ ಮಾರ್ಗಗಳು',
+      'PLANNER.AVAILABLE_CORRIDORS': 'ಲಭ್ಯವಿರುವ ಹೆದ್ದಾರಿ ಮಾರ್ಗಗಳು',
+      'PLANNER.DISTANCE': 'ರಸ್ತೆ ದೂರ',
+      'PLANNER.DURATION': 'ಪ್ರಯಾಣದ ಸಮಯ',
+      'PLANNER.TOLL': 'ಫಾಸ್ಟ್‌ಟ್ಯಾಗ್ ಟೋಲ್',
+      'PLANNER.DIRECTIONS_TITLE': '🧭 ಹೆದ್ದಾರಿ ನಿರ್ದೇಶನಗಳು (ಹಂತ-ಹಂತವಾಗಿ)',
+      'PLANNER.LIVE_OPERATOR': 'ಲೈವ್ ಬಸ್ ಆಪರೇಟರ್ ಮಾರ್ಗ',
+      'PLANNER.CORRIDOR_STATUS': 'ಮಾರ್ಗದ ಸ್ಥಿತಿ',
+      'PLANNER.ESTIMATED_TOLL': 'ಅಂದಾಜು ಫಾಸ್ಟ್‌ಟ್ಯಾಗ್ ಶುಲ್ಕ',
+      'PLANNER.FOOD_TITLE': 'ಅಧಿಕೃತ ಬಸ್ ಊಟದ ನಿಲುಗಡೆಗಳು',
+      'PLANNER.FOOD_SUB': 'ಪ್ರಮುಖ ಬಸ್ ಆಪರೇಟರ್‌ಗಳು ನಿಲ್ಲಿಸುವ ಸ್ವಚ್ಛವಾದ ಹೋಟೆಲ್‌ಗಳು',
+      'PLANNER.TYPICAL_STOP': 'ನಿಲುಗಡೆ ಸಮಯ',
+      'PLANNER.OPERATORS_STOP': 'ಆಪರೇಟರ್‌ಗಳು',
+      'PLANNER.CORRIDOR_BREAKDOWN': 'ನಿಲುಗಡೆಗಳ ಸಂಪೂರ್ಣ ವಿವರ',
+
+      // Community
+      'COMMUNITY.HEADER_KICKER': 'ಅಖಿಲ ಭಾರತ ಪ್ರಯಾಣಿಕರ ಸಮುದಾಯ',
+      'COMMUNITY.TITLE': 'ಪ್ರಯಾಣಿಕರ ಸಮುದಾಯ ಮತ್ತು ಬಸ್ ವಿಮರ್ಶೆಗಳು',
+      'COMMUNITY.SUBTITLE': 'ಪ್ರಯಾಣಿಕರ ನೈಜ ಅನುಭವಗಳು, ಸ್ಲೀಪರ್ ಬಸ್‌ಗಳ ಫೋಟೋಗಳು ಮತ್ತು ಹೆದ್ದಾರಿ ಹೋಟೆಲ್ ವಿಮರ್ಶೆಗಳು.',
+      'COMMUNITY.CREATE_POST': '✍️ ನಿಮ್ಮ ಪ್ರಯಾಣದ ಅನುಭವ ಹಂಚಿಕೊಳ್ಳಿ',
+      'COMMUNITY.MODERATION_QUEUE': 'ಮಾಡರೇಶನ್ ಕ್ಯೂ',
+      'COMMUNITY.FILTER_ALL': 'ಎಲ್ಲಾ ಪೋಸ್ಟ್‌ಗಳು',
+      'COMMUNITY.FILTER_OPERATORS': 'ಬಸ್ ಫೋಟೋ ಗ್ಯಾಲರಿ',
+      'COMMUNITY.FILTER_FOOD': 'ಹೆದ್ದಾರಿ ಊಟದ ನಿಲುಗಡೆಗಳು',
+      'COMMUNITY.FILTER_ROUTES': 'ರಸ್ತೆ ಮತ್ತು ಘಾಟ್ ಪರಿಸ್ಥಿತಿ',
+      'COMMUNITY.VERIFIED_PASSENGER': 'ಪರಿಶೀಲಿಸಿದ ಪ್ರಯಾಣಿಕ',
+      'COMMUNITY.LIKE': 'ಉಪಯುಕ್ತ',
+      'COMMUNITY.REPLY': 'ಕಾಮೆಂಟ್',
+      'COMMUNITY.SHARE': 'ಹಂಚಿಕೊಳ್ಳಿ',
+      'COMMUNITY.POST_MODAL_TITLE': 'ನಿಮ್ಮ ಪ್ರಯಾಣದ ಅನುಭವ ಹಂಚಿಕೊಳ್ಳಿ',
+      'COMMUNITY.POST_SUB_TITLE': 'ಇತರ ಪ್ರಯಾಣಿಕರಿಗೆ ಉತ್ತಮ ಬಸ್ ಮತ್ತು ಸ್ಲೀಪರ್ ಬರ್ತ್ ಆಯ್ಕೆ ಮಾಡಲು ನೆರವಾಗಿ',
+      'COMMUNITY.MODAL_OPERATOR': 'ಬಸ್ ಆಪರೇಟರ್ ಆಯ್ಕೆಮಾಡಿ',
+      'COMMUNITY.MODAL_ROUTE': 'ಪ್ರಯಾಣಿಸಿದ ಮಾರ್ಗ',
+      'COMMUNITY.MODAL_RATING': 'ರೇಟಿಂಗ್',
+      'COMMUNITY.MODAL_CONTENT': 'ನಿಮ್ಮ ಪ್ರಯಾಣದ ವಿವರ, ಸೀಟಿನ ಆರಾಮ ಮತ್ತು ಚಾಲನೆಯ ಗುಣಮಟ್ಟ ಬರೆಯಿರಿ...',
+      'COMMUNITY.MODAL_SUBMIT': 'ಪೋಸ್ಟ್ ಪ್ರಕಟಿಸಿ',
+      'COMMUNITY.MODAL_CANCEL': 'ರದ್ದುಮಾಡಿ',
+
+      // Payment
+      'PAY.TITLE': 'ಪಾವತಿ ವಿಧಾನವನ್ನು ಆಯ್ಕೆಮಾಡಿ',
+      'PAY.UPI': 'ಯುಪಿಐ ಪಾವತಿಗಳು',
+      'PAY.CARDS': 'ಕ್ರೆಡಿಟ್ / ಡೆಬಿಟ್ ಕಾರ್ಡ್',
+      'PAY.NETBANKING': 'ನೆಟ್ ಬ್ಯಾಂಕಿಂಗ್',
+      'PAY.WALLETS': 'ಡಿಜಿಟಲ್ ವಾಲೆಟ್‌ಗಳು',
+      'PAY.CONFIRM_BTN': 'ಪಾವತಿಸಿ ಖಚಿತಪಡಿಸಿ',
+      'PAY.SUMMARY_HEAD': 'ದರ ಸಾರಾಂಶ',
+      'PAY.BASE_FARE': 'ಮೂಲ ಟಿಕೆಟ್ ದರ',
+      'PAY.OPERATOR_CHARGES': 'ಆಪರೇಟರ್ ಶುಲ್ಕ',
+      'PAY.GST': 'ಜಿಎಸ್‌ಟಿ (5%)',
+      'PAY.DISCOUNT': 'ಕೂಪನ್ ರಿಯಾಯಿತಿ',
+      'PAY.TOTAL': 'ಒಟ್ಟು ಮೊತ್ತ',
+      'PAY.TIME_REMAINING': 'ಆಸನ ಕಾಯ್ದಿರಿಸಲಾಗಿದೆ. ಪಾವತಿಗೆ ಉಳಿದ ಸಮಯ:',
+      'PAY.BUS_DETAILS': 'ಬಸ್ ಮತ್ತು ಪ್ರಯಾಣದ ವಿವರ',
+      'PAY.BOARDING': 'ಬೋರ್ಡಿಂಗ್ ಸ್ಥಳ',
+      'PAY.DROPPING': 'ಡ್ರಾಪಿಂಗ್ ಸ್ಥಳ',
+      'PAY.SEATS_BOOKED': 'ಆಸನ ಸಂಖ್ಯೆಗಳು',
+      'PAY.PAYMENT_SUCCESS': 'ಪಾವತಿ ಯಶಸ್ವಿಯಾಗಿದೆ!',
+      'PAY.TICKET_SENT': 'ಇ-ಟಿಕೆಟ್ ಎಸ್‌ಎಂಎಸ್ ಮತ್ತು ವಾಟ್ಸಾಪ್ ಮೂಲಕ ಕಳುಹಿಸಲಾಗಿದೆ.'
+    }
+  };
+
+  getLanguage(): string {
+    return this.langSubject.value;
   }
 
   setLanguage(lang: string): void {
-    const validLang = ['en', 'hi', 'kn'].includes(lang) ? lang : 'en';
-    localStorage.setItem('preferred_lang', validLang);
-    this.loadLanguage(validLang);
-  }
-
-  private loadLanguage(lang: string): void {
-    // Immediate fallback initialization
-    this.translations = EMBEDDED_TRANSLATIONS[lang] || EMBEDDED_TRANSLATIONS['en'];
-    this.currentLangSubject.next(lang);
-
-    // Optional dynamic asset fetch to sync updates
-    this.http.get(`./assets/i18n/${lang}.json`).subscribe({
-      next: (data: any) => {
-        if (data) {
-          this.translations = data;
-          this.currentLangSubject.next(lang);
-        }
-      },
-      error: () => {
-        // Fallback already assigned
-      }
-    });
+    localStorage.setItem('rb_language', lang);
+    this.langSubject.next(lang);
+    document.body.classList.remove('lang-en', 'lang-hi', 'lang-kn');
+    document.body.classList.add(`lang-${lang}`);
   }
 
   translate(key: string): string {
-    if (!key) return '';
-    const keys = key.split('.');
+    const lang = this.getLanguage();
+    const dict = this.dictionary[lang] || this.dictionary['en'];
 
-    // 1. Try active language
-    let result: any = this.translations;
-    for (const k of keys) {
-      if (!result || result[k] === undefined) {
-        result = null;
-        break;
-      }
-      result = result[k];
+    // Direct match
+    if (dict[key]) {
+      return dict[key];
     }
 
-    if (result && typeof result === 'string') return result;
-
-    // 2. Fallback to English
-    let fallback: any = EMBEDDED_TRANSLATIONS['en'];
-    for (const k of keys) {
-      if (!fallback || fallback[k] === undefined) {
-        fallback = null;
-        break;
-      }
-      fallback = fallback[k];
+    // Dynamic City Name resolution: e.g. "CITY.Bengaluru"
+    if (dict[`CITY.${key}`]) {
+      return dict[`CITY.${key}`];
     }
 
-    if (fallback && typeof fallback === 'string') return fallback;
-
-    // 3. Fallback to original key
     return key;
   }
 }

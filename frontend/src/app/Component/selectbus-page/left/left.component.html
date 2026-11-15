@@ -1,66 +1,99 @@
-<div class="left">
-    <div class="left_filters">
-        <p>Filters</p>
-        <ul>
-            <li (click)="handlelivetrackingclick()">
-                <div class="first-section">
-                    <mat-icon>
-                        gps_fixed
-                    </mat-icon>
-                    <span>Live Tracking</span>
-                    <mat-icon *ngIf="sidefiltervalues.livetracking"
-                        style="color: green;">check_circle_outline</mat-icon>
-                </div>
-            </li>
-            <li (click)="handlerescheduleclick()">
-                <div class="first-section">
-                    <mat-icon>restore</mat-icon>
-                    <span>Reschedulable</span>
-                    <mat-icon *ngIf="sidefiltervalues.reschedulable"
-                        style="color: green;">check_circle_outline</mat-icon>
-                </div>
-            </li>
-        </ul>
-    </div>
-    
-    <div class="left_filters">
-        <p>DEPARTURE TIME</p>
-        <ul>
-            <li *ngFor="let key of getobjectkey(sidefiltervalues.departuretime)" class="first-section">
-            <input type="checkbox" [name]="key" [checked]="sidefiltervalues.departuretime[key]" (change)="handledeparturetimeclick($event,key)">
-            <mat-icon>av_timer</mat-icon>
-            <span>{{key}}</span>
-            </li>
-        </ul>
-    </div>
-    <div class="left_filters">
-        <p>BUS TYPES</p>
-        <ul>
-            <li *ngFor="let key of getobjectkey(sidefiltervalues.bustype)" class="first-section">
-            <input type="checkbox" [name]="key" [checked]="sidefiltervalues.bustype[key]" (change)="handlebustypeclick($event,key)">
-            <mat-icon>airline_seat_legroom_extra</mat-icon>
-            <span>{{key}}</span>
-            </li>
-        </ul>
-    </div>
-    <div class="left_filters">
-        <p>ARRIVAL TIME</p>
-        <ul>
-            <li *ngFor="let key of getobjectkey(sidefiltervalues.arrivaltime)" class="first-section">
-            <input type="checkbox" [name]="key" [checked]="sidefiltervalues.arrivaltime[key]" (change)="handlearivaltimeclick($event,key)">
-            <mat-icon>av_timer</mat-icon>
-            <span>{{key}}</span>
-            </li>
-        </ul>
-    </div>
-    <div class="left_filters">
-        <p>AMENITIES</p>
-        <ul>
-            <li *ngFor="let key of getobjectkey(sidefiltervalues.amenities)" class="first-section">
-            <mat-icon>{{amenityIcon[key]}}</mat-icon>
-            <span>{{key}}</span>
-            </li>
-        </ul>
-    </div>
+<div class="filters-card">
+  <div class="filter-header-row">
+    <h3 class="filter-title">Filter buses</h3>
+    <button type="button" class="clear-all-link">Clear All</button>
+  </div>
 
+  <!-- AI Smart Filter -->
+  <div class="smart-search-box">
+    <span class="sparkle">✦</span>
+    <input type="text" placeholder='Try "Morning bus under ₹1500"' class="smart-input" />
+    <span class="mic-ico">🎙️</span>
+  </div>
+
+  <!-- Red outlined quick pill chips from Screenshot 226 -->
+  <div class="filter-pill-grid">
+    <button type="button" class="feature-pill-btn">
+      <span class="pill-ico">★</span> Primo Bus (9)
+    </button>
+    <button type="button" class="feature-pill-btn red-highlight active">
+      <span class="pill-ico">❄</span> AC (30)
+    </button>
+    <button type="button" class="feature-pill-btn red-highlight">
+      <span class="pill-ico">🛏</span> SLEEPER (32)
+    </button>
+    <button type="button" class="feature-pill-btn">
+      <span class="pill-ico">💺</span> Single Seats (11)
+    </button>
+    <button type="button" class="feature-pill-btn">
+      <span class="pill-ico">⏱</span> 18:00-24:00 (18)
+    </button>
+    <button type="button" class="feature-pill-btn">
+      <span class="pill-ico">★</span> High Rated Buses (6)
+    </button>
+    <button type="button" class="feature-pill-btn">
+      <span class="pill-ico">📍</span> Live Tracking (10)
+    </button>
+    <button type="button" class="feature-pill-btn">
+      <span class="pill-ico">✓</span> Volvo Buses (10)
+    </button>
+  </div>
+
+  <hr class="filter-divider" />
+
+  <!-- DEPARTURE TIME CHECKBOXES -->
+  <div class="filter-group">
+    <label class="filter-group-lbl">DEPARTURE TIME</label>
+    <div class="filter-checkbox-list">
+      <label class="custom-chk-row">
+        <input type="checkbox" />
+        <span class="time-ico">🌅</span>
+        <span class="time-txt">Before 6 AM</span>
+      </label>
+      <label class="custom-chk-row">
+        <input type="checkbox" />
+        <span class="time-ico">☀️</span>
+        <span class="time-txt">6 AM to 12 PM</span>
+      </label>
+      <label class="custom-chk-row">
+        <input type="checkbox" />
+        <span class="time-ico">🌤️</span>
+        <span class="time-txt">12 PM to 6 PM</span>
+      </label>
+      <label class="custom-chk-row">
+        <input type="checkbox" />
+        <span class="time-ico">🌙</span>
+        <span class="time-txt">After 6 PM</span>
+      </label>
+    </div>
+  </div>
+
+  <hr class="filter-divider" />
+
+  <!-- BUS TYPES CHECKBOXES -->
+  <div class="filter-group">
+    <label class="filter-group-lbl">BUS TYPES</label>
+    <div class="filter-checkbox-list">
+      <label class="custom-chk-row">
+        <input type="checkbox" />
+        <span class="bus-ico">💺</span>
+        <span class="type-txt">Seater</span>
+      </label>
+      <label class="custom-chk-row">
+        <input type="checkbox" />
+        <span class="bus-ico">🛏️</span>
+        <span class="type-txt">Sleeper</span>
+      </label>
+      <label class="custom-chk-row">
+        <input type="checkbox" />
+        <span class="bus-ico">❄️</span>
+        <span class="type-txt">AC</span>
+      </label>
+      <label class="custom-chk-row">
+        <input type="checkbox" />
+        <span class="bus-ico">🚌</span>
+        <span class="type-txt">Non-AC</span>
+      </label>
+    </div>
+  </div>
 </div>

@@ -1,347 +1,568 @@
-<div class="rb-payment-viewport">
-  
-  <!-- Top Bar -->
-  <header class="payment-navbar">
-    <div class="nav-content-wrap">
-      <div class="brand-left">
-        <span class="redbus-logo">redBus</span>
-        <span class="safety-tag">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-          100% Safe & Secure Checkout
-        </span>
+<div class="modern-checkout-wrapper">
+
+  <!-- ================= SUCCESS CONFIRMATION MODAL ================= -->
+  <div class="success-overlay" *ngIf="bookingSuccess">
+    <div class="modern-ticket-card">
+      <div class="ticket-status-ribbon">
+        <div class="pulse-check">✓</div>
+        <h2>Booking Confirmed!</h2>
+        <p>M-Ticket & Boarding pass sent to WhatsApp & Email</p>
       </div>
 
-      <div class="nav-right-meta">
-        <span class="session-timer">Expires in: <strong>{{ formattedTime }}</strong></span>
-        <span class="booking-id-tag">ID: <strong>{{ booking.bookingId }}</strong></span>
-      </div>
-    </div>
-  </header>
-
-  <!-- Payment Workspace Layout -->
-  <main class="payment-workspace" *ngIf="!paymentSuccess">
-    <div class="checkout-grid">
-      
-      <!-- LEFT SECTION: Payment Gateways Card -->
-      <section class="payment-gateways-card">
-        
-        <!-- Tab Navigation Sidebar -->
-        <nav class="gateways-tabs-sidebar">
-          <button type="button" class="tab-item-btn" [class.active]="selectedTab === 'upi'" (click)="setTab('upi')">
-            <span class="tab-icon">⚡</span>
-            <div class="tab-txt-group">
-              <span class="tab-main">UPI & QR Code</span>
-              <span class="tab-sub">Navi, GPay, PhonePe</span>
-            </div>
-          </button>
-
-          <button type="button" class="tab-item-btn" [class.active]="selectedTab === 'card'" (click)="setTab('card')">
-            <span class="tab-icon">💳</span>
-            <div class="tab-txt-group">
-              <span class="tab-main">Credit / Debit Card</span>
-              <span class="tab-sub">Visa, MasterCard, RuPay</span>
-            </div>
-          </button>
-
-          <button type="button" class="tab-item-btn" [class.active]="selectedTab === 'netbanking'" (click)="setTab('netbanking')">
-            <span class="tab-icon">🏦</span>
-            <div class="tab-txt-group">
-              <span class="tab-main">Net Banking</span>
-              <span class="tab-sub">All Indian Banks</span>
-            </div>
-          </button>
-
-          <button type="button" class="tab-item-btn" [class.active]="selectedTab === 'wallet'" (click)="setTab('wallet')">
-            <span class="tab-icon">👛</span>
-            <div class="tab-txt-group">
-              <span class="tab-main">Wallets</span>
-              <span class="tab-sub">Amazon Pay, Paytm</span>
-            </div>
-          </button>
-        </nav>
-
-        <!-- Gateway Content Panel -->
-        <div class="gateway-body-panel">
-          
-          <!-- TAB 1: UPI & ANIMATED CUSTOM QR -->
-          <div *ngIf="selectedTab === 'upi'" class="gateway-tab-pane">
-            <div class="pane-headline">
-              <h4>Pay with Navi UPI QR Code</h4>
-              <p>Scan using Navi, Google Pay, PhonePe, Paytm, or any UPI app.</p>
-            </div>
-
-            <!-- Toggle QR Button -->
-            <div class="qr-trigger-box">
-              <button type="button" class="btn-toggle-qr" (click)="toggleQrDisplay()">
-                <span class="qr-icon-btn">📲</span>
-                <span *ngIf="!showQrAnimation">Show UPI QR Code (₹{{ booking.totalFare }})</span>
-                <span *ngIf="showQrAnimation">Hide QR Code</span>
-              </button>
-            </div>
-
-            <!-- Animated Navi QR Card -->
-            <div class="animated-qr-wrapper" [class.visible]="showQrAnimation">
-              <div class="qr-card-container animate-pop">
-                
-                <!-- Laser Scanning Animation Line -->
-                <div class="laser-scanner-line"></div>
-
-                <div class="qr-inner-card">
-                  <!-- Navi Brand Header -->
-                  <div class="qr-brand-header">
-                    <span class="navi-logo-txt"><span class="navi-n">n^</span> navi</span>
-                    <span class="qr-tagline">Pay using any UPI app</span>
-                  </div>
-
-                  <!-- Accepted App Icons Strip -->
-                  <div class="apps-icon-strip">
-                    <span class="chip-gpay">G Pay</span>
-                    <span class="chip-phonepe">PhonePe</span>
-                    <span class="chip-paytm">Paytm</span>
-                    <span class="chip-navi">navi</span>
-                  </div>
-
-                  <!-- QR Code Render -->
-                  <div class="qr-image-display">
-                    <img [src]="qrApiUrl"
-                         alt="Navi UPI QR Code" 
-                         class="actual-qr-img" />
-                  </div>
-
-                  <!-- Beneficiary Information -->
-                  <div class="qr-beneficiary-footer">
-                    <strong class="payee-name">{{ payeeName }}</strong>
-                    <span class="payee-vpa">UPI ID : {{ upiId }}</span>
-                  </div>
-                </div>
-
-                <div class="scan-cta-banner">
-                  <span class="blink-dot"></span>
-                  Waiting for passenger scan of ₹{{ booking.totalFare }}...
-                </div>
-
-                <button type="button" class="btn-done-scan" (click)="processPayment()">
-                  I have paid from my UPI App ➔
-                </button>
-              </div>
-            </div>
-
-            <div class="divider-text-line">
-              <span>OR DIRECT VPA VERIFICATION</span>
-            </div>
-
-            <div class="form-field-group">
-              <label>Beneficiary UPI ID</label>
-              <div class="upi-input-container">
-                <input type="text" [(ngModel)]="upiId" readonly class="verified-vpa-input" />
-                <button type="button" class="btn-verify-vpa" (click)="processPayment()">Pay Now</button>
-              </div>
-            </div>
-
-            <button type="button" class="btn-primary-pay" [disabled]="isProcessing" (click)="processPayment()">
-              {{ isProcessing ? 'Verifying Transaction with Bank...' : 'COMPLETE BOOKING (₹' + booking.totalFare + ')' }}
-            </button>
+      <div class="ticket-body">
+        <div class="ticket-route-header">
+          <div>
+            <span class="route-city">{{ fromCity }}</span>
+            <span class="route-time">{{ depTime }}</span>
           </div>
-
-          <!-- TAB 2: CREDIT / DEBIT CARD -->
-          <div *ngIf="selectedTab === 'card'" class="gateway-tab-pane">
-            <div class="pane-headline">
-              <h4>Credit or Debit Card</h4>
-              <p>Safe 256-bit encrypted card checkout.</p>
-            </div>
-
-            <div class="form-field-group">
-              <label>Card Number</label>
-              <input type="text" [(ngModel)]="cardNumber" placeholder="1234  5678  9012  3456" maxlength="19" />
-            </div>
-
-            <div class="form-split-row">
-              <div class="form-field-group">
-                <label>Valid Thru (MM/YY)</label>
-                <input type="text" [(ngModel)]="cardExpiry" placeholder="MM/YY" maxlength="5" />
-              </div>
-
-              <div class="form-field-group">
-                <label>CVV / CVC</label>
-                <input type="password" [(ngModel)]="cardCvv" placeholder="123" maxlength="4" />
-              </div>
-            </div>
-
-            <div class="form-field-group">
-              <label>Name on Card</label>
-              <input type="text" [(ngModel)]="cardHolder" placeholder="Name as displayed on card" />
-            </div>
-
-            <button type="button" class="btn-primary-pay" [disabled]="isProcessing" (click)="processPayment()">
-              {{ isProcessing ? 'Connecting to Card Gateway...' : 'PAY ₹' + booking.totalFare }}
-            </button>
-          </div>
-
-          <!-- TAB 3: NET BANKING -->
-          <div *ngIf="selectedTab === 'netbanking'" class="gateway-tab-pane">
-            <div class="pane-headline">
-              <h4>Popular Banks</h4>
-              <p>Select your internet banking service provider to proceed.</p>
-            </div>
-
-            <div class="bank-options-grid">
-              <div class="bank-selection-card" [class.selected]="selectedBank === 'HDFC'" (click)="selectedBank = 'HDFC'">
-                <span class="bank-mark">🏛️</span>
-                <span class="bank-title">HDFC Bank</span>
-              </div>
-              <div class="bank-selection-card" [class.selected]="selectedBank === 'SBI'" (click)="selectedBank = 'SBI'">
-                <span class="bank-mark">🏛️</span>
-                <span class="bank-title">State Bank of India</span>
-              </div>
-              <div class="bank-selection-card" [class.selected]="selectedBank === 'ICICI'" (click)="selectedBank = 'ICICI'">
-                <span class="bank-mark">🏛️</span>
-                <span class="bank-title">ICICI Bank</span>
-              </div>
-              <div class="bank-selection-card" [class.selected]="selectedBank === 'AXIS'" (click)="selectedBank = 'AXIS'">
-                <span class="bank-mark">🏛️</span>
-                <span class="bank-title">Axis Bank</span>
-              </div>
-            </div>
-
-            <button type="button" class="btn-primary-pay" [disabled]="isProcessing" (click)="processPayment()">
-              {{ isProcessing ? 'Redirecting to ' + selectedBank + '...' : 'PROCEED TO ' + selectedBank }}
-            </button>
-          </div>
-
-          <!-- TAB 4: WALLETS -->
-          <div *ngIf="selectedTab === 'wallet'" class="gateway-tab-pane">
-            <div class="pane-headline">
-              <h4>Mobile Wallets</h4>
-              <p>Link your wallet account for quick checkout.</p>
-            </div>
-
-            <div class="bank-options-grid">
-              <div class="bank-selection-card" [class.selected]="selectedWallet === 'Paytm'" (click)="selectedWallet = 'Paytm'">
-                <span class="bank-mark">👛</span>
-                <span class="bank-title">Paytm Wallet</span>
-              </div>
-              <div class="bank-selection-card" [class.selected]="selectedWallet === 'AmazonPay'" (click)="selectedWallet = 'AmazonPay'">
-                <span class="bank-mark">📦</span>
-                <span class="bank-title">Amazon Pay</span>
-              </div>
-              <div class="bank-selection-card" [class.selected]="selectedWallet === 'Mobikwik'" (click)="selectedWallet = 'Mobikwik'">
-                <span class="bank-mark">⚡</span>
-                <span class="bank-title">MobiKwik</span>
-              </div>
-            </div>
-
-            <button type="button" class="btn-primary-pay" [disabled]="isProcessing" (click)="processPayment()">
-              {{ isProcessing ? 'Connecting to ' + selectedWallet + '...' : 'PAY ₹' + booking.totalFare }}
-            </button>
-          </div>
-
-        </div>
-      </section>
-
-      <!-- RIGHT SECTION: Journey & Fare Summary Sidebar -->
-      <aside class="payment-summary-card">
-        <h4 class="summary-headline">Trip Overview</h4>
-
-        <div class="operator-profile">
-          <span class="bus-company">{{ booking.busName }}</span>
-          <span class="bus-category">{{ booking.busType }}</span>
-        </div>
-
-        <div class="timeline-itinerary">
-          <div class="itinerary-node">
-            <div class="node-time">{{ booking.departureTime }}</div>
-            <div class="node-meta">
-              <strong>{{ booking.from }}</strong>
-              <span>{{ booking.boardingPoint }}</span>
-            </div>
-          </div>
-
-          <div class="itinerary-transit">
-            <span class="transit-duration">{{ booking.duration || '10h 30m' }}</span>
-          </div>
-
-          <div class="itinerary-node">
-            <div class="node-time">{{ booking.arrivalTime }}</div>
-            <div class="node-meta">
-              <strong>{{ booking.to }}</strong>
-              <span>{{ booking.droppingPoint }}</span>
-            </div>
+          <div class="route-arrow">➔</div>
+          <div class="text-end">
+            <span class="route-city">{{ toCity }}</span>
+            <span class="route-time">{{ arrTime }}</span>
           </div>
         </div>
 
-        <div class="passenger-seat-strip">
-          <div class="seat-info-col">
-            <label>Journey Date</label>
-            <strong>{{ booking.date }}</strong>
+        <div class="ticket-grid-details">
+          <div class="detail-cell">
+            <span class="cell-label">PNR NUMBER</span>
+            <span class="cell-val text-brand">{{ bookingRef }}</span>
           </div>
-          <div class="seat-info-col">
-            <label>Berths ({{ booking.seats.length }})</label>
-            <strong class="highlight-seats">{{ booking.seatNumbers }}</strong>
+          <div class="detail-cell">
+            <span class="cell-label">JOURNEY DATE</span>
+            <span class="cell-val">{{ journeyDate }}</span>
+          </div>
+          <div class="detail-cell">
+            <span class="cell-label">OPERATOR</span>
+            <span class="cell-val">{{ busName }}</span>
+          </div>
+          <div class="detail-cell">
+            <span class="cell-label">SEAT NO</span>
+            <span class="cell-val text-accent">{{ selectedSeats }}</span>
           </div>
         </div>
 
-        <div class="fare-receipt">
-          <div class="receipt-row">
-            <span>Base Fare</span>
-            <span>₹{{ booking.totalFare }}</span>
+        <div class="ticket-station-points">
+          <div class="point-row">
+            <span class="point-badge bg-green">Boarding</span>
+            <span class="point-text">{{ pickupPoint }}</span>
           </div>
-          <div class="receipt-row">
-            <span>GST & Convenience Fee</span>
-            <span class="waived-badge">FREE</span>
-          </div>
-          <div class="receipt-row final-payable">
-            <span>Total Payable Amount</span>
-            <span class="final-amt">₹{{ booking.totalFare }}</span>
+          <div class="point-row">
+            <span class="point-badge bg-red">Dropping</span>
+            <span class="point-text">{{ dropPoint }}</span>
           </div>
         </div>
-      </aside>
 
-    </div>
-  </main>
-
-  <!-- CONFIRMATION / SUCCESS TICKET MODAL -->
-  <div class="payment-confirmed-overlay" *ngIf="paymentSuccess">
-    <div class="ticket-pass-card">
-      <div class="stamp-icon-wrap">
-        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3">
-          <polyline points="20 6 9 17 4 12"></polyline>
-        </svg>
-      </div>
-
-      <h2 class="congrats-title">Booking Confirmed!</h2>
-      <p class="congrats-sub">Your e-ticket has been generated and sent to your phone and email.</p>
-
-      <div class="e-ticket-receipt">
-        <div class="e-row">
-          <span>Booking Reference</span>
-          <strong>{{ booking.bookingId }}</strong>
-        </div>
-        <div class="e-row">
-          <span>Bus Operator</span>
-          <strong>{{ booking.busName }}</strong>
-        </div>
-        <div class="e-row">
-          <span>Route</span>
-          <strong>{{ booking.from }} ➔ {{ booking.to }}</strong>
-        </div>
-        <div class="e-row">
-          <span>Departure Date</span>
-          <strong>{{ booking.date }} at {{ booking.departureTime }}</strong>
-        </div>
-        <div class="e-row">
-          <span>Confirmed Berths</span>
-          <strong class="e-seats">{{ booking.seatNumbers }}</strong>
-        </div>
-        <div class="e-row total-paid">
-          <span>Paid via UPI ({{ upiId }})</span>
-          <strong class="e-fare">₹{{ booking.totalFare }}</strong>
+        <div class="ticket-amount-banner">
+          <div>
+            <span class="paid-method-lbl">Paid via {{ paidVia }}</span>
+            <span class="badge-verified">Verified Transaction</span>
+          </div>
+          <div class="paid-price">₹{{ totalFare }}</div>
         </div>
       </div>
 
-      <button type="button" class="btn-return-home" (click)="goToHome()">
-        Return to Home
-      </button>
+      <div class="ticket-footer">
+        <button type="button" class="btn-primary-glow" routerLink="/">Book Return / Another Journey</button>
+      </div>
     </div>
   </div>
 
+  <!-- ================= MAIN PAYMENT WORKFLOW ================= -->
+  <div class="checkout-container" *ngIf="!bookingSuccess">
+
+    <!-- TOP HEADER WITH LIVE TRUST BAR -->
+    <div class="trust-top-bar">
+      <div class="trust-item">
+        <span class="trust-icon">🛡️</span>
+        <span>256-Bit SSL Encrypted Banking</span>
+      </div>
+      <div class="countdown-badge">
+        <span class="badge-dot"></span>
+        <span>Price held for: <strong>{{ timerMinutes }}:{{ timerSeconds < 10 ? '0' : '' }}{{ timerSeconds }}</strong></span>
+      </div>
+    </div>
+
+    <div class="layout-grid">
+
+      <!-- LEFT COLUMN: PAYMENT SELECTION DESK -->
+      <div class="payment-desk-card">
+        
+        <div class="desk-header">
+          <h1 class="desk-title">Choose Payment Method</h1>
+          <span class="desk-subtitle">All transactions are zero-fee & instantly confirmed</span>
+        </div>
+
+        <!-- 4 CORE PAYMENT NAV TABS -->
+        <div class="method-nav-tabs">
+          <button type="button" class="nav-tab-item" [class.active]="activeTab === 'upi'" (click)="setTab('upi')">
+            <div class="tab-icon-wrap">⚡</div>
+            <div class="tab-text-wrap">
+              <span class="tab-main-title">UPI Options</span>
+              <span class="tab-sub-title">PhonePe, GPay, QR</span>
+            </div>
+          </button>
+
+          <button type="button" class="nav-tab-item" [class.active]="activeTab === 'card'" (click)="setTab('card')">
+            <div class="tab-icon-wrap">💳</div>
+            <div class="tab-text-wrap">
+              <span class="tab-main-title">Cards</span>
+              <span class="tab-sub-title">Debit / Credit Card</span>
+            </div>
+          </button>
+
+          <button type="button" class="nav-tab-item" [class.active]="activeTab === 'netbanking'" (click)="setTab('netbanking')">
+            <div class="tab-icon-wrap">🏛️</div>
+            <div class="tab-text-wrap">
+              <span class="tab-main-title">Net Banking</span>
+              <span class="tab-sub-title">All Major Indian Banks</span>
+            </div>
+          </button>
+
+          <button type="button" class="nav-tab-item" [class.active]="activeTab === 'wallet'" (click)="setTab('wallet')">
+            <div class="tab-icon-wrap">👛</div>
+            <div class="tab-text-wrap">
+              <span class="tab-main-title">Wallets</span>
+              <span class="tab-sub-title">Amazon, Paytm, Mobikwik</span>
+            </div>
+          </button>
+        </div>
+
+        <!-- ================= PANEL 1: UPI PAYMENTS ================= -->
+        <div class="tab-panel" *ngIf="activeTab === 'upi'">
+          <div class="upi-sub-switch">
+            <button [class.active]="upiSubMethod === 'qr'" (click)="setUpiSubMethod('qr')">Scan PhonePe QR</button>
+            <button [class.active]="upiSubMethod === 'apps'" (click)="setUpiSubMethod('apps')">UPI Apps Intent</button>
+            <button [class.active]="upiSubMethod === 'id'" (click)="setUpiSubMethod('id')">Enter UPI ID</button>
+          </div>
+
+          <!-- 1A: MODERN PHONEPE QR CARD -->
+          <div *ngIf="upiSubMethod === 'qr'" class="phonepe-modern-stage">
+            <div class="phonepe-brand-badge">
+              <span class="phonepe-chip">पे</span>
+              <span class="brand-name">PhonePe</span>
+              <span class="verified-tag">ACCEPTED HERE</span>
+            </div>
+
+            <p class="qr-tagline">Scan with PhonePe, Google Pay, Paytm, BHIM, or any Banking UPI App</p>
+
+            <div class="modern-qr-chassis">
+              <div class="laser-scanner"></div>
+
+              <!-- Vector PhonePe QR Matrix -->
+              <svg class="qr-svg-matrix" viewBox="0 0 300 300" width="220" height="220" xmlns="http://www.w3.org/2000/svg">
+                <rect width="300" height="300" fill="#ffffff" rx="12" />
+
+                <!-- FINDER CORNER 1 -->
+                <rect x="20" y="20" width="60" height="60" rx="6" fill="#000000" />
+                <rect x="30" y="30" width="40" height="40" rx="4" fill="#ffffff" />
+                <rect x="38" y="38" width="24" height="24" rx="3" fill="#000000" />
+
+                <!-- FINDER CORNER 2 -->
+                <rect x="220" y="20" width="60" height="60" rx="6" fill="#000000" />
+                <rect x="230" y="30" width="40" height="40" rx="4" fill="#ffffff" />
+                <rect x="238" y="38" width="24" height="24" rx="3" fill="#000000" />
+
+                <!-- FINDER CORNER 3 -->
+                <rect x="20" y="220" width="60" height="60" rx="6" fill="#000000" />
+                <rect x="30" y="230" width="40" height="40" rx="4" fill="#ffffff" />
+                <rect x="38" y="238" width="24" height="24" rx="3" fill="#000000" />
+
+                <!-- MATRIX DATA SHAPES -->
+                <rect x="90" y="22" width="10" height="18" fill="#000000" />
+                <rect x="110" y="20" width="16" height="10" fill="#000000" />
+                <rect x="135" y="22" width="12" height="24" fill="#000000" />
+                <rect x="155" y="20" width="20" height="10" fill="#000000" />
+                <rect x="185" y="22" width="12" height="18" fill="#000000" />
+                <rect x="205" y="20" width="8" height="26" fill="#000000" />
+
+                <rect x="90" y="48" width="20" height="10" fill="#000000" />
+                <rect x="120" y="40" width="10" height="18" fill="#000000" />
+                <rect x="140" y="45" width="28" height="12" fill="#000000" />
+                <rect x="180" y="48" width="10" height="22" fill="#000000" />
+                <rect x="200" y="45" width="12" height="12" fill="#000000" />
+
+                <rect x="90" y="65" width="14" height="14" fill="#000000" />
+                <rect x="115" y="65" width="18" height="20" fill="#000000" />
+                <rect x="145" y="65" width="12" height="12" fill="#000000" />
+                <rect x="165" y="62" width="18" height="24" fill="#000000" />
+                <rect x="195" y="65" width="15" height="12" fill="#000000" />
+
+                <rect x="20" y="90" width="14" height="14" fill="#000000" />
+                <rect x="45" y="90" width="14" height="14" fill="#000000" />
+                <rect x="70" y="88" width="12" height="28" fill="#000000" />
+                <rect x="20" y="112" width="28" height="12" fill="#000000" />
+                <rect x="58" y="112" width="14" height="20" fill="#000000" />
+
+                <rect x="20" y="138" width="18" height="14" fill="#000000" />
+                <rect x="48" y="140" width="14" height="12" fill="#000000" />
+                <rect x="70" y="132" width="14" height="30" fill="#000000" />
+                <rect x="20" y="160" width="12" height="24" fill="#000000" />
+                <rect x="42" y="160" width="20" height="14" fill="#000000" />
+                <rect x="20" y="192" width="25" height="14" fill="#000000" />
+                <rect x="55" y="188" width="14" height="18" fill="#000000" />
+
+                <rect x="90" y="90" width="22" height="14" fill="#000000" />
+                <rect x="120" y="90" width="14" height="24" fill="#000000" />
+                <rect x="90" y="115" width="14" height="22" fill="#000000" />
+                <rect x="112" y="122" width="20" height="14" fill="#000000" />
+
+                <rect x="168" y="90" width="24" height="14" fill="#000000" />
+                <rect x="200" y="90" width="12" height="25" fill="#000000" />
+                <rect x="170" y="115" width="14" height="24" fill="#000000" />
+                <rect x="195" y="122" width="20" height="14" fill="#000000" />
+
+                <rect x="220" y="90" width="20" height="14" fill="#000000" />
+                <rect x="250" y="90" width="30" height="14" fill="#000000" />
+                <rect x="225" y="112" width="14" height="24" fill="#000000" />
+                <rect x="248" y="112" width="18" height="14" fill="#000000" />
+                <rect x="272" y="110" width="8" height="26" fill="#000000" />
+                <rect x="220" y="145" width="24" height="14" fill="#000000" />
+                <rect x="252" y="138" width="14" height="28" fill="#000000" />
+                <rect x="274" y="145" width="10" height="15" fill="#000000" />
+                <rect x="220" y="170" width="14" height="22" fill="#000000" />
+                <rect x="242" y="175" width="22" height="14" fill="#000000" />
+                <rect x="270" y="170" width="10" height="25" fill="#000000" />
+
+                <rect x="90" y="145" width="12" height="24" fill="#000000" />
+                <rect x="110" y="142" width="22" height="12" fill="#000000" />
+                <rect x="140" y="142" width="18" height="20" fill="#000000" />
+                <rect x="165" y="145" width="14" height="24" fill="#000000" />
+                <rect x="188" y="142" width="20" height="12" fill="#000000" />
+
+                <rect x="90" y="175" width="22" height="14" fill="#000000" />
+                <rect x="120" y="170" width="14" height="26" fill="#000000" />
+                <rect x="142" y="172" width="20" height="14" fill="#000000" />
+                <rect x="170" y="178" width="15" height="18" fill="#000000" />
+                <rect x="195" y="170" width="16" height="24" fill="#000000" />
+
+                <rect x="90" y="202" width="14" height="24" fill="#000000" />
+                <rect x="112" y="205" width="24" height="12" fill="#000000" />
+                <rect x="145" y="198" width="14" height="25" fill="#000000" />
+                <rect x="168" y="202" width="20" height="14" fill="#000000" />
+                <rect x="195" y="205" width="15" height="12" fill="#000000" />
+
+                <rect x="90" y="235" width="16" height="14" fill="#000000" />
+                <rect x="115" y="228" width="15" height="26" fill="#000000" />
+                <rect x="138" y="235" width="26" height="12" fill="#000000" />
+                <rect x="172" y="228" width="14" height="26" fill="#000000" />
+                <rect x="194" y="235" width="18" height="14" fill="#000000" />
+
+                <rect x="90" y="260" width="25" height="18" fill="#000000" />
+                <rect x="125" y="262" width="18" height="15" fill="#000000" />
+                <rect x="150" y="258" width="22" height="18" fill="#000000" />
+                <rect x="180" y="262" width="30" height="15" fill="#000000" />
+
+                <rect x="220" y="202" width="15" height="24" fill="#000000" />
+                <rect x="242" y="205" width="22" height="12" fill="#000000" />
+                <rect x="270" y="202" width="10" height="25" fill="#000000" />
+                <rect x="220" y="235" width="28" height="14" fill="#000000" />
+                <rect x="256" y="228" width="15" height="25" fill="#000000" />
+                <rect x="220" y="260" width="15" height="18" fill="#000000" />
+                <rect x="245" y="262" width="35" height="15" fill="#000000" />
+
+                <!-- CENTER PHONEPE EMBLEM -->
+                <circle cx="150" cy="150" r="26" fill="#ffffff" />
+                <circle cx="150" cy="150" r="23" fill="#5f259f" />
+                <text x="150" y="160" font-family="-apple-system, BlinkMacSystemFont, Arial, sans-serif" font-size="24" font-weight="900" fill="#ffffff" text-anchor="middle">पे</text>
+              </svg>
+            </div>
+
+            <!-- ADITYA ADITYA OFFICIAL MERCHANT IDENTIFIER -->
+            <div class="merchant-name-chip">{{ payeeName }}</div>
+
+            <!-- COPY VPA BAR -->
+            <div class="copy-vpa-row">
+              <span class="vpa-text">{{ upiVpa }}</span>
+              <button type="button" class="btn-copy-vpa" (click)="copyVpa()">
+                {{ copiedVpa ? '✓ Copied' : 'Copy' }}
+              </button>
+            </div>
+
+            <button type="button" class="btn-pay-action" (click)="processPayment('PhonePe QR (' + payeeName + ')')">
+              <span *ngIf="!isProcessing">Confirm Paid ₹{{ totalFare }}</span>
+              <span *ngIf="isProcessing">Verifying Transaction...</span>
+            </button>
+          </div>
+
+          <!-- 1B: UPI APPS SELECTION -->
+          <div *ngIf="upiSubMethod === 'apps'" class="apps-intent-desk">
+            <span class="view-instructions">Select your installed UPI Application to proceed:</span>
+            
+            <div class="intent-apps-grid">
+              <div class="intent-card" [class.selected]="selectedUpiApp === 'phonepe'" (click)="selectUpiApp('phonepe')">
+                <div class="intent-badge phonepe-gradient">पे</div>
+                <span class="intent-name">PhonePe</span>
+                <span class="intent-status">Instant Intent</span>
+              </div>
+              <div class="intent-card" [class.selected]="selectedUpiApp === 'gpay'" (click)="selectUpiApp('gpay')">
+                <div class="intent-badge gpay-gradient">GPay</div>
+                <span class="intent-name">Google Pay</span>
+                <span class="intent-status">Fast Checkout</span>
+              </div>
+              <div class="intent-card" [class.selected]="selectedUpiApp === 'paytm'" (click)="selectUpiApp('paytm')">
+                <div class="intent-badge paytm-gradient">Paytm</div>
+                <span class="intent-name">Paytm UPI</span>
+                <span class="intent-status">Zero Fee</span>
+              </div>
+              <div class="intent-card" [class.selected]="selectedUpiApp === 'bhim'" (click)="selectUpiApp('bhim')">
+                <div class="intent-badge bhim-gradient">BHIM</div>
+                <span class="intent-name">BHIM UPI</span>
+                <span class="intent-status">NPCI Direct</span>
+              </div>
+            </div>
+
+            <button type="button" class="btn-pay-action mt-4" (click)="processPayment('UPI Intent (' + selectedUpiApp.toUpperCase() + ')')">
+              Open {{ selectedUpiApp.toUpperCase() }} & Pay ₹{{ totalFare }}
+            </button>
+          </div>
+
+          <!-- 1C: MANUAL UPI ID -->
+          <div *ngIf="upiSubMethod === 'id'" class="manual-vpa-desk">
+            <span class="view-instructions">Pay via Virtual Payment Address (VPA):</span>
+            
+            <div class="modern-field-group">
+              <label class="field-label">YOUR UPI ID</label>
+              <div class="field-input-box">
+                <input 
+                  type="text" 
+                  class="field-input" 
+                  placeholder="e.g. mobileNumber@upi / yourname@okaxis" 
+                  [(ngModel)]="customUpiId" />
+                <span class="input-right-badge">UPI 2.0</span>
+              </div>
+            </div>
+
+            <button type="button" class="btn-pay-action mt-4" [disabled]="!customUpiId" (click)="processPayment('UPI VPA (' + customUpiId + ')')">
+              Verify VPA & Pay ₹{{ totalFare }}
+            </button>
+          </div>
+        </div>
+
+        <!-- ================= PANEL 2: CREDIT / DEBIT CARDS ================= -->
+        <div class="tab-panel" *ngIf="activeTab === 'card'">
+          
+          <!-- LIVE INTERACTIVE CREDIT CARD VISUAL -->
+          <div class="virtual-card-canvas" [ngClass]="cardNetwork">
+            <div class="card-chip-mesh">
+              <div class="chip-graphic"></div>
+              <div class="contactless-icon">))))</div>
+            </div>
+            
+            <div class="virtual-card-number">
+              {{ cardNumber ? cardNumber : '•••• •••• •••• ••••' }}
+            </div>
+
+            <div class="virtual-card-bottom">
+              <div>
+                <span class="v-sub">CARD HOLDER</span>
+                <span class="v-main">{{ cardName ? cardName : 'ADITYA CHAVAN' }}</span>
+              </div>
+              <div class="text-end">
+                <span class="v-sub">EXPIRES</span>
+                <span class="v-main">{{ cardExpiry ? cardExpiry : 'MM/YY' }}</span>
+              </div>
+              <div class="v-network-logo">{{ cardNetwork | uppercase }}</div>
+            </div>
+          </div>
+
+          <!-- CARD INPUT FIELDS -->
+          <div class="card-input-grid mt-4">
+            <div class="modern-field-group">
+              <label class="field-label">CARD NUMBER</label>
+              <input 
+                type="text" 
+                class="field-input" 
+                placeholder="XXXX XXXX XXXX XXXX" 
+                [value]="cardNumber" 
+                (input)="onCardNumberInput($event)" />
+            </div>
+
+            <div class="form-dual-row">
+              <div class="modern-field-group flex-1">
+                <label class="field-label">VALID THRU</label>
+                <input 
+                  type="text" 
+                  class="field-input" 
+                  placeholder="MM/YY" 
+                  [value]="cardExpiry" 
+                  (input)="onExpiryInput($event)" />
+              </div>
+              <div class="modern-field-group flex-1">
+                <label class="field-label">CVV / CVC</label>
+                <input 
+                  type="password" 
+                  class="field-input" 
+                  placeholder="•••" 
+                  [(ngModel)]="cardCvv" 
+                  maxlength="4" />
+              </div>
+            </div>
+
+            <div class="modern-field-group">
+              <label class="field-label">CARDHOLDER NAME</label>
+              <input 
+                type="text" 
+                class="field-input" 
+                [(ngModel)]="cardName" />
+            </div>
+
+            <div class="pci-compliance-banner">
+              🔒 PCI-DSS Certified. Bank-level encryption protects your financial details.
+            </div>
+
+            <button type="button" class="btn-pay-action mt-3" (click)="processPayment(cardNetwork.toUpperCase() + ' Card')">
+              Pay ₹{{ totalFare }} Securely
+            </button>
+          </div>
+        </div>
+
+        <!-- ================= PANEL 3: NET BANKING ================= -->
+        <div class="tab-panel" *ngIf="activeTab === 'netbanking'">
+          <span class="view-instructions">Fast Gateway Routing for High Success Rate:</span>
+
+          <div class="netbanking-grid">
+            <div class="bank-pill-card" [class.selected]="selectedBank === 'SBI'" (click)="selectBank('SBI')">
+              <div class="bank-badge sbi-bg">SBI</div>
+              <span class="bank-title">State Bank of India</span>
+            </div>
+            <div class="bank-pill-card" [class.selected]="selectedBank === 'HDFC'" (click)="selectBank('HDFC')">
+              <div class="bank-badge hdfc-bg">HDFC</div>
+              <span class="bank-title">HDFC Bank</span>
+            </div>
+            <div class="bank-pill-card" [class.selected]="selectedBank === 'ICICI'" (click)="selectBank('ICICI')">
+              <div class="bank-badge icici-bg">ICICI</div>
+              <span class="bank-title">ICICI Bank</span>
+            </div>
+            <div class="bank-pill-card" [class.selected]="selectedBank === 'Axis Bank'" (click)="selectBank('Axis Bank')">
+              <div class="bank-badge axis-bg">AXIS</div>
+              <span class="bank-title">Axis Bank</span>
+            </div>
+          </div>
+
+          <div class="modern-field-group mt-4">
+            <label class="field-label">ALL OTHER INDIAN BANKS</label>
+            <select class="field-input" [(ngModel)]="selectedBank">
+              <option value="Kotak Mahindra">Kotak Mahindra Bank</option>
+              <option value="Punjab National Bank">Punjab National Bank</option>
+              <option value="Bank of Baroda">Bank of Baroda</option>
+              <option value="Canara Bank">Canara Bank</option>
+              <option value="Union Bank of India">Union Bank of India</option>
+              <option value="IndusInd Bank">IndusInd Bank</option>
+              <option value="Yes Bank">Yes Bank</option>
+            </select>
+          </div>
+
+          <button type="button" class="btn-pay-action mt-4" (click)="processPayment('Net Banking (' + selectedBank + ')')">
+            Login via {{ selectedBank }} Gateway
+          </button>
+        </div>
+
+        <!-- ================= PANEL 4: DIGITAL WALLETS ================= -->
+        <div class="tab-panel" *ngIf="activeTab === 'wallet'">
+          <span class="view-instructions">One-Click Wallet Checkout:</span>
+
+          <div class="wallets-deck">
+            <div class="wallet-select-row" [class.selected]="selectedWallet === 'amazon'" (click)="selectWallet('amazon')">
+              <div class="wallet-icon-symbol amazon-sym">a</div>
+              <div class="wallet-meta">
+                <strong>Amazon Pay Balance</strong>
+                <span>Instant 1-Click payment without OTP</span>
+              </div>
+              <div class="radio-dot"></div>
+            </div>
+
+            <div class="wallet-select-row" [class.selected]="selectedWallet === 'paytm'" (click)="selectWallet('paytm')">
+              <div class="wallet-icon-symbol paytm-sym">P</div>
+              <div class="wallet-meta">
+                <strong>Paytm Wallet / Postpaid</strong>
+                <span>Direct wallet deduction & cashback eligible</span>
+              </div>
+              <div class="radio-dot"></div>
+            </div>
+
+            <div class="wallet-select-row" [class.selected]="selectedWallet === 'mobikwik'" (click)="selectWallet('mobikwik')">
+              <div class="wallet-icon-symbol mobikwik-sym">M</div>
+              <div class="wallet-meta">
+                <strong>MobiKwik ZIP</strong>
+                <span>Pay Later or Wallet deduction</span>
+              </div>
+              <div class="radio-dot"></div>
+            </div>
+          </div>
+
+          <button type="button" class="btn-pay-action mt-4" (click)="processPayment('Wallet (' + selectedWallet.toUpperCase() + ')')">
+            Pay ₹{{ totalFare }} via {{ selectedWallet | uppercase }}
+          </button>
+        </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN: MODERN BOOKING SUMMARY TICKET -->
+      <div class="summary-desk-card">
+        <div class="summary-top-tag">
+          <span class="tag-live">LIVE TICKET RESERVATION</span>
+        </div>
+
+        <div class="trip-route-header">
+          <div class="from-to-title">{{ fromCity }} ➔ {{ toCity }}</div>
+          <div class="bus-subname">{{ busName }} • {{ busType }}</div>
+        </div>
+
+        <div class="trip-timeline-box">
+          <div class="point-item">
+            <div class="dot-indicator"></div>
+            <div class="point-data">
+              <span class="p-time">{{ depTime }}</span>
+              <span class="p-city">{{ fromCity }}</span>
+              <span class="p-address">{{ pickupPoint }}</span>
+            </div>
+          </div>
+          <div class="vertical-dash-line"></div>
+          <div class="point-item">
+            <div class="dot-indicator red-dot"></div>
+            <div class="point-data">
+              <span class="p-time">{{ arrTime }}</span>
+              <span class="p-city">{{ toCity }}</span>
+              <span class="p-address">{{ dropPoint }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="perforated-ticket-line"></div>
+
+        <div class="fare-spec-list">
+          <div class="fare-row">
+            <span>Date of Journey</span>
+            <strong>{{ journeyDate }}</strong>
+          </div>
+          <div class="fare-row">
+            <span>Seats Reserved</span>
+            <strong class="text-accent">{{ selectedSeats }}</strong>
+          </div>
+          <div class="fare-row">
+            <span>Base Fare</span>
+            <span>₹{{ totalFare }}</span>
+          </div>
+          <div class="fare-row">
+            <span>Convenience Fee</span>
+            <span class="free-text">FREE</span>
+          </div>
+        </div>
+
+        <div class="grand-total-box">
+          <div>
+            <span class="total-label">Final Payable</span>
+            <span class="inclusive-text">Inclusive of GST</span>
+          </div>
+          <div class="grand-price">₹{{ totalFare }}</div>
+        </div>
+
+        <div class="guarantee-shield">
+          <span class="shield-icon">🛡️</span>
+          <span>100% Refundable according to standard bus operator policies</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
 </div>

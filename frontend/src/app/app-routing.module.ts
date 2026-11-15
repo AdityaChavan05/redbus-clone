@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-
 import { LandingPageComponent } from './Component/landing-page/landing-page.component';
 import { SelectbusPageComponent } from './Component/selectbus-page/selectbus-page.component';
 import { PaymentPageComponent } from './Component/payment-page/payment-page.component';

@@ -1,85 +1,501 @@
-<div class="bus-box">
-    <div class="busBoxSection1">
-        <div class="busBoxSection11">
-            <div>{{operatorname}}</div>
-            <div>{{bustypename}}</div>
-        </div>
-        <div class="busBoxSection12">
-            <div>
-                {{busdeparturetime}}:00
-            </div>
-            <div>{{routedetails.departureLocation.name}}</div>
-        </div>
-        <div class="busBoxSection13">
-            <div>
-                {{routedetails.duration}} &nbsp;h
-            </div>
-        </div>
-        <div class="busBoxSection14">
-            <div>
-                {{busarrivaltime}}:00
-            </div>
-            <div>
-                {{routedetails.arrivalLocation.name}}
-            </div>
-        </div>
-        <div class="busBoxSection15">
-            <div>
-                <i class="material-icons">star</i>
-                <div>{{avgrating}}</div>
-            </div>
-            <div><i class="material-icons">people</i>
-                <div>{{totalreview}}</div>
-            </div>
-        </div>
-        <div class="busBoxSection16">
-            <div>
-                <div>INR</div>
-                <div>{{seatprivce}}</div>
-            </div>
-            <div><i class="material-icons">local_offer</i>
-                <div>reDeal applied</div>
-            </div>
-        </div>
-        <div class="busBoxSection17">
-            <div></div>
-            <div>
-                <div>{{40 -filledseats.length}}</div>
-                <div>Seats Available</div>
-            </div>
-            <div>20</div>
-            <div>Window</div>
-        </div>
+<div class="bus-box-card" [class.vrl-flagship]="isVrlVolvo9600()" [class.ksrtc-card]="!isVrlVolvo9600()">
+
+  <!-- 1. TOP MAIN SUMMARY BAR -->
+  <div class="bus-card-main">
+    <div class="col-operator">
+      <div class="operator-head">
+        <h3 class="bus-name">{{ operatorname }}</h3>
+        <span class="primo-badge" *ngIf="isVolvo9600()">Primo</span>
+        <span class="flagship-badge" *ngIf="!isSeaterBus() && isVolvo9600()">⭐ 42 SLEEPER (15m)</span>
+        <span class="flagship-badge ksrtc-badge" *ngIf="isSeaterBus()">💺 51 SEMI-SLEEPER SEATER</span>
+        <span class="flagship-badge standard-badge" *ngIf="!isSeaterBus() && !isVolvo9600()">🚌 36 SLEEPER (12m)</span>
+      </div>
+      <p class="bus-type">{{ bustypename }}</p>
+      
+      <div class="meta-pills-row">
+        <span class="rating-pill">★ {{ avgrating }}</span>
+        <span class="reviews-count">{{ totalreview }} ratings</span>
+        <span class="surge-badge" [title]="surgeExplanation">{{ surgeMultiplierTag }}</span>
+        <span class="live-tag" *ngIf="livetracking === 1">📍 Live Tracking</span>
+      </div>
     </div>
-    <div class="busBoxSection2">
-        <div class="busBoxSection21">
-            <span matTooltip="Charging Point">
-                <i class="material-icons">power</i>
-            </span>
-            <span matTooltip="Movie">
-                <i class="material-icons">movie_filter</i>
-            </span>
-            <span matTooltip="Reading Light">
-                <i class="material-icons">wb_incandescent</i>
-            </span>
-            <span matTooltip="Track My Bus">
-                <i class="material-icons">directions_bus</i>
-            </span>
+
+    <!-- TIMINGS IN 12-HOUR FORMAT -->
+    <div class="col-timings">
+      <div class="time-block">
+        <strong class="time-txt">{{ format12HrTime(busdeparturetime) }}</strong>
+        <span class="city-txt">{{ routedetails?.departureLocation?.name || 'Bengaluru' }}</span>
+      </div>
+
+      <div class="duration-block">
+        <span class="dur-txt">{{ routedetails?.duration || '13h 30m' }}</span>
+        <div class="route-line-graphic">
+          <span class="route-dot start-dot"></span>
+          <span class="line-bar"></span>
+          <span class="bus-icon">{{ isSeaterBus() ? '🚎' : '🚌' }}</span>
+          <span class="line-bar"></span>
+          <span class="route-dot end-dot"></span>
         </div>
-        <div class="busBoxSection22">
-            <div *ngIf="livetracking ===1">
-                <i class="material-icons">gps_fixed</i>
-                <span>Live Tracking</span>
+      </div>
+
+      <div class="time-block">
+        <strong class="time-txt">{{ format12HrTime(busarrivaltime) }}</strong>
+        <span class="city-txt">{{ routedetails?.arrivalLocation?.name || 'Mumbai' }}</span>
+      </div>
+    </div>
+
+    <div class="col-pricing">
+      <span class="fare-sub">Starts at</span>
+      <div class="fare-main">₹{{ currentDynamicFare }}</div>
+      <span class="seats-left-txt">{{ getTotalBerthsCount() - (filledseats ? filledseats.length : 12) }} Seats Left</span>
+
+      <button type="button" class="btn-select-seats" (click)="toggleSeatDrawer()">
+        {{ isExpanded ? 'Hide Seats ▲' : 'View Seats ▼' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- 2. FULL HALF-SCREEN SPLIT DRAWER -->
+  <div class="rb-expanded-stage" *ngIf="isExpanded">
+    
+    <!-- TOP WIZARD STEPS NAV -->
+    <div class="rb-wizard-nav">
+      <button type="button" class="wizard-step-btn active">
+        <span>Select {{ isSeaterBus() ? 'Seats' : 'Seats/Berths' }}</span>
+        <div class="active-underline"></div>
+      </button>
+      <button type="button" class="wizard-step-btn" (click)="setRightTab('boarding')">
+        <span>Board/Drop point</span>
+      </button>
+      <button type="button" class="wizard-step-btn" (click)="setRightTab('cancellation')">
+        <span>Cancellation Policy</span>
+      </button>
+    </div>
+
+    <!-- 50% / 50% SPLIT ARENA -->
+    <div class="rb-half-screen-grid">
+      
+      <!-- ================= LEFT HALF: SEATING/BERTH CHASSIS ================= -->
+      <section class="left-half-chassis-stage">
+        
+        <!-- CASE A: 51 SEMI-SLEEPER SEATER LAYOUT (FOR KSRTC AIRAVAT 2.0) -->
+        <div class="seater-bus-container" *ngIf="isSeaterBus()">
+          <div class="deck-title-badge">Airavat 2.0 Semi-Sleeper Deck (51 Seats)</div>
+
+          <div class="vertical-seater-body">
+            <!-- Front Driver Console Indicator -->
+            <div class="driver-steering-bar">
+              <span class="steering-symbol">🛞</span>
+              <span class="front-label">Driver Cabin / Entry Gate</span>
             </div>
-            <div *ngIf="reschedulable === 1">
-                <i class="material-icons">restore</i>
-                <span>Reschedulable</span>
+
+            <!-- 2+2 SEAT ROWS STACK (13 ROWS TOTAL = 51 SEATS) -->
+            <div class="seater-rows-stack">
+              <div *ngFor="let row of seaterRows; let rIdx = index" class="seater-row-unit" [class.last-row]="rIdx === seaterRows.length - 1">
+                
+                <!-- Left Pair: Window & Aisle -->
+                <div class="seat-pair left-pair">
+                  <div 
+                    class="rb-seat-pod"
+                    [class.booked]="row.leftWindow?.isBooked"
+                    [class.selected]="row.leftWindow?.isSelected"
+                    (click)="row.leftWindow && toggleSeat(row.leftWindow)">
+                    <div class="seat-headrest"></div>
+                    <div class="seat-armrest left-arm"></div>
+                    <div class="seat-cushion-base">
+                      <span class="seat-code">{{ row.leftWindow?.label }}</span>
+                    </div>
+                    <div class="seat-armrest right-arm"></div>
+                  </div>
+
+                  <div 
+                    class="rb-seat-pod"
+                    [class.booked]="row.leftAisle?.isBooked"
+                    [class.selected]="row.leftAisle?.isSelected"
+                    (click)="row.leftAisle && toggleSeat(row.leftAisle)">
+                    <div class="seat-headrest"></div>
+                    <div class="seat-armrest left-arm"></div>
+                    <div class="seat-cushion-base">
+                      <span class="seat-code">{{ row.leftAisle?.label }}</span>
+                    </div>
+                    <div class="seat-armrest right-arm"></div>
+                  </div>
+                </div>
+
+                <!-- Center Gangway Walkway (or 5th middle seat on last row) -->
+                <div class="seater-aisle-path" *ngIf="!row.middleBack">
+                  <span class="aisle-arrow">↓</span>
+                </div>
+
+                <div 
+                  class="rb-seat-pod middle-back-seat"
+                  *ngIf="row.middleBack"
+                  [class.booked]="row.middleBack.isBooked"
+                  [class.selected]="row.middleBack.isSelected"
+                  (click)="row.middleBack && toggleSeat(row.middleBack)">
+                  <div class="seat-headrest"></div>
+                  <div class="seat-cushion-base">
+                    <span class="seat-code">{{ row.middleBack.label }}</span>
+                  </div>
+                </div>
+
+                <!-- Right Pair: Aisle & Window -->
+                <div class="seat-pair right-pair">
+                  <div 
+                    class="rb-seat-pod"
+                    [class.booked]="row.rightAisle?.isBooked"
+                    [class.selected]="row.rightAisle?.isSelected"
+                    (click)="row.rightAisle && toggleSeat(row.rightAisle)">
+                    <div class="seat-headrest"></div>
+                    <div class="seat-armrest left-arm"></div>
+                    <div class="seat-cushion-base">
+                      <span class="seat-code">{{ row.rightAisle?.label }}</span>
+                    </div>
+                    <div class="seat-armrest right-arm"></div>
+                  </div>
+
+                  <div 
+                    class="rb-seat-pod"
+                    [class.booked]="row.rightWindow?.isBooked"
+                    [class.selected]="row.rightWindow?.isSelected"
+                    (click)="row.rightWindow && toggleSeat(row.rightWindow)">
+                    <div class="seat-headrest"></div>
+                    <div class="seat-armrest left-arm"></div>
+                    <div class="seat-cushion-base">
+                      <span class="seat-code">{{ row.rightWindow?.label }}</span>
+                    </div>
+                    <div class="seat-armrest right-arm"></div>
+                  </div>
+                </div>
+
+              </div>
             </div>
+
+            <div class="rear-emergency-exit">
+              <span>🚨 Rear Emergency Door</span>
+            </div>
+          </div>
         </div>
+
+        <!-- CASE B: SLEEPER DECKS LAYOUT (FOR SLEEPER BUSES) -->
+        <div class="vertical-decks-arena" *ngIf="!isSeaterBus()">
+          
+          <!-- LOWER DECK -->
+          <div class="deck-column">
+            <div class="deck-title-badge">Lower Deck ({{ getDeckBerthsCount() }})</div>
+            
+            <div class="vertical-bus-body">
+              <div class="cabin-indicator">Driver Cabin / Front</div>
+
+              <div class="deck-rows-stack">
+                <div *ngFor="let r of lowerDeckRows" class="v-berth-row">
+                  <div 
+                    class="rb-berth-pod"
+                    [class.booked]="r.single.isBooked"
+                    [class.selected]="r.single.isSelected"
+                    (click)="toggleSeat(r.single)">
+                    <div class="berth-pillow"></div>
+                    <span class="berth-state-lbl">{{ r.single.isBooked ? 'Sold' : '₹' + r.single.price }}</span>
+                  </div>
+
+                  <div class="v-aisle-gap"></div>
+
+                  <div class="v-double-pair">
+                    <div 
+                      class="rb-berth-pod"
+                      [class.booked]="r.doubleLeft.isBooked"
+                      [class.selected]="r.doubleLeft.isSelected"
+                      (click)="toggleSeat(r.doubleLeft)">
+                      <div class="berth-pillow"></div>
+                      <span class="berth-state-lbl">{{ r.doubleLeft.isBooked ? 'Sold' : '₹' + r.doubleLeft.price }}</span>
+                    </div>
+
+                    <div 
+                      class="rb-berth-pod"
+                      [class.booked]="r.doubleRight.isBooked"
+                      [class.selected]="r.doubleRight.isSelected"
+                      (click)="toggleSeat(r.doubleRight)">
+                      <div class="berth-pillow"></div>
+                      <span class="berth-state-lbl">{{ r.doubleRight.isBooked ? 'Sold' : '₹' + r.doubleRight.price }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="emergency-exit-tag">
+                <span class="arrow-down">▼</span> Emergency Exit
+              </div>
+            </div>
+          </div>
+
+          <!-- UPPER DECK -->
+          <div class="deck-column">
+            <div class="deck-title-badge">Upper Deck ({{ getDeckBerthsCount() }})</div>
+            
+            <div class="vertical-bus-body">
+              <div class="cabin-indicator">Upper Cabin Space</div>
+
+              <div class="deck-rows-stack">
+                <div *ngFor="let r of upperDeckRows" class="v-berth-row">
+                  <div 
+                    class="rb-berth-pod"
+                    [class.booked]="r.single.isBooked"
+                    [class.selected]="r.single.isSelected"
+                    (click)="toggleSeat(r.single)">
+                    <div class="berth-pillow"></div>
+                    <span class="berth-state-lbl">{{ r.single.isBooked ? 'Sold' : '₹' + r.single.price }}</span>
+                  </div>
+
+                  <div class="v-aisle-gap"></div>
+
+                  <div class="v-double-pair">
+                    <div 
+                      class="rb-berth-pod"
+                      [class.booked]="r.doubleLeft.isBooked"
+                      [class.selected]="r.doubleLeft.isSelected"
+                      (click)="toggleSeat(r.doubleLeft)">
+                      <div class="berth-pillow"></div>
+                      <span class="berth-state-lbl">{{ r.doubleLeft.isBooked ? 'Sold' : '₹' + r.doubleLeft.price }}</span>
+                    </div>
+
+                    <div 
+                      class="rb-berth-pod"
+                      [class.booked]="r.doubleRight.isBooked"
+                      [class.selected]="r.doubleRight.isSelected"
+                      (click)="toggleSeat(r.doubleRight)">
+                      <div class="berth-pillow"></div>
+                      <span class="berth-state-lbl">{{ r.doubleRight.isBooked ? 'Sold' : '₹' + r.doubleRight.price }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="emergency-exit-tag">
+                <span class="arrow-down">▼</span> Upper Safety Window
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- SEAT LEGEND ROW -->
+        <div class="rb-seat-legend">
+          <span class="legend-unit"><span class="swatch-box available"></span> Available</span>
+          <span class="legend-unit"><span class="swatch-box selected"></span> Selected</span>
+          <span class="legend-unit"><span class="swatch-box sold"></span> Sold</span>
+        </div>
+
+      </section>
+
+      <!-- ================= RIGHT HALF: OPERATOR FEATURES & CAROUSEL ================= -->
+      <section class="right-half-info-stage">
+        
+        <!-- OPERATOR CARD HEADER -->
+        <div class="rb-operator-detail-head">
+          <div class="head-left">
+            <span class="primo-crown">Primo ⭐</span>
+            <h3 class="head-op-name">{{ operatorname }}</h3>
+            <p class="head-op-sub">{{ format12HrTime(busdeparturetime) }} - {{ format12HrTime(busarrivaltime) }} • Sat 07 Nov</p>
+            <span class="head-op-type">{{ bustypename }}</span>
+          </div>
+
+          <div class="head-right-rating">
+            <div class="green-rating-chip">★ {{ avgrating }}</div>
+            <span class="rating-sub-count">{{ totalreview }}</span>
+          </div>
+        </div>
+
+        <!-- HORIZONTAL BUS PHOTO CAROUSEL (USES DYNAMIC CARD PHOTOS) -->
+        <div class="rb-photos-carousel-wrapper">
+          <button type="button" class="carousel-arrow prev" (click)="slideCarousel('left')">❮</button>
+          
+          <div class="carousel-track">
+            <div 
+              *ngFor="let photo of galleryPhotos; let idx = index" 
+              class="carousel-card" 
+              [class.active]="idx === selectedPhotoIndex"
+              (click)="setPhoto(idx)">
+              <img 
+                [src]="photo.url" 
+                [alt]="photo.title" 
+                class="carousel-img" />
+              <span class="card-caption">{{ photo.category }}</span>
+            </div>
+          </div>
+
+          <button type="button" class="carousel-arrow next" (click)="slideCarousel('right')">❯</button>
+        </div>
+
+        <!-- ACTIVE ENLARGED PHOTO DISPLAY -->
+        <div class="active-photo-showcase" *ngIf="galleryPhotos.length > 0">
+          <div class="showcase-img-box">
+            <img 
+              [src]="galleryPhotos[selectedPhotoIndex].url" 
+              [alt]="galleryPhotos[selectedPhotoIndex].title" 
+              class="showcase-hero-img" />
+            <div class="showcase-overlay">
+              <span class="showcase-category">{{ galleryPhotos[selectedPhotoIndex].category }}</span>
+              <strong class="showcase-title">{{ galleryPhotos[selectedPhotoIndex].title }}</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- FULL-WIDTH SCROLLABLE SUB-TABS -->
+        <div class="rb-subtabs-scroll-wrap">
+          <div class="rb-subtabs-bar">
+            <button type="button" class="subtab-item" [class.active]="activeRightTab === 'highlights'" (click)="setRightTab('highlights')">
+              Highlights
+            </button>
+            <button type="button" class="subtab-item" [class.active]="activeRightTab === 'cancellation'" (click)="setRightTab('cancellation')">
+              Cancellation policy
+            </button>
+            <button type="button" class="subtab-item" [class.active]="activeRightTab === 'amenities'" (click)="setRightTab('amenities')">
+              Amenities
+            </button>
+            <button type="button" class="subtab-item" [class.active]="activeRightTab === 'boarding'" (click)="setRightTab('boarding')">
+              Boarding point
+            </button>
+            <button type="button" class="subtab-item" [class.active]="activeRightTab === 'dropping'" (click)="setRightTab('dropping')">
+              Dropping point
+            </button>
+            <button type="button" class="subtab-item" [class.active]="activeRightTab === 'reviews'" (click)="setRightTab('reviews')">
+              Reviews
+            </button>
+          </div>
+        </div>
+
+        <!-- SUB-TAB CONTENT PANES -->
+        <div class="rb-subtab-container">
+          
+          <!-- TAB 1: HIGHLIGHTS -->
+          <div *ngIf="activeRightTab === 'highlights'" class="highlights-pane">
+            <div class="badges-row">
+              <div class="trust-badge-card">
+                <strong class="badge-headline">8.8/10 on seating comfort</strong>
+                <span class="badge-footnote">Based on verified passenger reviews</span>
+              </div>
+              <div class="trust-badge-card">
+                <strong class="badge-headline">Top Rated by Commuters</strong>
+                <span class="badge-footnote">Punctual departures and air suspension</span>
+              </div>
+            </div>
+
+            <div class="quick-amenities-strip mt-3">
+              <span *ngFor="let am of vrlAmenities.slice(0, 4)" class="quick-am-tag">
+                {{ am.icon }} {{ am.name }}
+              </span>
+            </div>
+          </div>
+
+          <!-- TAB 2: CANCELLATION POLICY -->
+          <div *ngIf="activeRightTab === 'cancellation'" class="guidelines-pane">
+            <table class="rb-cancellation-mini-table">
+              <thead>
+                <tr>
+                  <th>Cancellation Time Window</th>
+                  <th>Deduction Fee</th>
+                  <th>Estimated Refund</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let tier of cancellationPolicy">
+                  <td>{{ tier.timeWindow }}</td>
+                  <td class="text-danger">{{ tier.deductionPercentage }}</td>
+                  <td class="text-success">{{ tier.refundAmountApprox }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- TAB 3: AMENITIES -->
+          <div *ngIf="activeRightTab === 'amenities'" class="amenities-pane">
+            <div class="amenities-grid-two">
+              <div *ngFor="let a of vrlAmenities" class="am-item-card">
+                <span class="am-icon">{{ a.icon }}</span>
+                <div class="am-text">
+                  <strong class="am-name">{{ a.name }}</strong>
+                  <p class="am-desc">{{ a.desc }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 4: BOARDING POINTS -->
+          <div *ngIf="activeRightTab === 'boarding'" class="boarding-pane">
+            <div class="boarding-points-flow">
+              <div *ngFor="let bp of officialBoardingPoints" class="rb-point-row">
+                <span class="pt-time">{{ format12HrTime(bp.time) }}</span>
+                <div class="pt-details">
+                  <strong class="pt-title">{{ bp.location }}</strong>
+                  <span class="pt-desc">Landmark: {{ bp.landmark }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 5: DROPPING POINTS -->
+          <div *ngIf="activeRightTab === 'dropping'" class="dropping-pane">
+            <div class="boarding-points-flow">
+              <div *ngFor="let dp of officialDroppingPoints" class="rb-point-row">
+                <span class="pt-time red-text">{{ format12HrTime(dp.time) }}</span>
+                <div class="pt-details">
+                  <strong class="pt-title">{{ dp.location }}</strong>
+                  <span class="pt-desc">Landmark: {{ dp.landmark }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 6: REVIEWS -->
+          <div *ngIf="activeRightTab === 'reviews'" class="reviews-pane">
+            <div *ngFor="let rev of busReviews" class="review-box">
+              <div class="rev-header">
+                <strong>{{ rev.reviewer }}</strong>
+                <span class="rev-stars">★ {{ rev.rating }}.0 • {{ rev.date }}</span>
+              </div>
+              <p class="rev-body">"{{ rev.comment }}"</p>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
     </div>
-    <div class="busBoxSection3">
-        <app-bottom-tab [busid]='busid' [filledseats]="filledseats" [seatprice]="seatprivce" [routedetials]="routedetails"
-            [busarrivaltime]="busarrivaltime" [busdeparturetime]="busdeparturetime"
-            [operatorname]="operatorname"></app-bottom-tab>
+
+    <!-- 3. DOWN SIDE STICKY FLOATING CHECKOUT BAR -->
+    <div class="rb-floating-dock-bar">
+      <div class="dock-left-recap">
+        <div class="dock-bus-title">{{ operatorname }} ({{ bustypename }})</div>
+        <div class="dock-seat-tags">
+          <span>Selected Seats:</span>
+          <strong>{{ getSelectedBerthLabels() }}</strong>
+        </div>
+      </div>
+
+      <div class="bus-box-card" 
+     [class.vrl-flagship]="isVrlVolvo9600()" 
+     [class.ksrtc-card]="isSeaterBus()"
+     [class.intrcity-card]="operatorname.toLowerCase().includes('intrcity')">
+        <div class="dock-left-recap">
+          <div class="dock-bus-title">{{ operatorname }} ({{ bustypename }})</div>
+          <div class="dock-seat-tags">
+            <span>Selected Seats:</span>
+            <strong>{{ getSelectedBerthLabels() }}</strong>
+          </div>
+        </div>
+      <div class="dock-right-action">
+        <div class="dock-price-block">
+          <span class="price-kicker">Total Amount</span>
+          <div class="price-val">₹{{ getTotalPrice() }}</div>
+        </div>
+
+        <button type="button" class="btn-proceed-red" (click)="proceedToBook()">
+          Proceed to Payment ➔
+        </button>
+      </div>
     </div>
+
+  </div>
+
 </div>

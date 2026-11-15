@@ -1,27 +1,135 @@
-.left{
-    padding: 15px;
-}
-.left ul{
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-.left_filters{
-    margin-bottom: 25px;
-}
-.left ul li{
-    border-bottom: 2px solid white;
-    padding :15px 0px;
-    cursor: pointer;
+:host {
+  display: block;
 }
 
-.left li i{
-    margin-right: 10px;
+.filters-card {
+  background: var(--rb-card-bg);
+  border: 1.5px solid var(--rb-border);
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
 }
 
-.first-section{
-    display: flex;
-    justify-content: flex-start;
-    column-gap: 10px;
-    align-items: center;
+.filter-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.filter-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--rb-text-main);
+  margin: 0;
+}
+
+.clear-all-link {
+  background: none;
+  border: none;
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #dc2626;
+  cursor: pointer;
+}
+
+.smart-search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--rb-card-inner);
+  border: 1px solid var(--rb-border-subtle);
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-bottom: 14px;
+}
+
+.sparkle {
+  color: #6366f1;
+  font-size: 0.85rem;
+}
+
+.mic-ico {
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.smart-input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 0.75rem;
+  width: 100%;
+  color: var(--rb-text-main);
+}
+
+.filter-pill-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.feature-pill-btn {
+  background: var(--rb-card-bg);
+  border: 1px solid var(--rb-border-subtle);
+  border-radius: 20px;
+  padding: 7px 12px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--rb-text-main);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.15s ease;
+}
+
+.feature-pill-btn.red-highlight {
+  border-color: #f87171;
+  color: #dc2626;
+}
+
+.feature-pill-btn.red-highlight.active {
+  background: #fef2f2;
+  border-color: #d84e55;
+  color: #d84e55;
+  font-weight: 900;
+}
+
+.filter-divider {
+  border: none;
+  border-top: 1px solid var(--rb-border);
+  margin: 14px 0;
+}
+
+.filter-group-lbl {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 900;
+  color: var(--rb-text-muted);
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+}
+
+.filter-checkbox-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.custom-chk-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--rb-text-main);
+  cursor: pointer;
+}
+
+.custom-chk-row input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #d84e55;
+  cursor: pointer;
 }

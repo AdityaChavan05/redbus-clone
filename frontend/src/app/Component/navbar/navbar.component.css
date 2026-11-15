@@ -1,115 +1,165 @@
 .navbar-wrapper {
   background: var(--bg-surface);
-  border-bottom: 1px solid var(--border-color);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  border-bottom: 1.5px solid var(--border-color);
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 9999;
+  box-shadow: var(--shadow-sm);
 }
 
-.navbar-container {
-  max-width: 1220px;
+.nav-container {
+  max-width: 1240px;
   margin: 0 auto;
-  padding: 12px 20px;
+  padding: 0 16px;
+  height: 68px;
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: center;
 }
 
-.nav-brand-group {
+.brand-link {
   display: flex;
   align-items: center;
-  gap: 28px;
-}
-
-.nav-brand {
-  font-size: 24px;
-  font-weight: 800;
-  color: var(--accent-red);
+  gap: 3px;
   text-decoration: none;
+  font-size: 1.6rem;
+  font-weight: 900;
   letter-spacing: -0.5px;
 }
 
-.nav-links {
+.brand-red-txt { color: var(--brand-red); }
+.brand-dark-txt { color: var(--text-main); }
+
+.badge-pro {
+  background: var(--brand-accent);
+  color: #ffffff;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 6px;
+}
+
+.nav-menu {
   display: flex;
-  gap: 16px;
+  gap: 10px;
 }
 
 .nav-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  border-radius: 10px;
   text-decoration: none;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  padding: 6px 12px;
-  border-radius: 6px;
+  color: var(--text-muted);
+  font-weight: 700;
+  font-size: 0.9rem;
   transition: all 0.15s ease;
 }
 
-.nav-item:hover, .nav-item.active {
-  color: var(--accent-red);
-  background: var(--pill-bg);
+.nav-item:hover {
+  background: var(--bg-subtle);
+  color: var(--text-main);
 }
 
-.nav-controls-group {
+.nav-item.active {
+  background: var(--brand-red-soft);
+  color: var(--brand-red);
+}
+
+.nav-actions {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-.lang-selector select {
-  background: var(--bg-surface);
-  color: var(--text-primary);
+.lang-selector-box {
+  display: flex;
+  align-items: center;
+  background: var(--bg-subtle);
   border: 1px solid var(--border-color);
-  border-radius: 6px;
-  padding: 6px 10px;
-  font-size: 12px;
-  font-weight: 600;
+  border-radius: 8px;
+  padding: 4px 8px;
+}
+
+.globe-icon { font-size: 1rem; margin-right: 4px; }
+
+.lang-select {
+  border: none;
+  background: transparent;
+  color: var(--text-main);
+  font-weight: 700;
+  font-size: 0.85rem;
   outline: none;
   cursor: pointer;
 }
 
-.btn-theme-toggle {
-  background: var(--pill-bg);
-  color: var(--text-primary);
+.theme-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-subtle);
   border: 1px solid var(--border-color);
-  border-radius: 6px;
-  padding: 6px 12px;
-  font-size: 12px;
-  font-weight: 700;
+  padding: 7px 12px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: all 0.15s ease;
+  color: var(--text-main);
+  font-weight: 700;
+  font-size: 0.82rem;
 }
 
-.btn-theme-toggle:hover {
-  border-color: var(--accent-red);
+.theme-toggle-btn:hover {
+  border-color: var(--brand-red);
 }
 
-.notif-bell {
+.notif-btn {
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 7px 10px;
   text-decoration: none;
-  font-size: 16px;
-  padding: 6px;
-  color: var(--text-primary);
+  font-size: 1rem;
 }
 
 .notif-badge {
   position: absolute;
-  top: 0;
-  right: 0;
-  background: var(--accent-red);
+  top: -5px;
+  right: -5px;
+  background: var(--brand-red);
   color: #ffffff;
-  font-size: 10px;
-  font-weight: 800;
-  border-radius: 9999px;
-  padding: 2px 5px;
+  font-size: 0.68rem;
+  font-weight: 900;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.nav-account {
+.account-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--brand-red);
+  color: #ffffff;
+  padding: 8px 14px;
+  border-radius: 8px;
   text-decoration: none;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text-primary);
-  padding: 6px 12px;
-  border-radius: 6px;
-  border: 1px solid var(--border-color);
+  font-weight: 800;
+  font-size: 0.85rem;
+  box-shadow: 0 4px 10px rgba(216, 78, 85, 0.25);
+}
+
+.account-btn:hover {
+  background: var(--brand-red-dark);
+}
+
+@media (max-width: 991px) {
+  .nav-menu { display: none; }
 }

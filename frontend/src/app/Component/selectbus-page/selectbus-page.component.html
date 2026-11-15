@@ -1,290 +1,1514 @@
-<div class="rb-viewport">
-  <!-- Top Route Sub-Navigation Bar -->
-  <header class="rb-subnav">
-    <div class="subnav-container">
-      <div class="route-badge-cluster">
-        <span class="city-name">{{ departure }}</span>
-        <span class="route-arrow">➔</span>
-        <span class="city-name">{{ arrival }}</span>
-        <span class="travel-date">{{ journeyDate }}</span>
+<div class="selectbus-page-wrapper" [class.dark-theme]="isDarkMode">
+
+  <!-- ================= TOP SEARCH BAR ================= -->
+  <header class="search-strip-container">
+    <div class="search-strip-card">
+      <div class="route-quick-info">
+        <div class="route-title-line">
+          <span class="back-arrow">←</span>
+          <h2 class="route-header-title">{{ fromCity }} → {{ toCity }}</h2>
+        </div>
+        <span class="route-buses-count">{{ busesList.length }} {{ t('buses_label') }}</span>
       </div>
-      <div class="subnav-actions">
-        <button type="button" class="btn-modify-route" (click)="swapLocations()">
-          <span class="swap-icon">⇄</span> Modify Search
-        </button>
+
+      <div class="search-slot">
+        <span class="slot-lbl">{{ t('lbl_from') }}</span>
+        <div class="slot-val-row">
+          <span class="slot-ico">🚌</span>
+          <input type="text" [(ngModel)]="fromCity" (change)="updateCityContext()" class="pill-input" />
+        </div>
       </div>
+
+      <button type="button" class="btn-swap-cities" (click)="swapCities()">⇄</button>
+
+      <div class="search-slot">
+        <span class="slot-lbl">{{ t('lbl_to') }}</span>
+        <div class="slot-val-row">
+          <span class="slot-ico">🚏</span>
+          <input type="text" [(ngModel)]="toCity" (change)="updateCityContext()" class="pill-input" />
+        </div>
+      </div>
+
+      <div class="search-slot">
+        <span class="slot-lbl">{{ t('lbl_date') }}</span>
+        <div class="slot-val-row">
+          <span class="slot-ico">📅</span>
+          <input type="text" [(ngModel)]="journeyDate" class="pill-input" />
+        </div>
+      </div>
+
+      <div class="quick-date-buttons">
+        <button type="button" class="btn-pill-date" (click)="journeyDate = '14 Nov, 2026'; updateCityContext()">{{ t('chip_today') }}</button>
+        <button type="button" class="btn-pill-date" (click)="journeyDate = '15 Nov, 2026'; updateCityContext()">{{ t('chip_tomorrow') }}</button>
+      </div>
+
+      <button type="button" class="btn-search-icon-red" (click)="updateCityContext()">🔍</button>
     </div>
   </header>
 
-  <main class="rb-main-layout">
-    <!-- Filter Bar -->
-    <section class="rb-pill-filter-bar">
-      <span class="filter-headline">FILTER BY:</span>
-      <div class="pill-scroll-tray">
-        <button type="button" class="filter-pill" [class.active]="activeFilter === 'all'" (click)="setFilter('all')">
-          All Buses
-        </button>
-        <button type="button" class="filter-pill" [class.active]="activeFilter === 'primo'" (click)="setFilter('primo')">
-          <span class="pill-icon">★</span> Primo Certified
-        </button>
-        <button type="button" class="filter-pill" [class.active]="activeFilter === 'ac'" (click)="setFilter('ac')">
-          AC
-        </button>
-        <button type="button" class="filter-pill" [class.active]="activeFilter === 'sleeper'" (click)="setFilter('sleeper')">
-          Sleeper
-        </button>
-        <button type="button" class="filter-pill" [class.active]="activeFilter === 'seater'" (click)="setFilter('seater')">
-          Seater
-        </button>
-      </div>
-      <span class="results-tally">{{ filteredBuses.length }} Buses Available</span>
-    </section>
+  <!-- ================= MAIN ARENA ================= -->
+  <div class="selectbus-content-arena">
+    <div class="arena-grid">
 
-    <!-- Bus Listings Section -->
-    <section class="rb-card-feed">
-      <article *ngFor="let bus of filteredBuses" class="rb-bus-ticket-card">
-        
-        <!-- Primary Ticket Summary Row -->
-        <div class="ticket-header-row">
-          
-          <!-- Column 1: Operator Identity & Features -->
-          <div class="col-brand">
-            <h3 class="travels-title">{{ bus.operatorname }}</h3>
-            <span class="coach-type-lbl">{{ bus.bustype }}</span>
-            <div class="feature-badges">
-              <span *ngIf="bus.isPrimo" class="badge-primo">★ PRIMO</span>
-              <span *ngIf="bus.isFreeCancel" class="badge-free-cancel">Free Cancellation</span>
-              <span class="badge-layout-tag">2+1 Sleeper</span>
+      <!-- LEFT FILTER SIDEBAR -->
+      <aside class="filters-sidebar">
+        <app-left></app-left>
+      </aside>
+
+      <!-- RIGHT RESULTS COLUMN -->
+      <main class="results-main-col">
+
+        <!-- SPECIAL HIGHLIGHT BANNER: BOOKING FOR WOMEN FEATURE (FIRST PAGE) -->
+        <div class="women-booking-hero-banner" [class.active-mode]="isWomenBookingMode">
+          <div class="wb-left">
+            <div class="wb-avatar-badge">👩</div>
+            <div>
+              <div class="wb-title-row">
+                <strong>Booking for Women</strong>
+                <span class="wb-new-pill">✨ 10% OFF • Code: WOMEN10</span>
+              </div>
+              <p class="wb-desc">
+                Unlock exclusive 10% off on Primo & top-rated operators, view female-reserved seats (👩), and get priority safety support.
+              </p>
             </div>
           </div>
 
-          <!-- Column 2: Departure / Timeline / Arrival -->
-          <div class="col-schedule">
-            <div class="schedule-point">
-              <span class="time-readout">{{ bus.busdeparturetime }}</span>
-              <span class="station-lbl">{{ bus.departure }}</span>
+          <label class="wb-toggle-switch-wrap">
+            <span class="wb-toggle-label">{{ isWomenBookingMode ? 'Women Mode ON' : 'Enable Women Mode' }}</span>
+            <input type="checkbox" [(ngModel)]="isWomenBookingMode" class="wb-checkbox" />
+          </label>
+        </div>
+
+        <!-- TOP PROMO STRIP (WITH OPERATOR PHOTOS & MODERN AESTHETIC CARDS) -->
+        <div class="promo-strip-grid">
+
+          <!-- 1. VRL SuperBus Card with VRL Coach Photo -->
+          <div class="promo-card vrl-gold has-photo">
+            <div class="promo-card-top">
+              <div class="promo-operator-thumb">
+                <img [src]="promoOperatorPhotos['vrl'].url" alt="VRL SuperBus" (error)="handleImageError($event, promoOperatorPhotos['vrl'])" />
+              </div>
+              <span class="promo-luxury-tag">GOLD CLASS</span>
             </div>
-            
-            <div class="schedule-duration-track">
-              <span class="duration-counter">{{ bus.duration }}</span>
-              <div class="track-line">
-                <span class="track-dot start"></span>
-                <span class="track-dot end"></span>
+            <div class="promo-card-body">
+              <div class="promo-brand">VIJAYANAND TRAVELS</div>
+              <div class="promo-title">VRL SuperBus</div>
+              <div class="promo-caption">Volvo 9600 Multi-Axle Luxury Fleet</div>
+            </div>
+          </div>
+
+          <!-- 2. Primo Rising Stars Card with Airavat Coach Photo -->
+          <div class="promo-card primo-blue has-photo">
+            <div class="promo-card-top">
+              <div class="promo-operator-thumb">
+                <img [src]="promoOperatorPhotos['airavat'].url" alt="Primo Bus" (error)="handleImageError($event, promoOperatorPhotos['airavat'])" />
+              </div>
+              <span class="primo-badge-tag">Primo ★</span>
+            </div>
+            <div class="promo-card-body">
+              <div class="promo-title">Rising Stars on redBus</div>
+              <div class="promo-caption">Top rated punctual operators</div>
+            </div>
+          </div>
+
+          <!-- 3. Women's Deal 10% OFF Modern Card -->
+          <div class="promo-card women-promo-card modern-feature-tile" (click)="isWomenBookingMode = !isWomenBookingMode">
+            <div class="promo-card-top">
+              <div class="modern-tile-icon pink-glow">👩</div>
+              <span class="tile-pill pink">WOMEN10</span>
+            </div>
+            <div class="promo-card-body">
+              <strong>Women's Deal 10% OFF</strong>
+              <span class="promo-caption">Exclusive discount & female seat lock</span>
+            </div>
+          </div>
+
+          <!-- 4. Free Cancellation Modern Card -->
+          <div class="promo-card cancel-promo-card modern-feature-tile">
+            <div class="promo-card-top">
+              <div class="modern-tile-icon emerald-glow">🛡️</div>
+              <span class="tile-pill emerald">INSTANT REFUND</span>
+            </div>
+            <div class="promo-card-body">
+              <strong>Free Cancellation</strong>
+              <span class="promo-caption">Full base fare refund up to 6 hrs prior</span>
+            </div>
+          </div>
+
+          <!-- 5. Flexi Ticket Modern Card -->
+          <div class="promo-card flexi-promo-card modern-feature-tile">
+            <div class="promo-card-top">
+              <div class="modern-tile-icon indigo-glow">📅</div>
+              <span class="tile-pill indigo">FREE RESCHEDULE</span>
+            </div>
+            <div class="promo-card-body">
+              <strong>FLEXI TICKET</strong>
+              <span class="promo-caption">Free date change up to 12 hrs before</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RESULTS HEADER & SORT BAR -->
+        <div class="results-header-row">
+          <span class="results-count-title">{{ busesList.length }} {{ t('buses_label') }} ({{ fromCity }} → {{ toCity }})</span>
+          <div class="sort-by-wrap">
+            <span class="sort-lbl">{{ t('sort_by') }}</span>
+            <button type="button" class="btn-sort active">{{ t('sort_ratings') }}</button>
+            <button type="button" class="btn-sort">{{ t('sort_departure') }}</button>
+            <button type="button" class="btn-sort">{{ t('sort_price') }}</button>
+          </div>
+        </div>
+
+        <!-- PEACH TRUST BANNER -->
+        <div class="operators-trust-banner">
+          <strong>4,400+ bus operators on redBus • Daily verified schedules for {{ fromCity }} to {{ toCity }}</strong>
+        </div>
+
+        <!-- SPECIAL OFFERS CAROUSEL WITH OPERATOR PHOTOS & MODERN TICKET COUPONS -->
+        <div class="special-offers-box">
+          <div class="offers-box-header">
+            <h4 class="offers-title">{{ t('offers_heading') }}</h4>
+            <span class="offers-sub-pill">✨ Verified Operator Partner Deals</span>
+          </div>
+
+          <div class="offers-cards-row three-cols">
+
+            <!-- Coupon 1: WOMEN10 (VRL & Partner Operators Photo) -->
+            <div class="offer-coupon-card women-offer-box modern-coupon">
+              <div class="coupon-operator-thumb pink-ring">
+                <img [src]="promoOperatorPhotos['vrl'].url" alt="VRL Partner" (error)="handleImageError($event, promoOperatorPhotos['vrl'])" />
+                <span class="thumb-mini-badge">👩 10%</span>
+              </div>
+              <div class="offer-txt">
+                <div class="coupon-meta-top">
+                  <span class="op-partner-tag pink">VRL & Women Partners</span>
+                  <span class="code-box pink">WOMEN10</span>
+                </div>
+                <p>Get flat 10% OFF on female bookings across partner buses</p>
+              </div>
+              <button type="button" class="btn-copy-code pink-btn" (click)="copyCoupon('WOMEN10')">
+                {{ appliedCouponCode === 'WOMEN10' ? '✓ Copied' : 'Copy' }}
+              </button>
+            </div>
+
+            <!-- Coupon 2: SUPERHIT (KSRTC Airavat / Route Special Photo) -->
+            <div class="offer-coupon-card superhit-offer-box modern-coupon">
+              <div class="coupon-operator-thumb emerald-ring">
+                <img [src]="promoOperatorPhotos['airavat'].url" alt="Airavat Partner" (error)="handleImageError($event, promoOperatorPhotos['airavat'])" />
+                <span class="thumb-mini-badge emerald">₹200</span>
+              </div>
+              <div class="offer-txt">
+                <div class="coupon-meta-top">
+                  <span class="op-partner-tag emerald">Airavat & Multi-Axle</span>
+                  <span class="code-box">SUPERHIT</span>
+                </div>
+                <p>Save ₹200 on {{ fromCity }} to {{ toCity }} bus bookings</p>
+              </div>
+              <button type="button" class="btn-copy-code emerald-btn" (click)="copyCoupon('SUPERHIT')">
+                {{ appliedCouponCode === 'SUPERHIT' ? '✓ Copied' : 'Copy' }}
+              </button>
+            </div>
+
+            <!-- Coupon 3: BUS300 (IntrCity SmartBus & Primo Sleeper Photo) -->
+            <div class="offer-coupon-card primo-offer-box modern-coupon">
+              <div class="coupon-operator-thumb blue-ring">
+                <img [src]="promoOperatorPhotos['intrcity'].url" alt="IntrCity SmartBus" (error)="handleImageError($event, promoOperatorPhotos['intrcity'])" />
+                <span class="thumb-mini-badge blue">PRIMO</span>
+              </div>
+              <div class="offer-txt">
+                <div class="coupon-meta-top">
+                  <span class="op-partner-tag blue">IntrCity & Primo Fleet</span>
+                  <span class="code-box blue">BUS300</span>
+                </div>
+                <p>Instant savings up to ₹200 on Primo & AC Sleeper coaches</p>
+              </div>
+              <button type="button" class="btn-copy-code blue-btn" (click)="copyCoupon('BUS300')">
+                {{ appliedCouponCode === 'BUS300' ? '✓ Copied' : 'Copy' }}
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- BUS FLEET LISTINGS (ALL 21 BUSES WITH WOMEN OFFER HIGHLIGHT) -->
+        <div class="buses-list-stack">
+          <article *ngFor="let bus of busesList" class="bus-card-item" [class.women-partner-card]="bus.hasWomenOffer && isWomenBookingMode">
+            <div class="bus-card-main-row">
+
+              <!-- Operator & Type -->
+              <div class="bus-operator-block">
+                <div class="operator-title-row">
+                  <h3 class="operator-name">{{ bus.operatorname }}</h3>
+                  <span class="bus-tracker-icon">📍</span>
+                </div>
+                <div class="bus-type-desc">{{ bus.bustypename }}</div>
+
+                <div class="bus-badges-wrap">
+                  <span class="business-class-pill" *ngIf="bus.superBusBadge">{{ bus.superBusBadge }}</span>
+                  <span class="women-deal-operator-pill" *ngIf="bus.hasWomenOffer">
+                    👩 Women Deal: {{ bus.womenDiscountPct || 10 }}% OFF (WOMEN10)
+                  </span>
+                </div>
+              </div>
+
+              <!-- Rating Badge -->
+              <div class="bus-rating-col">
+                <span class="rating-badge-pill" [class.gold]="bus.avgrating < 4.5">★ {{ bus.avgrating }}</span>
+                <span class="reviews-count">{{ bus.totalreview }}</span>
+              </div>
+
+              <!-- Departure / Arrival / Seats Left -->
+              <div class="bus-timing-block">
+                <div class="time-pair">
+                  <strong class="time-main">{{ bus.busdeparturetime }}</strong>
+                  <span class="time-sep">—</span>
+                  <strong class="time-main">{{ bus.busarrivaltime }}</strong>
+                </div>
+                <div class="duration-seats-sub">
+                  <span>{{ bus.routedetails.duration }}</span> •
+                  <span>{{ bus.availableSeats }} {{ t('seats_single') }} ({{ bus.singleSeats }} {{ t('single_lbl') }})</span>
+                </div>
+              </div>
+
+              <!-- Price & View Seats Button -->
+              <div class="bus-price-action-block">
+                <div class="price-stack">
+                  <strong class="fare-num">₹{{ bus.seatprivce }}</strong>
+                  <span class="onwards-txt">{{ t('onwards') }}</span>
+                </div>
+                <button type="button" class="btn-view-seats" (click)="openFloatingSeatDrawer(bus)">
+                  {{ t('btn_view_seats') }}
+                </button>
               </div>
             </div>
 
-            <div class="schedule-point">
-              <span class="time-readout">{{ bus.busarrivaltime }}</span>
-              <span class="station-lbl">{{ bus.arrival }}</span>
+            <!-- Bottom Quick Links Row on Card -->
+            <div class="bus-card-quick-links">
+              <a (click)="openFloatingSeatDrawer(bus, 'highlights')">{{ t('tab_highlights') }}</a>
+              <a (click)="openFloatingSeatDrawer(bus, 'boarding')">{{ t('tab_boarding') }} ({{ fromCity }})</a>
+              <a (click)="openFloatingSeatDrawer(bus, 'dropping')">{{ t('tab_dropping') }} ({{ toCity }})</a>
+              <a (click)="openFloatingSeatDrawer(bus, 'reviews')">{{ t('tab_reviews') }}</a>
+              <a (click)="openFloatingSeatDrawer(bus, 'cancellation')">{{ t('tab_cancellation') }}</a>
+            </div>
+          </article>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ================= FLOATING MULTI-STEP MODAL ================= -->
+  <div class="floating-seat-overlay-backdrop" *ngIf="floatingSelectedBus">
+    <div class="floating-split-modal">
+
+      <!-- Toast Notification -->
+      <div class="redbus-toast-banner" *ngIf="toastMessage">{{ toastMessage }}</div>
+
+      <!-- TOP HEADER WITH 3 STEPS -->
+      <header class="modal-top-header" *ngIf="modalStep !== 'payment'">
+        <div class="modal-header-left">
+          <button type="button" class="btn-close-modal-x" (click)="closeFloatingSeatDrawer()">✕</button>
+          <h2 class="modal-route-heading">{{ fromCity }} <span class="arrow">→</span> {{ toCity }}</h2>
+          <span class="modal-women-chip" *ngIf="isWomenBookingMode">👩 Women Booking Mode Active</span>
+        </div>
+
+        <div class="modal-stepper-row">
+          <button type="button" class="step-chip" [class.active]="modalStep === 'seats'" [class.done]="selectedSeatsList.length > 0 && modalStep !== 'seats'" (click)="goToModalStep('seats')">
+            <span *ngIf="selectedSeatsList.length > 0 && modalStep !== 'seats'">✓ </span>1. {{ t('step_select_seats') }}
+          </button>
+          <button type="button" class="step-chip" [class.active]="modalStep === 'board_drop'" [class.done]="modalStep === 'passenger'" (click)="goToModalStep('board_drop')">
+            <span *ngIf="modalStep === 'passenger'">✓ </span>2. {{ t('step_board_drop') }}
+          </button>
+          <button type="button" class="step-chip" [class.active]="modalStep === 'passenger'" (click)="goToModalStep('passenger')">
+            3. {{ t('step_passenger') }}
+          </button>
+        </div>
+      </header>
+
+      <!-- ========================================================================= -->
+      <!-- STEP 1: SELECT SEATS (LEFT SIDE-BY-SIDE DECKS + RIGHT SCROLL SPY)         -->
+      <!-- ========================================================================= -->
+      <div class="split-drawer-body" *ngIf="modalStep === 'seats'">
+
+        <!-- LEFT PANE: SIDE-BY-SIDE LOWER DECK & UPPER DECK CARDS -->
+        <section class="split-left-pane-seats">
+
+          <!-- Quick Women Mode Toggle inside Drawer -->
+          <div class="drawer-women-bar">
+            <div class="dwb-info">
+              <span>👩 <strong>Booking for Women?</strong></span>
+              <small *ngIf="floatingSelectedBus.hasWomenOffer">Get {{ floatingSelectedBus.womenDiscountPct || 10 }}% OFF with code <strong>WOMEN10</strong></small>
+            </div>
+            <label class="dwb-switch">
+              <input type="checkbox" [(ngModel)]="isWomenBookingMode" />
+              <span>{{ isWomenBookingMode ? 'ON' : 'OFF' }}</span>
+            </label>
+          </div>
+
+          <!-- Prominent Note when clicking a seat beside a female-booked 2-sleeper berth -->
+          <div class="female-adjacent-note-banner" *ngIf="femaleSeatNoteMessage">
+            <span class="fan-icon">👩</span>
+            <div class="fan-text">
+              <strong>Female Passenger Only</strong>
+              <span>{{ femaleSeatNoteMessage }}</span>
+            </div>
+            <button type="button" class="fan-close" (click)="femaleSeatNoteMessage = ''">✕</button>
+          </div>
+
+          <div class="decks-side-by-side-wrapper">
+
+            <!-- LOWER DECK WHITE CARD -->
+            <div class="deck-chassis-card">
+              <div class="deck-card-header">
+                <strong class="deck-title">{{ t('lower_deck') }}</strong>
+                <span class="steering-wheel-svg" title="Driver">🛞</span>
+              </div>
+
+              <div class="deck-rows-stack">
+                <div class="berth-row-3col" *ngFor="let r of getDeckRows('lower')">
+                  <!-- Left Single Berth -->
+                  <div class="berth-slot" *ngIf="getSeatAt('lower', r, 'left') as s" (click)="toggleSeat(s)">
+                    <div class="rb-sleeper-rect"
+                         [class.sold]="s.isBooked"
+                         [class.selected]="isSeatSelected(s)"
+                         [class.male]="s.gender === 'M'"
+                         [class.female]="s.gender === 'F' || s.isFemaleOnlyAvailable">
+                      <span class="seat-num-in" *ngIf="isSeatSelected(s)">{{ s.label }}</span>
+                      <span class="gender-emoji-badge" *ngIf="s.gender === 'M'" title="Booked by Male">👨</span>
+                      <span class="gender-emoji-badge" *ngIf="s.gender === 'F'" title="Booked by Female">👩</span>
+                      <span class="gender-emoji-badge" *ngIf="!s.isBooked && s.isFemaleOnlyAvailable" title="Available for Women Only">👩</span>
+                      <span class="bottom-pillow-bar"></span>
+                    </div>
+                    <span class="berth-sub-price">{{ s.isBooked ? t('sold_tag') : '₹' + s.price }}</span>
+                  </div>
+
+                  <div class="aisle-spacer"></div>
+
+                  <!-- Right Double Berths -->
+                  <div class="double-berth-pair">
+                    <div class="berth-slot" *ngIf="getSeatAt('lower', r, 'right-1') as s" (click)="toggleSeat(s)">
+                      <div class="rb-sleeper-rect"
+                           [class.sold]="s.isBooked"
+                           [class.selected]="isSeatSelected(s)"
+                           [class.male]="s.gender === 'M'"
+                           [class.female]="s.gender === 'F' || s.isFemaleOnlyAvailable">
+                        <span class="seat-num-in" *ngIf="isSeatSelected(s)">{{ s.label }}</span>
+                        <span class="gender-emoji-badge" *ngIf="s.gender === 'M'">👨</span>
+                        <span class="gender-emoji-badge" *ngIf="s.gender === 'F'" title="Booked by Female">👩</span>
+                        <span class="gender-emoji-badge" *ngIf="!s.isBooked && s.isFemaleOnlyAvailable" title="Only Female Passenger Can Book">👩</span>
+                        <span class="bottom-pillow-bar"></span>
+                      </div>
+                      <span class="berth-sub-price">{{ s.isBooked ? t('sold_tag') : '₹' + s.price }}</span>
+                    </div>
+
+                    <div class="berth-slot" *ngIf="getSeatAt('lower', r, 'right-2') as s" (click)="toggleSeat(s)">
+                      <div class="rb-sleeper-rect"
+                           [class.sold]="s.isBooked"
+                           [class.selected]="isSeatSelected(s)"
+                           [class.male]="s.gender === 'M'"
+                           [class.female]="s.gender === 'F' || s.isFemaleOnlyAvailable">
+                        <span class="seat-num-in" *ngIf="isSeatSelected(s)">{{ s.label }}</span>
+                        <span class="gender-emoji-badge" *ngIf="s.gender === 'M'">👨</span>
+                        <span class="gender-emoji-badge" *ngIf="s.gender === 'F'" title="Booked by Female">👩</span>
+                        <span class="gender-emoji-badge" *ngIf="!s.isBooked && s.isFemaleOnlyAvailable" title="Only Female Passenger Can Book">👩</span>
+                        <span class="bottom-pillow-bar"></span>
+                      </div>
+                      <span class="berth-sub-price">{{ s.isBooked ? t('sold_tag') : '₹' + s.price }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- UPPER DECK WHITE CARD -->
+            <div class="deck-chassis-card">
+              <div class="deck-card-header">
+                <strong class="deck-title">{{ t('upper_deck') }}</strong>
+              </div>
+
+              <div class="deck-rows-stack">
+                <div class="berth-row-3col" *ngFor="let r of getDeckRows('upper')">
+                  <!-- Left Single Berth -->
+                  <div class="berth-slot" *ngIf="getSeatAt('upper', r, 'left') as s" (click)="toggleSeat(s)">
+                    <div class="rb-sleeper-rect"
+                         [class.sold]="s.isBooked"
+                         [class.selected]="isSeatSelected(s)"
+                         [class.male]="s.gender === 'M'"
+                         [class.female]="s.gender === 'F' || s.isFemaleOnlyAvailable">
+                      <span class="seat-num-in" *ngIf="isSeatSelected(s)">{{ s.label }}</span>
+                      <span class="gender-emoji-badge" *ngIf="s.gender === 'M'">👨</span>
+                      <span class="gender-emoji-badge" *ngIf="s.gender === 'F'">👩</span>
+                      <span class="gender-emoji-badge" *ngIf="!s.isBooked && s.isFemaleOnlyAvailable">👩</span>
+                      <span class="bottom-pillow-bar"></span>
+                    </div>
+                    <span class="berth-sub-price">{{ s.isBooked ? t('sold_tag') : '₹' + s.price }}</span>
+                  </div>
+
+                  <div class="aisle-spacer"></div>
+
+                  <!-- Right Double Berths -->
+                  <div class="double-berth-pair">
+                    <div class="berth-slot" *ngIf="getSeatAt('upper', r, 'right-1') as s" (click)="toggleSeat(s)">
+                      <div class="rb-sleeper-rect"
+                           [class.sold]="s.isBooked"
+                           [class.selected]="isSeatSelected(s)"
+                           [class.male]="s.gender === 'M'"
+                           [class.female]="s.gender === 'F' || s.isFemaleOnlyAvailable">
+                        <span class="seat-num-in" *ngIf="isSeatSelected(s)">{{ s.label }}</span>
+                        <span class="gender-emoji-badge" *ngIf="s.gender === 'M'">👨</span>
+                        <span class="gender-emoji-badge" *ngIf="s.gender === 'F'" title="Booked by Female">👩</span>
+                        <span class="gender-emoji-badge" *ngIf="!s.isBooked && s.isFemaleOnlyAvailable" title="Only Female Passenger Can Book">👩</span>
+                        <span class="bottom-pillow-bar"></span>
+                      </div>
+                      <span class="berth-sub-price">{{ s.isBooked ? t('sold_tag') : '₹' + s.price }}</span>
+                    </div>
+
+                    <div class="berth-slot" *ngIf="getSeatAt('upper', r, 'right-2') as s" (click)="toggleSeat(s)">
+                      <div class="rb-sleeper-rect"
+                           [class.sold]="s.isBooked"
+                           [class.selected]="isSeatSelected(s)"
+                           [class.male]="s.gender === 'M'"
+                           [class.female]="s.gender === 'F' || s.isFemaleOnlyAvailable">
+                        <span class="seat-num-in" *ngIf="isSeatSelected(s)">{{ s.label }}</span>
+                        <span class="gender-emoji-badge" *ngIf="s.gender === 'M'">👨</span>
+                        <span class="gender-emoji-badge" *ngIf="s.gender === 'F'" title="Booked by Female">👩</span>
+                        <span class="gender-emoji-badge" *ngIf="!s.isBooked && s.isFemaleOnlyAvailable" title="Only Female Passenger Can Book">👩</span>
+                        <span class="bottom-pillow-bar"></span>
+                      </div>
+                      <span class="berth-sub-price">{{ s.isBooked ? t('sold_tag') : '₹' + s.price }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Know Your Seat Types Legend with Female Emoji 👩 -->
+          <div class="seat-types-legend-box">
+            <h5 class="legend-heading">{{ t('know_seat_types') }}</h5>
+            <div class="legend-row">
+              <span>Available</span>
+              <div class="rb-sleeper-mini available"></div>
+            </div>
+            <div class="legend-row">
+              <span>Already booked</span>
+              <div class="rb-sleeper-mini sold"></div>
+            </div>
+            <div class="legend-row">
+              <span>Selected by you</span>
+              <div class="rb-sleeper-mini selected"></div>
+            </div>
+            <div class="legend-row">
+              <span>Booked by female passenger (👩)</span>
+              <div class="rb-sleeper-mini female-booked"><span class="mini-emoji">👩</span></div>
+            </div>
+            <div class="legend-row">
+              <span>Available only for female passenger (👩)</span>
+              <div class="rb-sleeper-mini female"><span class="mini-emoji">👩</span></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- RIGHT PANE: CONTINUOUS SCROLL SPY INFO CARD -->
+        <section class="split-right-pane-info" *ngIf="!showAllStopsDrawer">
+
+          <div class="pane-bus-title-row">
+            <div>
+              <h3 class="pane-op-title">{{ floatingSelectedBus.operatorname }}</h3>
+              <p class="pane-op-timing">{{ floatingSelectedBus.busdeparturetime }} - {{ floatingSelectedBus.busarrivaltime }} • {{ journeyDate }}</p>
+              <span class="pane-bus-type-sub">{{ floatingSelectedBus.bustypename }}</span>
+            </div>
+            <div class="pane-rating-badge">★ {{ floatingSelectedBus.avgrating }} ({{ floatingSelectedBus.totalreview }})</div>
+          </div>
+
+          <!-- Horizontal Photo Carousel (Multi-Format Resolver) -->
+          <div class="photos-strip-grid">
+            <div *ngFor="let photo of floatingSelectedBus.photos" class="photo-card-unit">
+              <img [src]="photo.url" [alt]="photo.title" (error)="handleImageError($event, photo)" />
             </div>
           </div>
 
-          <!-- Column 3: Trust & Rating -->
-          <div class="col-score">
-            <div class="rating-badge">★ {{ bus.rating }}</div>
-            <span class="reviews-count">{{ bus.totalratings }} ratings</span>
+          <!-- Sticky Tab Bar -->
+          <nav class="ten-tabs-nav-bar">
+            <button type="button" class="tab-pill" [class.active]="activeDrawerTab === 'highlights'" (click)="scrollToSection('highlights')">{{ t('tab_highlights') }}</button>
+            <button type="button" class="tab-pill" [class.active]="activeDrawerTab === 'cancellation'" (click)="scrollToSection('cancellation')">{{ t('tab_cancellation') }}</button>
+            <button type="button" class="tab-pill" [class.active]="activeDrawerTab === 'reschedule'" (click)="scrollToSection('reschedule')">{{ t('tab_reschedule') }}</button>
+            <button type="button" class="tab-pill" [class.active]="activeDrawerTab === 'bus_route'" (click)="scrollToSection('bus_route')">{{ t('tab_bus_route') }}</button>
+            <button type="button" class="tab-pill" [class.active]="activeDrawerTab === 'boarding'" (click)="scrollToSection('boarding')">{{ t('tab_boarding') }}</button>
+            <button type="button" class="tab-pill" [class.active]="activeDrawerTab === 'dropping'" (click)="scrollToSection('dropping')">{{ t('tab_dropping') }}</button>
+            <button type="button" class="tab-pill" [class.active]="activeDrawerTab === 'features'" (click)="scrollToSection('features')">{{ t('tab_features') }}</button>
+            <button type="button" class="tab-pill" [class.active]="activeDrawerTab === 'reviews'" (click)="scrollToSection('reviews')">{{ t('tab_reviews') }}</button>
+            <button type="button" class="tab-pill" [class.active]="activeDrawerTab === 'other_policies'" (click)="scrollToSection('other_policies')">{{ t('tab_other_policies') }}</button>
+          </nav>
+
+          <!-- ALL SECTIONS STACKED IN ONE CONTINUOUS SCROLL STREAM -->
+          <div class="continuous-sections-stream">
+
+            <!-- 1. Highlights -->
+            <div id="sec-highlights" class="stream-section">
+              <div class="highlights-2col-cards">
+                <div class="hl-mini-card">
+                  <div>
+                    <strong>Premium bus</strong>
+                    <span>{{ floatingSelectedBus.busname }}</span>
+                  </div>
+                  <span class="hl-badge-ico">☸️</span>
+                </div>
+                <div class="hl-mini-card">
+                  <div>
+                    <strong>Women's choice</strong>
+                    <span>Highly rated by women • 10% OFF (WOMEN10)</span>
+                  </div>
+                  <span class="hl-badge-ico">👩</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. Cancellation Policy -->
+            <div id="sec-cancellation" class="stream-section">
+              <h4 class="stream-sec-title">{{ t('tab_cancellation') }}</h4>
+              <div class="policy-table">
+                <div class="policy-row header">
+                  <span>Time before travel</span>
+                  <span>Without free cancellation</span>
+                  <span>With free cancellation</span>
+                </div>
+                <div class="policy-row">
+                  <span>Before 24 hrs of departure</span>
+                  <span>75% Refund</span>
+                  <strong class="green">✔ Full Refund</strong>
+                </div>
+                <div class="policy-row">
+                  <span>From 24 hrs until 12 hrs before</span>
+                  <span>50% Refund</span>
+                  <strong class="green">✔ Full Refund</strong>
+                </div>
+                <div class="policy-row">
+                  <span>Within 12 hrs before departure</span>
+                  <strong class="red">0% Refund</strong>
+                  <span>0% Refund</span>
+                </div>
+              </div>
+              <div class="pink-cancel-banner">
+                <span>🛡️ <strong>Add Free Cancellation</strong> while booking to get a full refund on cancellation</span>
+              </div>
+            </div>
+
+            <!-- 3. Reschedule Policy & Dynamic Bus Route -->
+            <div id="sec-reschedule" class="stream-section">
+              <h4 class="stream-sec-title">Date change policy</h4>
+              <div class="policy-table">
+                <div class="policy-row header">
+                  <span>Time before travel</span>
+                  <span>Date change charges</span>
+                </div>
+                <div class="policy-row">
+                  <span>Before 12 hrs of departure</span>
+                  <strong class="green">FREE</strong>
+                </div>
+              </div>
+            </div>
+
+            <div id="sec-bus_route" class="stream-section">
+              <h4 class="stream-sec-title">{{ t('tab_bus_route') }}</h4>
+              <span class="route-sub-meta">{{ floatingSelectedBus.routedetails.distanceKm }} km • {{ floatingSelectedBus.routedetails.duration }}</span>
+              <p class="route-cities-chain">
+                <span *ngFor="let c of floatingSelectedBus.routedetails.viaRoute; let last = last">
+                  <strong [class.underline-city]="c === fromCity || c === toCity">{{ c }}</strong>
+                  <span *ngIf="!last"> → </span>
+                </span>
+              </p>
+            </div>
+
+            <!-- 4. Dynamic Boarding Point Preview + View All Button -->
+            <div id="sec-boarding" class="stream-section">
+              <h4 class="stream-sec-title">{{ t('tab_boarding') }} ({{ fromCity }})</h4>
+              <div class="timeline-preview-list">
+                <div class="tl-item" *ngFor="let bp of floatingSelectedBus.routedetails.boardingPoints.slice(0, 3)">
+                  <div class="tl-time"><strong>{{ bp.time }}</strong><span>{{ bp.date }}</span></div>
+                  <div class="tl-dot"></div>
+                  <div class="tl-info"><strong>{{ bp.name }}</strong><span>{{ bp.landmark }}</span></div>
+                </div>
+              </div>
+              <button type="button" class="btn-pink-pill-wide" (click)="showAllStopsDrawer = true; allStopsTab = 'boarding'">
+                {{ t('view_all_boarding') }} ({{ floatingSelectedBus.routedetails.boardingPoints.length }})
+              </button>
+            </div>
+
+            <!-- 5. Dynamic Dropping Point Preview + View All Button -->
+            <div id="sec-dropping" class="stream-section">
+              <h4 class="stream-sec-title">{{ t('tab_dropping') }} ({{ toCity }})</h4>
+              <div class="timeline-preview-list">
+                <div class="tl-item" *ngFor="let dp of floatingSelectedBus.routedetails.droppingPoints.slice(0, 3)">
+                  <div class="tl-time"><strong>{{ dp.time }}</strong><span>{{ dp.date }}</span></div>
+                  <div class="tl-dot"></div>
+                  <div class="tl-info"><strong>{{ dp.name }}</strong><span>{{ dp.landmark }}</span></div>
+                </div>
+              </div>
+              <button type="button" class="btn-pink-pill-wide" (click)="showAllStopsDrawer = true; allStopsTab = 'dropping'">
+                {{ t('view_all_dropping') }} ({{ floatingSelectedBus.routedetails.droppingPoints.length }})
+              </button>
+            </div>
+
+            <!-- 6. Bus Features & Ratings -->
+            <div id="sec-features" class="stream-section">
+              <h4 class="stream-sec-title">{{ t('tab_features') }}</h4>
+              <div class="features-pills-wrap">
+                <span class="feat-pill" *ngFor="let a of floatingSelectedBus.amenities">{{ a.icon }} {{ a.name }}</span>
+              </div>
+            </div>
+
+            <div id="sec-reviews" class="stream-section">
+              <div class="reviews-header-line">
+                <h4 class="stream-sec-title">{{ t('tab_reviews') }}</h4>
+                <div class="rev-score-right">
+                  <strong>★ {{ floatingSelectedBus.avgrating }}</strong>
+                  <span>{{ floatingSelectedBus.totalreview }} Ratings</span>
+                </div>
+              </div>
+              <div class="star-bars-box">
+                <div class="s-bar-row"><span>5 ★</span><div class="s-track"><div class="s-fill" style="width: 58%"></div></div><span>58%</span></div>
+                <div class="s-bar-row"><span>4 ★</span><div class="s-track"><div class="s-fill" style="width: 24%"></div></div><span>24%</span></div>
+                <div class="s-bar-row"><span>3 ★</span><div class="s-track"><div class="s-fill" style="width: 9%"></div></div><span>9%</span></div>
+                <div class="s-bar-row"><span>2 ★</span><div class="s-track"><div class="s-fill" style="width: 4%"></div></div><span>4%</span></div>
+                <div class="s-bar-row"><span>1 ★</span><div class="s-track"><div class="s-fill" style="width: 5%"></div></div><span>5%</span></div>
+              </div>
+            </div>
+
+            <!-- 7. Other Policies -->
+            <div id="sec-other_policies" class="stream-section">
+              <h4 class="stream-sec-title">{{ t('tab_other_policies') }}</h4>
+              <div class="other-policies-list">
+                <div class="op-row">
+                  <span class="op-ico">👶</span>
+                  <div><strong>Child passenger policy</strong><p>Children above the age of 3 will need a ticket</p></div>
+                </div>
+                <div class="op-row">
+                  <span class="op-ico">🧳</span>
+                  <div><strong>Luggage policy</strong><p>2 pieces of luggage will be accepted free of charge per passenger. Excess baggage over 20 kgs per passenger will be chargeable</p></div>
+                </div>
+                <div class="op-row">
+                  <span class="op-ico">🐾</span>
+                  <div><strong>Pets Policy</strong><p>Pets are not allowed</p></div>
+                </div>
+                <div class="op-row">
+                  <span class="op-ico">🍾</span>
+                  <div><strong>Liquor Policy</strong><p>Carrying or consuming liquor inside the bus is prohibited. Bus operator reserves the right to deboard drunk passengers.</p></div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- SUB-DRAWER: VIEW ALL BOARDING & DROPPING POINTS -->
+        <section class="split-right-pane-info" *ngIf="showAllStopsDrawer">
+          <div class="subdrawer-header">
+            <button type="button" class="btn-back-arrow" (click)="showAllStopsDrawer = false">←</button>
+            <strong>Boarding ({{ fromCity }}) & Dropping ({{ toCity }})</strong>
+          </div>
+          <div class="subdrawer-tabs">
+            <button type="button" [class.active]="allStopsTab === 'boarding'" (click)="allStopsTab = 'boarding'">Boarding Point</button>
+            <button type="button" [class.active]="allStopsTab === 'dropping'" (click)="allStopsTab = 'dropping'">Dropping Point</button>
+          </div>
+          <div class="timeline-preview-list" *ngIf="allStopsTab === 'boarding'">
+            <div class="tl-item" *ngFor="let bp of floatingSelectedBus.routedetails.boardingPoints">
+              <div class="tl-time"><strong>{{ bp.time }}</strong><span>{{ bp.date }}</span></div>
+              <div class="tl-dot"></div>
+              <div class="tl-info"><strong>{{ bp.name }}</strong><span>{{ bp.landmark }}</span></div>
+            </div>
+          </div>
+          <div class="timeline-preview-list" *ngIf="allStopsTab === 'dropping'">
+            <div class="tl-item" *ngFor="let dp of floatingSelectedBus.routedetails.droppingPoints">
+              <div class="tl-time"><strong>{{ dp.time }}</strong><span>{{ dp.date }}</span></div>
+              <div class="tl-dot"></div>
+              <div class="tl-info"><strong>{{ dp.name }}</strong><span>{{ dp.landmark }}</span></div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- BOTTOM STICKY BAR WHEN SEAT IS SELECTED IN STEP 1 -->
+      <footer class="bottom-red-cta-bar" *ngIf="modalStep === 'seats' && selectedSeatsList.length > 0">
+        <div class="cta-seat-summary">
+          <span>{{ selectedSeatsList.length }} seat{{ selectedSeatsList.length > 1 ? 's' : '' }}</span>
+          <strong class="cta-price">₹{{ baseSeatTotal }}</strong>
+        </div>
+        <button type="button" class="btn-red-pill-cta" (click)="goToModalStep('board_drop')">
+          {{ t('btn_select_bd') }}
+        </button>
+      </footer>
+
+      <!-- ========================================================================= -->
+      <!-- STEP 2: DYNAMIC BOARDING & DROPPING POINT RADIO SELECTION                 -->
+      <!-- ========================================================================= -->
+      <div class="board-drop-step-container" *ngIf="modalStep === 'board_drop'">
+        <div class="bd-two-columns">
+
+          <!-- Left Column: Dynamic Boarding Points for Source City -->
+          <div class="bd-column-card">
+            <div class="bd-col-head">
+              <h4>Boarding points</h4>
+              <span class="city-pill-tag">{{ fromCity }}</span>
+            </div>
+            <div class="bd-radio-list">
+              <label class="bd-radio-row" *ngFor="let bp of floatingSelectedBus.routedetails.boardingPoints" [class.selected]="selectedBoardingPoint?.name === bp.name" (click)="selectedBoardingPoint = bp">
+                <div class="bd-time"><strong>{{ bp.time }}</strong><span>{{ bp.date }}</span></div>
+                <div class="bd-details"><strong>{{ bp.name }}</strong><span>{{ bp.landmark }}</span></div>
+                <input type="radio" name="boardingStop" [checked]="selectedBoardingPoint?.name === bp.name" />
+              </label>
+            </div>
           </div>
 
-          <!-- Column 4: Pricing & Action -->
-          <div class="col-action">
-            <div class="pricing-display">
-              <span class="currency-code">INR</span>
-              <span class="fare-num">{{ bus.seatprice }}</span>
+          <!-- Right Column: Dynamic Dropping Points for Destination City -->
+          <div class="bd-column-card">
+            <div class="bd-col-head">
+              <h4>Dropping points</h4>
+              <span class="city-pill-tag">{{ toCity }}</span>
             </div>
-            <span class="seats-left-pill">{{ bus.seatsRemaining }} berths left</span>
-            <button type="button" class="btn-toggle-seats" [class.expanded]="bus.showSeats" (click)="toggleSeats(bus)">
-              {{ bus.showSeats ? 'Hide Seats' : 'View Seats' }}
+            <div class="bd-radio-list">
+              <label class="bd-radio-row" *ngFor="let dp of floatingSelectedBus.routedetails.droppingPoints" [class.selected]="selectedDroppingPoint?.name === dp.name" (click)="selectedDroppingPoint = dp">
+                <div class="bd-time"><strong>{{ dp.time }}</strong><span>{{ dp.date }}</span></div>
+                <div class="bd-details"><strong>{{ dp.name }}</strong><span>{{ dp.landmark }}</span></div>
+                <input type="radio" name="droppingStop" [checked]="selectedDroppingPoint?.name === dp.name" />
+              </label>
+            </div>
+          </div>
+
+        </div>
+
+        <footer class="bottom-red-cta-bar">
+          <div class="cta-seat-summary">
+            <span>{{ selectedSeatsList.length }} seat</span>
+            <strong class="cta-price">₹{{ baseSeatTotal }}</strong>
+          </div>
+          <button type="button" class="btn-red-pill-cta" (click)="goToModalStep('passenger')">
+            Continue to Passenger Info
+          </button>
+        </footer>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- STEP 3: PASSENGER INFO (COMPULSORY VALIDATION + CO-TRAVELLERS + ADDONS)   -->
+      <!-- ========================================================================= -->
+      <div class="passenger-step-container" *ngIf="modalStep === 'passenger'">
+        <div class="passenger-two-col-grid">
+
+          <!-- Left Column: Contact Details, Co-Travellers, Free Cancellation, Trip Guarantee, ACKO Insurance, GST -->
+          <div class="passenger-forms-stack">
+
+            <!-- 1. Contact Details Card -->
+            <div class="p-white-card aesthetic-card">
+              <div class="card-head-with-badge">
+                <div>
+                  <h4>Contact details <span class="req-star">*</span></h4>
+                  <span class="p-sub">Ticket details will be sent to</span>
+                </div>
+                <button type="button" class="btn-edit-link" (click)="isEditingContact = !isEditingContact">
+                  {{ isEditingContact ? 'Done' : 'Edit' }}
+                </button>
+              </div>
+
+              <div class="p-input-grid">
+                <div class="p-field readonly-field">
+                  <label>Country Code</label>
+                  <input type="text" value="+91 (IND)" readonly />
+                </div>
+
+                <div class="p-field" [class.invalid-field]="showFormErrors && !isPhoneValid()">
+                  <label>Phone <span class="req-star">*</span></label>
+                  <input
+                    type="tel"
+                    maxlength="10"
+                    [(ngModel)]="contactPhone"
+                    placeholder="Enter 10-digit mobile number" />
+                  <small class="error-hint" *ngIf="showFormErrors && !isPhoneValid()">
+                    Compulsory: Enter a valid 10-digit mobile number
+                  </small>
+                </div>
+              </div>
+
+              <div class="p-field full" [class.invalid-field]="showFormErrors && !isEmailValid()">
+                <label>Email ID <span class="req-star">*</span></label>
+                <input
+                  type="email"
+                  [(ngModel)]="contactEmail"
+                  placeholder="Enter email address (e.g. traveler@domain.com)" />
+                <small class="error-hint" *ngIf="showFormErrors && !isEmailValid()">
+                  Compulsory: Enter a valid email address
+                </small>
+              </div>
+
+              <div class="p-field full" [class.invalid-field]="showFormErrors && !contactState">
+                <label>State of Residence <span class="req-star">*</span></label>
+                <select [(ngModel)]="contactState" class="modern-state-select">
+                  <option value="" disabled selected>Select State / Union Territory</option>
+                  <option *ngFor="let st of indianStatesList" [value]="st">{{ st }}</option>
+                </select>
+                <small class="error-hint" *ngIf="showFormErrors && !contactState">
+                  Compulsory: Please select your State of Residence
+                </small>
+              </div>
+
+              <label class="whatsapp-mint-bar">
+                <div class="wm-left">
+                  <span class="wa-circle-icon">💬</span>
+                  <span>WhatsApp communication enabled</span>
+                </div>
+                <input type="checkbox" [(ngModel)]="whatsappUpdates" />
+              </label>
+            </div>
+
+            <!-- 2. Co-Travellers Card -->
+            <div class="p-white-card aesthetic-card">
+              <div class="card-head-with-badge">
+                <div>
+                  <h4>Co-Travellers <span class="req-star">*</span></h4>
+                  <span class="p-sub">{{ validPassengersCount }}/{{ passengersList.length }} passengers completed</span>
+                </div>
+                <span class="seat-count-chip">Select {{ passengersList.length }} passenger{{ passengersList.length > 1 ? 's' : '' }}</span>
+              </div>
+
+              <div class="pink-add-passenger-bar">
+                <span>👤 Compulsory Passenger Details ({{ passengersList.length }} Seat{{ passengersList.length > 1 ? 's' : '' }})</span>
+              </div>
+
+              <div class="modern-passenger-card" *ngFor="let p of passengersList; let idx = index" [class.invalid-card]="showFormErrors && !isPassengerValid(p)">
+                <div class="mp-card-top">
+                  <div class="mp-avatar-group">
+                    <div class="mp-dynamic-avatar"
+                         [class.male-av]="p.gender === 'Male'"
+                         [class.female-av]="p.gender === 'Female'"
+                         [class.other-av]="p.gender === 'Other'">
+                      {{ getGenderAvatar(p.gender) }}
+                    </div>
+                    <div>
+                      <strong class="mp-title">{{ p.name || ('Passenger ' + (idx + 1)) }}</strong>
+                      <span class="mp-gender-status" *ngIf="p.gender">{{ p.gender }}{{ p.age ? ', ' + p.age + ' years' : '' }}</span>
+                      <span class="mp-gender-status muted" *ngIf="!p.gender">Fill name, age & select gender</span>
+                    </div>
+                  </div>
+                  <div class="mp-seat-badges">
+                    <span class="women-seat-pill" *ngIf="p.isFemaleReservedSeat">👩 Women Seat</span>
+                    <span class="seat-tag-pill">{{ p.seatLabel }} • {{ p.deck === 'upper' ? 'Upper deck' : 'Lower deck' }}</span>
+                  </div>
+                </div>
+
+                <div class="mp-inputs-row">
+                  <div class="p-field mp-name-box" [class.invalid-field]="showFormErrors && (p.name || '').trim().length < 2">
+                    <label>Full Name <span class="req-star">*</span></label>
+                    <input type="text" [(ngModel)]="p.name" placeholder="Enter full name" />
+                  </div>
+
+                  <div class="p-field mp-age-box" [class.invalid-field]="showFormErrors && (!p.age || p.age < 1 || p.age > 120)">
+                    <label>Age <span class="req-star">*</span></label>
+                    <input type="number" min="1" max="120" [(ngModel)]="p.age" placeholder="Years" />
+                  </div>
+                </div>
+
+                <div class="mp-gender-section">
+                  <label class="gender-sec-lbl">
+                    Gender <span class="req-star">*</span>
+                    <span class="female-lock-note" *ngIf="p.isFemaleReservedSeat">(Adjacent berth is booked by a female — only Female passenger allowed)</span>
+                  </label>
+                  <div class="gender-pills-grid">
+                    <button
+                      type="button"
+                      class="gender-choice-pill male-pill"
+                      [disabled]="p.isFemaleReservedSeat"
+                      [class.active]="p.gender === 'Male'"
+                      (click)="p.gender = 'Male'">
+                      <span class="g-emoji">👨</span>
+                      <span class="g-text">Male</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      class="gender-choice-pill female-pill"
+                      [class.active]="p.gender === 'Female'"
+                      (click)="p.gender = 'Female'">
+                      <span class="g-emoji">👩</span>
+                      <span class="g-text">Female</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      class="gender-choice-pill other-pill"
+                      [disabled]="p.isFemaleReservedSeat"
+                      [class.active]="p.gender === 'Other'"
+                      (click)="p.gender = 'Other'">
+                      <span class="g-emoji">🧑</span>
+                      <span class="g-text">Transgender / Other</span>
+                    </button>
+                  </div>
+                  <small class="error-hint" *ngIf="showFormErrors && !p.gender">
+                    Compulsory: Please select gender
+                  </small>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3. Free Cancellation Card -->
+            <div class="p-white-card aesthetic-card addon-feature-card">
+              <div class="social-proof-strip">Bought by 1,70,417+ people in the last month</div>
+              <div class="addon-hero-header">
+                <div>
+                  <h4>Free Cancellation</h4>
+                  <span class="p-sub">Valid till 6 hours before departure</span>
+                </div>
+                <span class="addon-shield-badge pink">🛡️</span>
+              </div>
+
+              <div class="refund-highlight-banner">
+                <strong class="big-green-pct">Full refund</strong>
+                <span>on cancellation</span>
+              </div>
+              <p class="addon-footnote">Cancel anytime up to 6 hours before bus departure time to get a full base fare refund.</p>
+
+              <div class="radio-choice-stack">
+                <label class="video-radio-option" [class.selected]="freeCancellationChoice === 'yes'" (click)="freeCancellationChoice = 'yes'">
+                  <div>
+                    <strong>Add Free Cancellation</strong>
+                    <span>Only for ₹420 per passenger</span>
+                  </div>
+                  <input type="radio" name="freeCancelRadio" [checked]="freeCancellationChoice === 'yes'" />
+                </label>
+
+                <label class="video-radio-option" [class.selected]="freeCancellationChoice === 'no'" (click)="freeCancellationChoice = 'no'">
+                  <div>
+                    <strong>Don't add Free Cancellation</strong>
+                  </div>
+                  <input type="radio" name="freeCancelRadio" [checked]="freeCancellationChoice === 'no'" />
+                </label>
+              </div>
+            </div>
+
+            <!-- 4. Trip Guarantee Card -->
+            <div class="p-white-card aesthetic-card addon-feature-card">
+              <div class="addon-hero-header">
+                <div>
+                  <h4>Trip Guarantee</h4>
+                  <span class="p-sub">₹26 per passenger</span>
+                </div>
+                <span class="addon-shield-badge red">🎫</span>
+              </div>
+              <p class="addon-sub-line">Get a full refund + <strong>₹500 extra</strong> if your bus gets cancelled by the operator.</p>
+
+              <div class="trip-guarantee-equation-box">
+                <span class="eq-caption">Get ₹{{ baseSeatTotal + 500 }} refund if bus gets cancelled</span>
+                <div class="eq-row">
+                  <div class="eq-col">
+                    <strong>₹{{ baseSeatTotal }}</strong>
+                    <span>Full refund</span>
+                  </div>
+                  <span class="eq-plus">+</span>
+                  <div class="eq-col">
+                    <strong>₹500</strong>
+                    <span>Cashback</span>
+                  </div>
+                </div>
+              </div>
+              <div class="social-proof-strip">Bought by 7,42,445+ people in the last month</div>
+
+              <div class="radio-choice-stack">
+                <label class="video-radio-option" [class.selected]="tripGuaranteeChoice === 'yes'" (click)="tripGuaranteeChoice = 'yes'">
+                  <div>
+                    <strong>Add Trip Guarantee</strong>
+                    <span>₹26 for {{ selectedSeatsList.length }} passenger</span>
+                  </div>
+                  <input type="radio" name="tripGuaranteeRadio" [checked]="tripGuaranteeChoice === 'yes'" />
+                </label>
+
+                <label class="video-radio-option" [class.selected]="tripGuaranteeChoice === 'no'" (click)="tripGuaranteeChoice = 'no'">
+                  <div>
+                    <strong>Don't add Trip Guarantee</strong>
+                  </div>
+                  <input type="radio" name="tripGuaranteeRadio" [checked]="tripGuaranteeChoice === 'no'" />
+                </label>
+              </div>
+            </div>
+
+            <!-- 5. Travel Insurance Card (ACKO) -->
+            <div class="p-white-card aesthetic-card addon-feature-card">
+              <div class="addon-hero-header">
+                <div>
+                  <h4>Travel Insurance</h4>
+                  <span class="p-sub">₹15 per passenger</span>
+                </div>
+                <span class="acko-logo-badge">ACKO</span>
+              </div>
+              <p class="addon-sub-line">Insure your travel by adding Rs 15.0 per passenger. Powered by Acko General Insurance Ltd.</p>
+
+              <div class="acko-benefits-list">
+                <div class="acko-row"><span>🧳 In the event of loss of luggage</span><strong>Upto ₹ 5,000</strong></div>
+                <div class="acko-row"><span>🏥 In the event of accidental hospitalisation</span><strong>Upto ₹ 75,000</strong></div>
+                <div class="acko-row"><span>🛡️ In case of death/PTD/PPD</span><strong>Upto ₹ 6 Lakh</strong></div>
+                <div class="acko-row"><span>🛏️ Hospital daily allowance</span><strong>₹ 500 per day</strong></div>
+              </div>
+
+              <div class="radio-choice-stack">
+                <label class="video-radio-option" [class.selected]="travelInsuranceChoice === 'yes'" (click)="travelInsuranceChoice = 'yes'">
+                  <div>
+                    <strong>Add Travel Insurance</strong>
+                    <span>₹15 for {{ selectedSeatsList.length }} passenger</span>
+                  </div>
+                  <input type="radio" name="travelInsRadio" [checked]="travelInsuranceChoice === 'yes'" />
+                </label>
+
+                <label class="video-radio-option" [class.selected]="travelInsuranceChoice === 'no'" (click)="travelInsuranceChoice = 'no'">
+                  <div>
+                    <strong>Don't add Travel Insurance</strong>
+                  </div>
+                  <input type="radio" name="travelInsRadio" [checked]="travelInsuranceChoice === 'no'" />
+                </label>
+              </div>
+            </div>
+
+            <!-- 6. Optional GST Number Card -->
+            <div class="p-white-card aesthetic-card">
+              <label class="gst-toggle-header">
+                <div>
+                  <strong>I have a GST number</strong>
+                  <span class="p-sub" style="margin:0;">Optional</span>
+                </div>
+                <input type="checkbox" [(ngModel)]="hasGstNumber" />
+              </label>
+
+              <div class="gst-fields-drawer" *ngIf="hasGstNumber">
+                <div class="p-field full"><label>GSTIN</label><input type="text" [(ngModel)]="gstNumberInput" placeholder="Enter 15-digit GSTIN" /></div>
+                <div class="p-field full"><label>Business Name</label><input type="text" [(ngModel)]="gstBusinessName" placeholder="Registered Company Name" /></div>
+                <div class="p-field full"><label>Business Address</label><input type="text" [(ngModel)]="gstBusinessAddress" placeholder="Registered Office Address" /></div>
+              </div>
+            </div>
+
+            <p class="terms-footnote">
+              By clicking 'Continue booking', I accept <a>Terms & conditions</a> and <a>Privacy policy</a>
+            </p>
+
+          </div>
+
+          <!-- Right Column: Primo Banner + Trip Summary Card -->
+          <aside class="passenger-summary-sidebar">
+            <div class="primo-sidebar-card">
+              <span class="primo-pill-white">Primo ★</span>
+              <div>
+                <strong>Bus on time or 50% cashback</strong>
+                <span>On time, friendly staff, Top rated buses</span>
+              </div>
+            </div>
+
+            <div class="p-white-card aesthetic-card sticky-summary">
+              <div class="summary-op-header">
+                <h4>{{ floatingSelectedBus.operatorname }}</h4>
+                <span class="rating-badge-pill">★ {{ floatingSelectedBus.avgrating }}</span>
+              </div>
+              <span class="p-sub">{{ selectedSeatsList.length }} seat • {{ floatingSelectedBus.bustypename }}</span>
+
+              <div class="women-offer-banner-mini" *ngIf="floatingSelectedBus.hasWomenOffer">
+                👩 <strong>10% Women's Deal Eligible!</strong> Use code <strong>WOMEN10</strong> at payment.
+              </div>
+
+              <div class="trip-timeline-mini">
+                <div class="tt-node">
+                  <div class="tt-time"><strong>{{ selectedBoardingPoint?.time }}</strong><span>{{ selectedBoardingPoint?.date }}</span></div>
+                  <div class="tt-dot green"></div>
+                  <div class="tt-place"><strong>{{ selectedBoardingPoint?.name }}</strong><span>{{ selectedBoardingPoint?.landmark }}</span></div>
+                </div>
+                <div class="tt-duration-tag">{{ floatingSelectedBus.routedetails.duration }}</div>
+                <div class="tt-node">
+                  <div class="tt-time"><strong>{{ selectedDroppingPoint?.time }}</strong><span>{{ selectedDroppingPoint?.date }}</span></div>
+                  <div class="tt-dot red"></div>
+                  <div class="tt-place"><strong>{{ selectedDroppingPoint?.name }}</strong><span>{{ selectedDroppingPoint?.landmark }}</span></div>
+                </div>
+              </div>
+
+              <div class="seat-summary-chip-box">
+                <strong>Seat details</strong>
+                <span class="p-sub" style="margin:2px 0 6px;">{{ selectedSeatsList.length }} seat</span>
+                <div class="green-seat-pills">
+                  <span class="g-pill" *ngFor="let s of selectedSeatsList">
+                    {{ s.label }} • {{ s.isFemaleOnlyAvailable ? 'Female Seat' : 'Seat' }} • {{ s.deck === 'upper' ? 'Upper deck' : 'Lower deck' }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </aside>
+
+        </div>
+
+        <!-- Bottom Sticky Bar with Peach Tax Notice -->
+        <div class="peach-tax-strip">Taxes will be added in the next step</div>
+        <footer class="bottom-red-cta-bar">
+          <div class="cta-seat-summary">
+            <span>Amount <small>(Tax excluded)</small></span>
+            <strong class="cta-price">₹{{ baseSeatTotal + addonsTotal }}</strong>
+          </div>
+          <button type="button" class="btn-red-pill-cta" (click)="proceedToPayment()">
+            {{ t('btn_continue_booking') }}
+          </button>
+        </footer>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- STEP 4: MODERN PAYMENT GATEWAY WITH 15-MIN TIMER, WOMEN10 & QR SHOWCASE   -->
+      <!-- ========================================================================= -->
+      <div class="payment-gateway-container" *ngIf="modalStep === 'payment'">
+        <header class="payment-top-bar">
+          <div class="pay-left-title">
+            <button type="button" class="btn-back-arrow" (click)="modalStep = 'passenger'">←</button>
+            <div>
+              <strong>Complete Your Payment • ₹{{ finalPayableAmount }}</strong>
+              <span class="pay-route-sub">{{ fromCity }} → {{ toCity }} • {{ journeyDate }}</span>
+            </div>
+          </div>
+          <div class="pay-timer-pill">
+            <span class="pulse-dot"></span>
+            Session expires in <strong>{{ formattedTimer }}</strong>
+          </div>
+        </header>
+
+        <div class="payment-two-col-grid">
+
+          <!-- Left Column: Payment Instruments -->
+          <div class="payment-methods-col">
+
+            <ng-container *ngIf="paymentView === 'main'">
+              <div class="trust-badges-strip">
+                <span>🔒 256-Bit SSL Secured</span>
+                <span>⚡ Instant PNR Generation</span>
+                <span>🌟 3.6+ Crore Happy Travelers</span>
+              </div>
+
+              <label class="pay-option-card aesthetic-card">
+                <div class="po-left">
+                  <span class="po-ico">👛</span>
+                  <div><strong>redBus Wallet Cashback</strong><span>Use ₹50 instant wallet balance</span></div>
+                </div>
+                <input type="checkbox" [(ngModel)]="useWallet" />
+              </label>
+
+              <!-- PROMO CODE & AVAILABLE COUPONS CARD ON PAYMENT PAGE -->
+              <div class="pay-section-card aesthetic-card">
+                <div class="po-left" style="width: 100%; justify-content: space-between;">
+                  <div style="display:flex; align-items:center; gap:10px; flex:1;">
+                    <span class="po-ico">🎟️</span>
+                    <input type="text" [(ngModel)]="couponInput" placeholder="Enter promo code (e.g. WOMEN10, SUPERHIT)" class="coupon-inline-in" />
+                  </div>
+                  <button type="button" class="btn-apply-cpn" (click)="copyCoupon(couponInput || 'WOMEN10')">Apply</button>
+                </div>
+
+                <!-- Clickable Available Coupons Strip (Highlights WOMEN10) -->
+                <div class="payment-coupons-strip">
+                  <button
+                    type="button"
+                    class="pay-cpn-chip women-cpn"
+                    [class.applied]="appliedCouponCode === 'WOMEN10'"
+                    (click)="copyCoupon('WOMEN10')">
+                    👩 <strong>WOMEN10</strong> • 10% OFF for Female Travelers
+                  </button>
+
+                  <button
+                    type="button"
+                    class="pay-cpn-chip"
+                    [class.applied]="appliedCouponCode === 'SUPERHIT'"
+                    (click)="copyCoupon('SUPERHIT')">
+                    🏷️ <strong>SUPERHIT</strong> • Flat ₹200 OFF
+                  </button>
+
+                  <button
+                    type="button"
+                    class="pay-cpn-chip"
+                    [class.applied]="appliedCouponCode === 'BUS300'"
+                    (click)="copyCoupon('BUS300')">
+                    🚌 <strong>BUS300</strong> • Primo ₹200 OFF
+                  </button>
+                </div>
+              </div>
+
+              <!-- MODERN UPI & CUSTOM QR CODE SHOWCASE CARD -->
+              <div class="pay-section-card aesthetic-card qr-featured-card">
+                <div class="upi-header-row">
+                  <div>
+                    <h5>UPI / Scan QR Code</h5>
+                    <span class="upi-sub">Zero convenience fee • Instant confirmation</span>
+                  </div>
+                  <div class="upi-apps-badges">
+                    <span class="app-pill">GPay</span>
+                    <span class="app-pill">PhonePe</span>
+                    <span class="app-pill">Paytm</span>
+                    <span class="app-pill">BHIM</span>
+                  </div>
+                </div>
+
+                <div class="pay-method-row active-qr-row" [class.selected]="selectedMainPaymentMethod === 'qr'" (click)="selectedMainPaymentMethod = 'qr'">
+                  <span>📱 Scan QR Code with any UPI App</span>
+                  <input type="radio" name="payMethod" [checked]="selectedMainPaymentMethod === 'qr'" />
+                </div>
+
+                <div class="custom-qr-showcase-panel" *ngIf="selectedMainPaymentMethod === 'qr'">
+                  <div class="qr-frame-box">
+                    <div class="scan-laser-line"></div>
+                    <img [src]="customQrCodeUrl" alt="Merchant UPI QR Code" class="qr-code-img" (error)="handleQrImageError($event)" />
+                  </div>
+
+                  <div class="qr-instructions-col">
+                    <span class="qr-amount-badge">Scan & Pay ₹{{ finalPayableAmount }}</span>
+                    <h4>Scan using GPay, PhonePe, Paytm or any Banking UPI App</h4>
+                    <p>Open your preferred UPI app, scan the QR code on the left, and approve the payment of <strong>₹{{ finalPayableAmount }}</strong>.</p>
+                    <div class="qr-timer-note">⏱️ QR code valid for <strong>{{ formattedTimer }}</strong> mins</div>
+
+                    <button type="button" class="btn-verify-qr-pay" (click)="completeMockPayment()">
+                      ✔ I Have Paid ₹{{ finalPayableAmount }} • Generate Ticket
+                    </button>
+                  </div>
+                </div>
+
+                <div class="pay-method-row" style="margin-top: 10px;" [class.selected]="selectedMainPaymentMethod === 'upi_id'" (click)="selectedMainPaymentMethod = 'upi_id'">
+                  <span>⚡ Pay via UPI ID / VPA</span>
+                  <input type="radio" name="payMethod" [checked]="selectedMainPaymentMethod === 'upi_id'" />
+                </div>
+
+                <div class="upi-id-entry-row" *ngIf="selectedMainPaymentMethod === 'upi_id'">
+                  <input type="text" [(ngModel)]="upiIdInput" placeholder="yourname@okaxis / @ybl" />
+                  <button type="button" class="btn-red-pill-cta" (click)="completeMockPayment()">Verify & Pay ₹{{ finalPayableAmount }}</button>
+                </div>
+              </div>
+
+              <div class="pay-section-card aesthetic-card">
+                <h5>Credit / Debit Cards</h5>
+                <div class="pay-method-row" (click)="paymentView = 'card'">
+                  <span>💳 Visa, MasterCard, RuPay & Maestro Cards</span>
+                  <span>›</span>
+                </div>
+              </div>
+
+              <div class="pay-section-card aesthetic-card">
+                <h5>Netbanking & Gift Cards</h5>
+                <div class="pay-method-row" (click)="paymentView = 'netbanking'">
+                  <span>🏦 All Indian Banks Supported (SBI, HDFC, ICICI, Axis)</span>
+                  <span>›</span>
+                </div>
+                <div class="pay-method-row" (click)="paymentView = 'giftcard'" style="margin-top: 8px;">
+                  <span>🎁 Redeem a redBus Gift Card</span>
+                  <span>›</span>
+                </div>
+              </div>
+            </ng-container>
+
+            <div class="p-white-card aesthetic-card" *ngIf="paymentView === 'card'">
+              <div class="subdrawer-header">
+                <button type="button" class="btn-back-arrow" (click)="paymentView = 'main'">←</button>
+                <strong>Back to all payment options</strong>
+              </div>
+              <h4>Enter Credit / Debit Card Details</h4>
+              <div class="p-field full"><label>Card Number</label><input type="text" [(ngModel)]="cardNumber" placeholder="XXXX XXXX XXXX XXXX" /></div>
+              <div class="p-field full"><label>Name on Card</label><input type="text" [(ngModel)]="cardName" placeholder="Cardholder Name" /></div>
+              <div class="p-input-grid">
+                <div class="p-field"><label>Expiry (MM/YY)</label><input type="text" [(ngModel)]="cardExpiry" placeholder="MM/YY" /></div>
+                <div class="p-field"><label>CVV</label><input type="password" [(ngModel)]="cardCvv" placeholder="***" /></div>
+              </div>
+              <button type="button" class="btn-red-pill-cta full-w" (click)="completeMockPayment()">Pay ₹{{ finalPayableAmount }} Securely</button>
+            </div>
+
+            <div class="p-white-card aesthetic-card" *ngIf="paymentView === 'netbanking'">
+              <div class="subdrawer-header">
+                <button type="button" class="btn-back-arrow" (click)="paymentView = 'main'">←</button>
+                <strong>Back to all payment options</strong>
+              </div>
+              <div class="p-field full"><input type="text" [(ngModel)]="bankSearch" placeholder="🔍 Search your bank..." /></div>
+              <div class="banks-list-stack">
+                <div class="bank-row-item" *ngFor="let b of popularBanks" (click)="completeMockPayment()">
+                  <span>🏛️ {{ b }}</span>
+                  <span>Pay ₹{{ finalPayableAmount }} ›</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-white-card aesthetic-card" *ngIf="paymentView === 'giftcard'">
+              <div class="subdrawer-header">
+                <button type="button" class="btn-back-arrow" (click)="paymentView = 'main'">←</button>
+                <strong>Redeem Gift Card</strong>
+              </div>
+              <div class="p-field full"><label>Gift Card Number</label><input type="text" [(ngModel)]="giftCardCode" placeholder="Enter 16-digit gift card code" /></div>
+              <div class="p-field full"><label>Secret PIN</label><input type="password" [(ngModel)]="giftCardPin" placeholder="Enter 6-digit PIN" /></div>
+              <button type="button" class="btn-red-pill-cta full-w" (click)="completeMockPayment()">Redeem & Pay ₹{{ finalPayableAmount }}</button>
+            </div>
+
+          </div>
+
+          <!-- Right Column: Fare Breakup & Passenger Summary -->
+          <aside class="payment-summary-col">
+            <div class="p-white-card aesthetic-card">
+              <h4>Fare Breakup</h4>
+              <div class="fare-row"><span>Base Fare ({{ selectedSeatsList.length }} Seat)</span><strong>₹{{ baseSeatTotal }}</strong></div>
+              <div class="fare-row" *ngIf="addonsTotal > 0"><span>Trip Add-ons</span><strong>₹{{ addonsTotal }}</strong></div>
+              <div class="fare-row"><span>GST (5%)</span><strong>₹{{ gstAmount }}</strong></div>
+              <div class="fare-row green" *ngIf="appliedDiscount > 0">
+                <span>Coupon Discount ({{ appliedCouponCode }})</span>
+                <strong>-₹{{ appliedDiscount }}</strong>
+              </div>
+              <div class="fare-row green" *ngIf="useWallet"><span>Wallet Cashback Used</span><strong>-₹50</strong></div>
+              <div class="fare-row total"><span>Total Payable</span><strong>₹{{ finalPayableAmount }}</strong></div>
+            </div>
+
+            <div class="p-white-card aesthetic-card">
+              <h4>{{ floatingSelectedBus.operatorname }}</h4>
+              <span class="p-sub">{{ selectedSeatsList.length }} Seat • {{ floatingSelectedBus.bustypename }}</span>
+              <div class="trip-timeline-mini">
+                <div class="tt-node">
+                  <div class="tt-time"><strong>{{ selectedBoardingPoint?.time }}</strong><span>{{ selectedBoardingPoint?.date }}</span></div>
+                  <div class="tt-dot green"></div>
+                  <div class="tt-place"><strong>{{ selectedBoardingPoint?.name }}</strong><span>{{ fromCity }}</span></div>
+                </div>
+                <div class="tt-node">
+                  <div class="tt-time"><strong>{{ selectedDroppingPoint?.time }}</strong><span>{{ selectedDroppingPoint?.date }}</span></div>
+                  <div class="tt-dot red"></div>
+                  <div class="tt-place"><strong>{{ selectedDroppingPoint?.name }}</strong><span>{{ toCity }}</span></div>
+                </div>
+              </div>
+              <div class="passenger-mini-box">
+                <strong>Passenger Details</strong>
+                <div class="pm-line" *ngFor="let p of passengersList">
+                  <span>{{ getGenderAvatar(p.gender) }} {{ p.name }} ({{ p.gender }}, {{ p.age }} yrs)</span>
+                  <span class="seat-tag-pill">Seat {{ p.seatLabel }}</span>
+                </div>
+                <p class="ticket-phone-note">E-Ticket will be sent to <strong>+91 {{ contactPhone }}</strong> ({{ contactState }})</p>
+              </div>
+            </div>
+          </aside>
+
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- AUTHENTIC REDBUS E-TICKET CONFIRMATION & PDF DOWNLOAD MODAL               -->
+      <!-- ========================================================================= -->
+      <div class="booking-celebration-overlay" *ngIf="paymentSuccess">
+        <div class="confirmed-ticket-modal-card">
+
+          <!-- Sticky Top Green Header with Exit Button -->
+          <div class="ticket-celebration-banner">
+            <button type="button" class="btn-ticket-top-exit" (click)="closeFloatingSeatDrawer()" title="Exit Ticket">✕ Exit</button>
+            <div class="check-glow-circle">✓</div>
+            <h2>Booking Confirmed! • redBus e-Ticket</h2>
+            <p>mTicket Accepted • Sent to +91 {{ contactPhone }} & {{ contactEmail }}</p>
+          </div>
+
+          <!-- Scrollable Authentic RedBus Ticket Body -->
+          <div class="perforated-ticket-body">
+
+            <!-- TIN, PNR & Booking Timestamp Strip -->
+            <div class="rb-ticket-ids-bar">
+              <div>
+                <span class="t-lbl">TICKET NO (TIN)</span>
+                <strong class="tin-val">{{ generatedTin }}</strong>
+              </div>
+              <div>
+                <span class="t-lbl">OPERATOR PNR</span>
+                <strong class="pnr-code">{{ generatedPnr }}</strong>
+              </div>
+              <div style="text-align:right;">
+                <span class="t-lbl">BOOKED ON</span>
+                <strong class="t-sub-dark">{{ bookingTimestamp }}</strong>
+              </div>
+            </div>
+
+            <!-- Operator & Bus Coach Header -->
+            <div class="ticket-top-meta">
+              <div>
+                <span class="t-lbl">BUS OPERATOR & SERVICE</span>
+                <strong class="t-val">{{ floatingSelectedBus.operatorname }}</strong>
+                <span class="t-sub">{{ floatingSelectedBus.bustypename }}</span>
+              </div>
+              <div style="text-align:right;">
+                <span class="t-lbl">OPERATOR HELPLINE</span>
+                <strong class="t-sub-dark">{{ operatorHelpline }}</strong>
+              </div>
+            </div>
+
+            <!-- Route, Reporting Time & Arrival Ribbon -->
+            <div class="ticket-route-ribbon">
+              <div class="tr-col">
+                <span class="t-lbl">FROM ({{ fromCity }})</span>
+                <strong class="tr-time">{{ selectedBoardingPoint?.time }}</strong>
+                <span class="tr-rep-pill">Reporting: {{ reportingTimeFormatted }}</span>
+                <span class="tr-place">{{ selectedBoardingPoint?.name }}</span>
+                <span class="tr-landmark">{{ selectedBoardingPoint?.landmark }}</span>
+              </div>
+
+              <div class="tr-arrow">
+                <span>{{ floatingSelectedBus.routedetails.duration }}</span>
+                <div class="tr-line">🚌 ➔</div>
+                <span>{{ journeyDate }}</span>
+              </div>
+
+              <div class="tr-col right">
+                <span class="t-lbl">TO ({{ toCity }})</span>
+                <strong class="tr-time">{{ selectedDroppingPoint?.time }}</strong>
+                <span class="tr-rep-pill arrival">Arrival ({{ selectedDroppingPoint?.date }})</span>
+                <span class="tr-place">{{ selectedDroppingPoint?.name }}</span>
+                <span class="tr-landmark">{{ selectedDroppingPoint?.landmark }}</span>
+              </div>
+            </div>
+
+            <!-- Passenger Manifest Table -->
+            <div class="rb-ticket-pax-table">
+              <div class="pax-tbl-head">
+                <span>PASSENGER NAME</span>
+                <span>GENDER & AGE</span>
+                <span>SEAT & DECK</span>
+              </div>
+              <div class="pax-tbl-row" *ngFor="let p of passengersList">
+                <strong>{{ getGenderAvatar(p.gender) }} {{ p.name }}</strong>
+                <span>{{ p.gender }}, {{ p.age }} yrs</span>
+                <span class="seat-badge-red">{{ p.seatLabel }} ({{ p.deck === 'upper' ? 'Upper' : 'Lower' }})</span>
+              </div>
+            </div>
+
+            <!-- Fare & State Summary Box -->
+            <div class="ticket-passenger-grid">
+              <div class="tp-cell">
+                <span class="t-lbl">CONTACT & STATE OF RESIDENCE</span>
+                <strong>+91 {{ contactPhone }} • {{ contactState }}</strong>
+              </div>
+              <div class="tp-cell">
+                <span class="t-lbl">TOTAL FARE PAID (INCL. GST)</span>
+                <strong class="green-txt">₹{{ finalPayableAmount }} (Paid via UPI)</strong>
+              </div>
+            </div>
+
+            <!-- mTicket & ID Proof Note -->
+            <div class="mticket-info-strip">
+              📱 <strong>mTicket Valid:</strong> Show this digital ticket + Govt. Photo ID at boarding. No printout required.
+            </div>
+
+            <!-- Barcode Strip -->
+            <div class="ticket-barcode-strip">
+              <div class="mock-barcode">||| |||| || | |||| ||| || |||| | ||| |||| |||</div>
+              <span>{{ generatedTin }} • {{ generatedPnr }} • Verified redBus Boarding Pass</span>
+            </div>
+          </div>
+
+          <!-- Sticky Bottom Footer with Download PDF, Print & Exit -->
+          <div class="ticket-actions-footer">
+            <button type="button" class="btn-download-ticket" (click)="downloadPdfTicket()">
+              📥 Download PDF Ticket
+            </button>
+            <button type="button" class="btn-print-ticket" (click)="printTicketReceipt()">
+              🖨️ Print Ticket
+            </button>
+            <button type="button" class="btn-done-close" (click)="closeFloatingSeatDrawer()">
+              ✕ Exit & Close
             </button>
           </div>
 
         </div>
+      </div>
 
-        <!-- Collapsible 2+1 Bus Seat Canvas -->
-        <div *ngIf="bus.showSeats" class="seat-drawer-canvas">
-          <div class="canvas-header">
-            <div class="canvas-title-group">
-              <h4>Choose your berths</h4>
-              <span class="deck-indicator-txt">Authentic 2+1 Configuration</span>
-            </div>
+    </div>
+  </div>
 
-            <div class="legend-cluster">
-              <div class="legend-item"><span class="swatch available"></span> Available</div>
-              <div class="legend-item"><span class="swatch selected"></span> Selected</div>
-              <div class="legend-item"><span class="swatch booked"></span> Booked</div>
-            </div>
-          </div>
-
-          <div class="canvas-workspace">
-            <!-- Modern Sleeper Coach Interior -->
-            <div class="coach-hull">
-              <!-- Driver Cabin -->
-              <div class="cockpit-compartment">
-                <div class="steering-icon-wrap">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7e7e8c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-                    <path d="M2 12h20"></path>
-                  </svg>
-                </div>
-                <span class="driver-tag">ENTRY</span>
-              </div>
-
-              <!-- Deck Layouts -->
-              <div class="deck-sections-wrapper">
-                
-                <!-- LOWER DECK -->
-                <div class="deck-capsule">
-                  <div class="deck-capsule-label">Lower Deck (2+1)</div>
-                  <div class="deck-rows-container">
-                    
-                    <!-- Row C (Upper Double Berth) -->
-                    <div class="berth-strip-row">
-                      <div *ngFor="let s of bus.lowerC"
-                           class="berth-cell"
-                           [class.booked]="s.booked"
-                           [class.selected]="isSeatChosen(bus._id, s.no)"
-                           (click)="pickSeat(bus, s)">
-                        <span class="cushion-pillow"></span>
-                        <span class="seat-id">{{ s.no }}</span>
-                        <span class="seat-fare">₹{{ s.price }}</span>
-                      </div>
-                    </div>
-
-                    <!-- Row B (Lower Double Berth) -->
-                    <div class="berth-strip-row">
-                      <div *ngFor="let s of bus.lowerB"
-                           class="berth-cell"
-                           [class.booked]="s.booked"
-                           [class.selected]="isSeatChosen(bus._id, s.no)"
-                           (click)="pickSeat(bus, s)">
-                        <span class="cushion-pillow"></span>
-                        <span class="seat-id">{{ s.no }}</span>
-                        <span class="seat-fare">₹{{ s.price }}</span>
-                      </div>
-                    </div>
-
-                    <!-- Center Gangway / Aisle -->
-                    <div class="coach-gangway">
-                      <span>WALKWAY</span>
-                    </div>
-
-                    <!-- Row A (Single Window Berth) -->
-                    <div class="berth-strip-row">
-                      <div *ngFor="let s of bus.lowerA"
-                           class="berth-cell single-berth"
-                           [class.booked]="s.booked"
-                           [class.selected]="isSeatChosen(bus._id, s.no)"
-                           (click)="pickSeat(bus, s)">
-                        <span class="cushion-pillow"></span>
-                        <span class="seat-id">{{ s.no }}</span>
-                        <span class="seat-fare">₹{{ s.price }}</span>
-                      </div>
-                    </div>
-
-                  </div>
-                </div>
-
-                <!-- UPPER DECK -->
-                <div class="deck-capsule">
-                  <div class="deck-capsule-label">Upper Deck (2+1)</div>
-                  <div class="deck-rows-container">
-                    
-                    <!-- Row C -->
-                    <div class="berth-strip-row">
-                      <div *ngFor="let s of bus.upperC"
-                           class="berth-cell"
-                           [class.booked]="s.booked"
-                           [class.selected]="isSeatChosen(bus._id, s.no)"
-                           (click)="pickSeat(bus, s)">
-                        <span class="cushion-pillow"></span>
-                        <span class="seat-id">{{ s.no }}</span>
-                        <span class="seat-fare">₹{{ s.price }}</span>
-                      </div>
-                    </div>
-
-                    <!-- Row B -->
-                    <div class="berth-strip-row">
-                      <div *ngFor="let s of bus.upperB"
-                           class="berth-cell"
-                           [class.booked]="s.booked"
-                           [class.selected]="isSeatChosen(bus._id, s.no)"
-                           (click)="pickSeat(bus, s)">
-                        <span class="cushion-pillow"></span>
-                        <span class="seat-id">{{ s.no }}</span>
-                        <span class="seat-fare">₹{{ s.price }}</span>
-                      </div>
-                    </div>
-
-                    <!-- Center Gangway / Aisle -->
-                    <div class="coach-gangway">
-                      <span>WALKWAY</span>
-                    </div>
-
-                    <!-- Row A -->
-                    <div class="berth-strip-row">
-                      <div *ngFor="let s of bus.upperA"
-                           class="berth-cell single-berth"
-                           [class.booked]="s.booked"
-                           [class.selected]="isSeatChosen(bus._id, s.no)"
-                           (click)="pickSeat(bus, s)">
-                        <span class="cushion-pillow"></span>
-                        <span class="seat-id">{{ s.no }}</span>
-                        <span class="seat-fare">₹{{ s.price }}</span>
-                      </div>
-                    </div>
-
-                  </div>
-                </div>
-
-              </div>
-            </div>
-
-            <!-- Booking Confirmation Sidebar -->
-            <aside class="sidebar-checkout-tray">
-              <div class="pickup-select-card">
-                <h5 class="tray-title">Boarding & Dropping</h5>
-                
-                <div class="control-group">
-                  <label>Boarding Point</label>
-                  <select class="custom-select" [(ngModel)]="bus.chosenBoarding">
-                    <option *ngFor="let bp of bus.boarding_points" [value]="bp">{{ bp }}</option>
-                  </select>
-                </div>
-
-                <div class="control-group">
-                  <label>Dropping Point</label>
-                  <select class="custom-select" [(ngModel)]="bus.chosenDropping">
-                    <option *ngFor="let dp of bus.dropping_points" [value]="dp">{{ dp }}</option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="fare-tally-box">
-                <div class="tally-line">
-                  <span>Selected Berths</span>
-                  <strong class="selected-seat-names">
-                    {{ (selectedSeatsMap[bus._id] || []).join(', ') || 'None selected' }}
-                  </strong>
-                </div>
-
-                <div class="tally-line total">
-                  <span>Total Amount</span>
-                  <strong class="total-figure">₹{{ getComputedTotal(bus) }}</strong>
-                </div>
-
-                <button type="button" 
-                        class="btn-proceed-pay" 
-                        [disabled]="(selectedSeatsMap[bus._id] || []).length === 0"
-                        (click)="checkout(bus)">
-                  CONTINUE TO BOOK
-                </button>
-              </div>
-            </aside>
-
-          </div>
-        </div>
-
-      </article>
-    </section>
-  </main>
 </div>

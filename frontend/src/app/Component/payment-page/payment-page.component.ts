@@ -1,27 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
-export interface BookingPayload {
-  bookingId: string;
-  busId?: string;
-  busName: string;
-  busType: string;
-  departure?: string;
-  arrival?: string;
-  from: string;
-  to: string;
-  date: string;
-  departureTime: string;
-  arrivalTime: string;
-  duration?: string;
-  boardingPoint: string;
-  droppingPoint: string;
-  seats: string[];
-  seatNumbers?: string;
-  totalSeats?: number;
-  farePerSeat?: number;
-  totalFare: number;
-}
+export type PaymentMethod = 'upi' | 'card' | 'netbanking' | 'wallet';
 
 @Component({
   selector: 'app-payment-page',
@@ -29,88 +9,74 @@ export interface BookingPayload {
   styleUrls: ['./payment-page.component.css']
 })
 export class PaymentPageComponent implements OnInit, OnDestroy {
-  booking: BookingPayload = {
-    bookingId: 'RB-829104',
-    busName: 'VRL Travels',
-    busType: 'Volvo Multi-Axle A/C Sleeper (2+1)',
-    from: 'Bengaluru',
-    to: 'Goa',
-    date: '25 Oct, 2026',
-    departureTime: '21:00',
-    arrivalTime: '07:30',
-    duration: '10h 30m',
-    boardingPoint: 'Majestic (Kempegowda Bus Station)',
-    droppingPoint: 'Panjim Bus Stand',
-    seats: ['L1A', 'L2A'],
-    seatNumbers: 'L1A, L2A',
-    totalSeats: 2,
-    farePerSeat: 1450,
-    totalFare: 2900
-  };
 
-  selectedTab: 'upi' | 'card' | 'netbanking' | 'wallet' = 'upi';
+  busName: string = '';
+  busType: string = '';
+  fromCity: string = '';
+  toCity: string = '';
+  journeyDate: string = '';
+  depTime: string = '';
+  arrTime: string = '';
+  selectedSeats: string = '';
+  pickupPoint: string = '';
+  dropPoint: string = '';
+  totalFare: number = 0;
 
-  // QR state
-  showQrAnimation: boolean = true;
-  upiId: string = 'adityaaditya2034@naviaxis';
-  payeeName: string = 'ADITYA ADITYA';
-  qrApiUrl: string = '';
+  activeTab: PaymentMethod = 'upi';
+  upiSubMethod: 'qr' | 'apps' | 'id' = 'qr';
+  selectedUpiApp: string = 'phonepe';
+  customUpiId: string = '';
+  copiedVpa: boolean = false;
 
-  // Form Controls
+  // Interactive Live Card Preview Data
   cardNumber: string = '';
   cardExpiry: string = '';
   cardCvv: string = '';
-  cardHolder: string = '';
-  selectedBank: string = 'HDFC';
-  selectedWallet: string = 'Paytm';
+  cardName: string = 'ADITYA CHAVAN';
+  cardNetwork: 'visa' | 'mastercard' | 'rupay' = 'visa';
 
+  // Netbanking Selection
+  selectedBank: string = 'SBI';
+
+  // Wallet Selection
+  selectedWallet: string = 'amazon';
+
+  // UPI Metadata
+  upiVpa: string = 'adityaaditya2034@naviaxis';
+  payeeName: string = 'ADITYA ADITYA';
+
+  // Checkout State
   isProcessing: boolean = false;
-  paymentSuccess: boolean = false;
+  bookingSuccess: boolean = false;
+  bookingRef: string = '';
+  paidVia: string = '';
 
-  // Session timer (10 mins)
   timerMinutes: number = 9;
   timerSeconds: number = 59;
   private timerInterval: any;
 
-  constructor(private router: Router) {}
+  constructor(private route: ActivatedRoute, private router: Router) {}
 
   ngOnInit(): void {
-    try {
-      const rawData = sessionStorage.getItem('currentBooking') ||
-                      sessionStorage.getItem('selectedBooking') ||
-                      localStorage.getItem('currentBooking') ||
-                      localStorage.getItem('selectedBooking');
+    this.route.queryParams.subscribe(params => {
+      this.busName = params['bus'] || 'VRL Travels';
+      this.busType = params['type'] || 'Volvo Multi-Axle AC Sleeper (2+1)';
+      this.fromCity = params['from'] || 'Bengaluru';
+      this.toCity = params['to'] || 'Goa';
+      this.journeyDate = params['date'] || 'Today';
+      this.depTime = params['dep'] || '21:00';
+      this.arrTime = params['arr'] || '07:30';
+      this.selectedSeats = params['seats'] || 'L-A1 (Standard Berth)';
+      this.pickupPoint = params['pickup'] || 'Central Bus Stand';
+      this.dropPoint = params['drop'] || 'City Terminal';
+      this.totalFare = Number(params['fare']) || 1200;
+    });
 
-      if (rawData) {
-        const parsed = JSON.parse(rawData);
-        if (parsed && typeof parsed === 'object') {
-          this.booking = {
-            ...this.booking,
-            ...parsed,
-            seats: Array.isArray(parsed.seats) ? parsed.seats : [parsed.seats || 'L1A'],
-            seatNumbers: parsed.seatNumbers || (Array.isArray(parsed.seats) ? parsed.seats.join(', ') : 'L1A'),
-            totalFare: Number(parsed.totalFare) || 1450
-          };
-        }
-      }
-    } catch (err) {
-      console.warn('Error reading booking payload from storage:', err);
-    }
-
-    this.constructQrCodeUrl();
     this.startCountdown();
   }
 
   ngOnDestroy(): void {
-    if (this.timerInterval) {
-      clearInterval(this.timerInterval);
-    }
-  }
-
-  constructQrCodeUrl(): void {
-    const total = this.booking.totalFare || 1450;
-    const upiUri = encodeURIComponent(`upi://pay?pa=adityaaditya2034@naviaxis&pn=ADITYA%20ADITYA&am=${total}&cu=INR`);
-    this.qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${upiUri}&margin=1`;
+    if (this.timerInterval) clearInterval(this.timerInterval);
   }
 
   startCountdown(): void {
@@ -123,37 +89,91 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
           this.timerSeconds = 59;
         } else {
           clearInterval(this.timerInterval);
+          alert('Booking session expired. Please reselect your seats.');
+          this.router.navigate(['/']);
         }
       }
     }, 1000);
   }
 
-  get formattedTime(): string {
-    const m = this.timerMinutes < 10 ? '0' + this.timerMinutes : this.timerMinutes;
-    const s = this.timerSeconds < 10 ? '0' + this.timerSeconds : this.timerSeconds;
-    return `${m}:${s}`;
+  setTab(tab: PaymentMethod): void {
+    this.activeTab = tab;
   }
 
-  setTab(tab: 'upi' | 'card' | 'netbanking' | 'wallet'): void {
-    this.selectedTab = tab;
+  setUpiSubMethod(method: 'qr' | 'apps' | 'id'): void {
+    this.upiSubMethod = method;
   }
 
-  toggleQrDisplay(): void {
-    this.showQrAnimation = !this.showQrAnimation;
+  selectUpiApp(app: string): void {
+    this.selectedUpiApp = app;
   }
 
-  processPayment(): void {
+  selectBank(bank: string): void {
+    this.selectedBank = bank;
+  }
+
+  selectWallet(wallet: string): void {
+    this.selectedWallet = wallet;
+  }
+
+  // Live Card Masking & Network Detection
+  onCardNumberInput(event: any): void {
+    let value = event.target.value.replace(/\D/g, '');
+    if (value.length > 16) value = value.substring(0, 16);
+
+    // Network Identification
+    if (value.startsWith('4')) {
+      this.cardNetwork = 'visa';
+    } else if (value.startsWith('5')) {
+      this.cardNetwork = 'mastercard';
+    } else if (value.startsWith('6') || value.startsWith('508')) {
+      this.cardNetwork = 'rupay';
+    }
+
+    // Format with spaces
+    this.cardNumber = value.replace(/(\d{4})(?=\d)/g, '$1 ');
+  }
+
+  onExpiryInput(event: any): void {
+    let value = event.target.value.replace(/\D/g, '');
+    if (value.length > 4) value = value.substring(0, 4);
+    if (value.length >= 3) {
+      this.cardExpiry = `${value.substring(0, 2)}/${value.substring(2, 4)}`;
+    } else {
+      this.cardExpiry = value;
+    }
+  }
+
+  copyVpa(): void {
+    navigator.clipboard.writeText(this.upiVpa);
+    this.copiedVpa = true;
+    setTimeout(() => { this.copiedVpa = false; }, 2000);
+  }
+
+  processPayment(methodDescription?: string): void {
     this.isProcessing = true;
+    this.paidVia = methodDescription || this.getFormattedPaymentMethod();
+
     setTimeout(() => {
       this.isProcessing = false;
-      this.paymentSuccess = true;
-    }, 1500);
+      this.bookingRef = 'RB' + Math.floor(100000 + Math.random() * 900000);
+      this.bookingSuccess = true;
+    }, 1000);
   }
 
-  goToHome(): void {
-    sessionStorage.removeItem('currentBooking');
-    sessionStorage.removeItem('selectedBooking');
-    this.router.navigate(['/']);
+  getFormattedPaymentMethod(): string {
+    switch (this.activeTab) {
+      case 'upi':
+        return this.upiSubMethod === 'qr' ? 'PhonePe Dynamic QR' : `UPI (${this.selectedUpiApp.toUpperCase()})`;
+      case 'card':
+        return `${this.cardNetwork.toUpperCase()} Debit/Credit Card`;
+      case 'netbanking':
+        return `Net Banking (${this.selectedBank})`;
+      case 'wallet':
+        return `Digital Wallet (${this.selectedWallet.toUpperCase()})`;
+      default:
+        return 'Online Secure Checkout';
+    }
   }
 }
 

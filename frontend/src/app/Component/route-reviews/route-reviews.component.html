@@ -1,54 +1,317 @@
-<div class="reviews-wrapper">
-  <div class="reviews-header">
-    <div>
-      <h2>{{ 'REVIEWS.TITLE' | translate }}</h2>
-      <div class="rating-strip">
-        <span class="badge-star">? {{ stats.averageRating }} / 5</span>
-        <span>{{ stats.totalReviews }} {{ 'REVIEWS.TOTAL_REVIEWS' | translate }}</span>
+<div class="reviews-page-wrapper" [class.dark-theme]="isDarkMode">
+
+  <!-- ================= HERO HEADER ================= -->
+  <header class="reviews-hero-stage">
+    <div class="hero-inner-container">
+      <div class="hero-badge-pill">
+        <span class="sparkle-icon">✦</span>
+        <span>{{ t('hero_kicker') }}</span>
+      </div>
+      <h1 class="hero-heading">{{ t('hero_heading') }}</h1>
+      <p class="hero-description">{{ t('hero_desc') }}</p>
+
+      <div class="hero-actions-row">
+        <button type="button" class="btn-hero-primary" (click)="showForm = !showForm">
+          <span class="icon">{{ showForm ? '✕' : '✎' }}</span>
+          <span>{{ showForm ? t('btn_cancel') : t('btn_write_review') }}</span>
+        </button>
       </div>
     </div>
-    <button class="btn-write" (click)="showForm = !showForm">
-      {{ showForm ? 'Cancel' : ('REVIEWS.WRITE_REVIEW' | translate) }}
-    </button>
-  </div>
+  </header>
 
-  <div class="review-form-card" *ngIf="showForm">
-    <h4>Verified Journey Review</h4>
-    <div *ngIf="errorMessage" class="error-box">{{ errorMessage }}</div>
-    <div class="form-row">
-      <input type="text" [(ngModel)]="verifiedPnr" placeholder="Completed PNR (e.g. RB94821034)" />
-      <select [(ngModel)]="newRating">
-        <option [ngValue]="5">5 Stars - Outstanding</option>
-        <option [ngValue]="4">4 Stars - Very Good</option>
-        <option [ngValue]="3">3 Stars - Average</option>
-      </select>
+  <!-- ================= MAIN CONTENT CONTAINER ================= -->
+  <div class="reviews-content-arena">
+    <div class="main-two-col-layout">
+      
+      <!-- ================= LEFT COLUMN: REVIEWS FEED ================= -->
+      <main class="reviews-feed-column">
+        
+        <!-- PNR REVIEW COMPOSE CARD (EXPANDABLE) -->
+        <div class="review-compose-card" *ngIf="showForm">
+          <div class="card-compose-header">
+            <h3>{{ t('btn_write_review') }}</h3>
+            <span class="pnr-note">{{ t('form_note') }}</span>
+          </div>
+
+          <div class="compose-grid">
+            <div class="compose-row-half">
+              <input 
+                type="text" 
+                [(ngModel)]="newReview.pnr" 
+                class="compose-input" 
+                [placeholder]="t('form_pnr_placeholder')" 
+                maxlength="10" />
+
+              <select [(ngModel)]="newReview.operator" class="compose-select">
+                <option value="VRL Travels">VRL Travels</option>
+                <option value="KSRTC Airavat 2.0">KSRTC Airavat 2.0</option>
+                <option value="IntrCity SmartBus">IntrCity SmartBus</option>
+              </select>
+            </div>
+
+            <input 
+              type="text" 
+              [(ngModel)]="newReview.title" 
+              class="compose-input" 
+              [placeholder]="t('form_title_placeholder')" />
+
+            <textarea 
+              [(ngModel)]="newReview.comment" 
+              rows="3" 
+              class="compose-textarea" 
+              [placeholder]="t('form_comment_placeholder')"></textarea>
+            
+            <div class="compose-actions-footer">
+              <div class="rating-select-group">
+                <label>{{ t('form_rating_lbl') }}</label>
+                <select [(ngModel)]="newReview.rating" class="rating-dropdown">
+                  <option [value]="5">★★★★★ (5.0 - Excellent)</option>
+                  <option [value]="4">★★★★☆ (4.0 - Very Good)</option>
+                  <option [value]="3">★★★☆☆ (3.0 - Average)</option>
+                </select>
+              </div>
+
+              <button type="button" class="btn-submit-review" (click)="submitNewReview()">
+                {{ t('form_btn_publish') }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SCORECARD SUMMARY WITH PROGRESS BARS -->
+        <div class="overall-scorecard-card">
+          <div class="scorecard-top-row">
+            <div class="big-rating-hero">
+              <span class="rating-val">{{ stats.averageRating }}</span>
+              <div class="rating-stars-block">
+                <div class="gold-stars">★★★★★</div>
+                <strong class="score-title">{{ t('overall_rating_title') }}</strong>
+                <span class="score-subtitle">{{ stats.totalReviews | number }} {{ t('based_on_txt') }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="metrics-breakdown-grid">
+            <div class="metric-meter-unit">
+              <div class="meter-info">
+                <span class="meter-lbl">{{ t('metric_punctuality') }}</span>
+                <strong class="meter-num">{{ stats.punctualityScore }} / 5</strong>
+              </div>
+              <div class="meter-track">
+                <div class="meter-fill" style="width: 98%;"></div>
+              </div>
+            </div>
+
+            <div class="metric-meter-unit">
+              <div class="meter-info">
+                <span class="meter-lbl">{{ t('metric_cleanliness') }}</span>
+                <strong class="meter-num">{{ stats.cleanlinessScore }} / 5</strong>
+              </div>
+              <div class="meter-track">
+                <div class="meter-fill" style="width: 96%;"></div>
+              </div>
+            </div>
+
+            <div class="metric-meter-unit">
+              <div class="meter-info">
+                <span class="meter-lbl">{{ t('metric_staff') }}</span>
+                <strong class="meter-num">{{ stats.staffScore }} / 5</strong>
+              </div>
+              <div class="meter-track">
+                <div class="meter-fill" style="width: 94%;"></div>
+              </div>
+            </div>
+
+            <div class="metric-meter-unit">
+              <div class="meter-info">
+                <span class="meter-lbl">{{ t('metric_comfort') }}</span>
+                <strong class="meter-num">4.8 / 5</strong>
+              </div>
+              <div class="meter-track">
+                <div class="meter-fill" style="width: 96%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FILTER CHIPS & SORT BAR -->
+        <div class="filters-and-sort-wrap">
+          <div class="operator-filter-tabs">
+            <button 
+              type="button" 
+              class="filter-pill-btn" 
+              [class.active]="activeOperatorFilter === 'all'" 
+              (click)="setOperatorFilter('all')">
+              {{ t('filter_all_operators') }}
+            </button>
+            <button 
+              type="button" 
+              class="filter-pill-btn" 
+              [class.active]="activeOperatorFilter === 'vrl'" 
+              (click)="setOperatorFilter('vrl')">
+              {{ t('filter_vrl') }}
+            </button>
+            <button 
+              type="button" 
+              class="filter-pill-btn" 
+              [class.active]="activeOperatorFilter === 'ksrtc'" 
+              (click)="setOperatorFilter('ksrtc')">
+              {{ t('filter_ksrtc') }}
+            </button>
+            <button 
+              type="button" 
+              class="filter-pill-btn" 
+              [class.active]="activeOperatorFilter === 'intrcity'" 
+              (click)="setOperatorFilter('intrcity')">
+              {{ t('filter_intrcity') }}
+            </button>
+          </div>
+
+          <div class="reviews-sorting-bar">
+            <span class="sort-title">{{ t('sort_label') }}</span>
+            <div class="sort-action-group">
+              <button 
+                type="button" 
+                class="btn-sort-opt" 
+                [class.active]="activeSort === 'recent'" 
+                (click)="setSort('recent')">
+                {{ t('sort_recent') }}
+              </button>
+              <button 
+                type="button" 
+                class="btn-sort-opt" 
+                [class.active]="activeSort === 'highest'" 
+                (click)="setSort('highest')">
+                {{ t('sort_highest') }}
+              </button>
+              <button 
+                type="button" 
+                class="btn-sort-opt" 
+                [class.active]="activeSort === 'lowest'" 
+                (click)="setSort('lowest')">
+                {{ t('sort_lowest') }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- EMPTY STATE FEED -->
+        <div *ngIf="displayedReviews.length === 0" class="empty-reviews-box">
+          <span class="empty-icon">⭐</span>
+          <p>{{ t('empty_reviews_msg') }}</p>
+        </div>
+
+        <!-- REVIEWS FEED STACK -->
+        <div class="reviews-list-stack">
+          <article *ngFor="let rev of displayedReviews" class="review-item-card">
+            
+            <div class="rev-header-row">
+              <div class="reviewer-meta">
+                <div class="reviewer-badge-circle">
+                  <span>{{ t(rev.reviewerNameKey).charAt(0) }}</span>
+                </div>
+                <div class="reviewer-text-block">
+                  <div class="reviewer-name-line">
+                    <strong class="reviewer-name">{{ t(rev.reviewerNameKey) }}</strong>
+                    <span class="verified-pill" *ngIf="rev.verifiedTrip">
+                      ✓ {{ t('verified_badge') }}
+                    </span>
+                  </div>
+                  <span class="reviewer-badge-txt">{{ t(rev.badgeKey) }}</span>
+                </div>
+              </div>
+
+              <div class="rev-rating-date">
+                <div class="green-star-badge">★ {{ rev.rating }}.0</div>
+                <span class="rev-date-txt">{{ t(rev.dateKey) }}</span>
+              </div>
+            </div>
+
+            <!-- Route & Operator Info Strip -->
+            <div class="bus-trip-ribbon">
+              <span class="trip-operator">🚌 {{ t(rev.operatorKey) }}</span>
+              <span class="trip-dot">•</span>
+              <span class="trip-type">{{ t(rev.busTypeKey) }}</span>
+              <span class="trip-dot">•</span>
+              <span class="trip-route">📍 {{ t(rev.routeKey) }}</span>
+            </div>
+
+            <!-- Review Content -->
+            <h3 class="rev-title">{{ t(rev.titleKey) }}</h3>
+            <p class="rev-comment-body">{{ t(rev.commentKey) }}</p>
+
+            <!-- Bottom Actions -->
+            <div class="rev-footer-row">
+              <button 
+                type="button" 
+                class="btn-helpful-action" 
+                [class.marked]="rev.hasMarkedHelpful" 
+                (click)="toggleHelpful(rev)">
+                <span>👍</span>
+                <span>{{ rev.helpfulCount }} {{ t('btn_helpful') }}</span>
+              </button>
+
+              <button type="button" class="btn-helpful-action">
+                <span>↗️</span>
+                <span>{{ t('btn_share') }}</span>
+              </button>
+            </div>
+
+          </article>
+        </div>
+
+      </main>
+
+      <!-- ================= RIGHT COLUMN: SIDEBAR ================= -->
+      <aside class="reviews-sidebar-column">
+        
+        <div class="sidebar-review-card write-card">
+          <div class="sidebar-card-badge">{{ t('widget_verify_badge') }}</div>
+          <h4 class="card-heading">{{ t('widget_write_review_title') }}</h4>
+          <p class="card-desc">{{ t('widget_write_review_desc') }}</p>
+          
+          <div class="pnr-input-wrap">
+            <input 
+              type="text" 
+              class="pnr-input" 
+              [placeholder]="t('pnr_input_placeholder')" 
+              maxlength="10" />
+            <button type="button" class="btn-pnr-submit" (click)="showForm = true">
+              {{ t('btn_submit_pnr') }}
+            </button>
+          </div>
+        </div>
+
+        <div class="sidebar-review-card assurance-card">
+          <h4 class="card-heading">{{ t('widget_trust_title') }}</h4>
+          <ul class="assurance-list">
+            <li>
+              <span class="icon-circle">🛡️</span> 
+              <div class="assurance-text">
+                <strong>{{ t('trust_head_1') }}</strong>
+                <span>{{ t('trust_sub_1') }}</span>
+              </div>
+            </li>
+            <li>
+              <span class="icon-circle">⚡</span> 
+              <div class="assurance-text">
+                <strong>{{ t('trust_head_2') }}</strong>
+                <span>{{ t('trust_sub_2') }}</span>
+              </div>
+            </li>
+            <li>
+              <span class="icon-circle">📍</span> 
+              <div class="assurance-text">
+                <strong>{{ t('trust_head_3') }}</strong>
+                <span>{{ t('trust_sub_3') }}</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+      </aside>
+
     </div>
-    <textarea [(ngModel)]="newReviewText" placeholder="Write at least 30 characters about punctuality and cleanliness..." rows="3"></textarea>
-    <button class="btn-submit-rev" (click)="submitReview()">Submit Review</button>
   </div>
 
-  <div class="reviews-list">
-    <ng-container *ngFor="let item of reviews">
-      <div class="review-card" *ngIf="!item.reported">
-        <div class="rev-head">
-          <div>
-            <strong>{{ item.reviewerName }}</strong>
-            <span class="pnr-tag">PNR: {{ item.pnr }}</span>
-            <span class="trusted-tag" *ngIf="item.isTrusted">? Trusted</span>
-          </div>
-          <span class="stars">? {{ item.rating }}.0</span>
-        </div>
-        <p class="rev-comment">{{ item.comment }}</p>
-        <div class="rev-foot">
-          <span [class.text-green]="isEditable(item)" [class.text-muted]="!isEditable(item)">
-            {{ isEditable(item) ? '? 24-hr edit window active' : '?? Rating locked' }}
-          </span>
-          <div>
-            <button (click)="upvote(item)" class="btn-mini">?? Helpful ({{ item.upvotes }})</button>
-            <button (click)="report(item)" class="btn-mini">?? Report</button>
-          </div>
-        </div>
-      </div>
-    </ng-container>
-  </div>
 </div>

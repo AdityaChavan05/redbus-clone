@@ -1,768 +1,842 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-
 :host {
-  display: block;
-  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  color: #111827;
-  background-color: #f7f7f9;
-  min-height: 100vh;
+  --primary-brand: #d84e55;
+  --primary-dark: #b32e35;
+  --phonepe-brand: #5f259f;
+  --phonepe-dark: #491c7c;
+  --bg-surface: #f4f7f6;
+  --card-bg: #ffffff;
+  --border-light: #e5e7eb;
+  --text-headline: #0f172a;
+  --text-muted: #64748b;
+  --success-color: #10b981;
 }
 
-/* Header Navbar */
-.payment-navbar {
-  background: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
-  padding: 14px 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+.modern-checkout-wrapper {
+  background: var(--bg-surface);
+  min-height: calc(100vh - 70px);
+  padding: 30px 16px 80px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-.nav-content-wrap {
-  max-width: 1200px;
+.checkout-container {
+  max-width: 1220px;
   margin: 0 auto;
+}
+
+/* TOP TRUST BAR */
+.trust-top-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.brand-left {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.redbus-logo {
-  font-size: 24px;
-  font-weight: 800;
-  color: #d84e55;
-  letter-spacing: -0.5px;
-}
-
-.safety-tag {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: #ecfdf5;
-  color: #059669;
-  font-size: 11px;
-  font-weight: 700;
-  padding: 4px 10px;
-  border-radius: 9999px;
-  border: 1px solid #d1fae5;
-}
-
-.nav-right-meta {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  font-size: 12px;
-  color: #6b7280;
-}
-
-.session-timer strong {
-  color: #dc2626;
-}
-
-.booking-id-tag strong {
-  color: #111827;
-}
-
-/* Workspace */
-.payment-workspace {
-  max-width: 1200px;
-  margin: 28px auto 60px;
-  padding: 0 20px;
-}
-
-.checkout-grid {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 24px;
-  align-items: flex-start;
-}
-
-/* Left Card: Methods */
-.payment-gateways-card {
   background: #ffffff;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-light);
   border-radius: 12px;
+  padding: 10px 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.trust-item {
   display: flex;
-  overflow: hidden;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
-}
-
-.gateways-tabs-sidebar {
-  width: 240px;
-  background: #fbfbfd;
-  border-right: 1px solid #e5e7eb;
-  display: flex;
-  flex-direction: column;
-}
-
-.tab-item-btn {
-  background: transparent;
-  border: none;
-  border-bottom: 1px solid #f0f2f5;
-  padding: 16px 18px;
-  text-align: left;
-  cursor: pointer;
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  transition: all 0.15s ease;
-  font-family: inherit;
-}
-
-.tab-item-btn:hover {
-  background: #f3f4f6;
-}
-
-.tab-item-btn.active {
-  background: #ffffff;
-  border-left: 4px solid #d84e55;
-}
-
-.tab-icon {
-  font-size: 18px;
-}
-
-.tab-txt-group {
-  display: flex;
-  flex-direction: column;
-}
-
-.tab-main {
-  font-size: 13px;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.88rem;
   font-weight: 700;
-  color: #1f2937;
+  color: var(--text-headline);
 }
 
-.tab-item-btn.active .tab-main {
-  color: #d84e55;
+.countdown-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
+  color: #be123c;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
 }
 
-.tab-sub {
-  font-size: 10px;
-  color: #9ca3af;
-  margin-top: 2px;
+.badge-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #e11d48;
+  animation: pulseDot 1.5s infinite;
 }
 
-/* Gateway Content Panel */
-.gateway-body-panel {
-  flex: 1;
-  padding: 28px;
+@keyframes pulseDot {
+  0% { transform: scale(0.9); opacity: 0.8; }
+  50% { transform: scale(1.3); opacity: 1; }
+  100% { transform: scale(0.9); opacity: 0.8; }
 }
 
-.pane-headline h4 {
-  margin: 0 0 4px;
-  font-size: 17px;
-  font-weight: 800;
-  color: #111827;
+/* TWO COLUMN GRID */
+.layout-grid {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 28px;
+  align-items: flex-start;
 }
 
-.pane-headline p {
-  margin: 0 0 16px;
-  font-size: 12px;
-  color: #6b7280;
+/* DESK CARDS */
+.payment-desk-card, .summary-desk-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
+  border-radius: 18px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
 }
 
-/* QR TRIGGER BUTTON */
-.qr-trigger-box {
-  margin-bottom: 18px;
+.payment-desk-card {
+  padding: 30px;
 }
 
-.btn-toggle-qr {
-  width: 100%;
-  background: #fef2f2;
-  border: 1.5px dashed #f87171;
-  color: #d84e55;
-  font-size: 14px;
-  font-weight: 800;
-  padding: 12px 20px;
+.desk-header {
+  margin-bottom: 22px;
+}
+
+.desk-title {
+  font-size: 1.45rem;
+  font-weight: 900;
+  color: var(--text-headline);
+  margin: 0 0 4px 0;
+}
+
+.desk-subtitle {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+
+/* 4 METHOD NAV TABS */
+.method-nav-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 28px;
+  background: #f8fafc;
+  padding: 6px;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+}
+
+.nav-tab-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  background: transparent;
+  border: 1px solid transparent;
   border-radius: 10px;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
+  text-align: left;
   transition: all 0.2s ease;
 }
 
-.btn-toggle-qr:hover {
-  background: #fee2e2;
-  transform: translateY(-1px);
+.nav-tab-item .tab-icon-wrap {
+  font-size: 1.25rem;
 }
 
-.qr-icon-btn {
-  font-size: 18px;
+.tab-main-title {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: var(--text-headline);
 }
 
-/* ANIMATED QR REVEAL & SCANNER */
-.animated-qr-wrapper {
-  max-height: 0;
-  opacity: 0;
-  overflow: hidden;
-  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+.tab-sub-title {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--text-muted);
 }
 
-.animated-qr-wrapper.visible {
-  max-height: 800px;
-  opacity: 1;
-  margin-bottom: 24px;
-}
-
-.animate-pop {
-  animation: popIn 0.35s ease forwards;
-}
-
-@keyframes popIn {
-  0% { transform: scale(0.96); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-.qr-card-container {
+.nav-tab-item.active {
   background: #ffffff;
-  border: 2px solid #e5e7eb;
-  border-radius: 16px;
-  padding: 24px;
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.nav-tab-item.active .tab-main-title {
+  color: var(--phonepe-brand);
+}
+
+/* UPI SUB SWITCH PILLS */
+.upi-sub-switch {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+  gap: 8px;
+  background: #f1f5f9;
+  padding: 4px;
+  border-radius: 10px;
+  margin-bottom: 22px;
 }
 
-/* Laser Scan Animation Line */
-.laser-scanner-line {
-  position: absolute;
-  top: 100px;
-  left: 20%;
-  right: 20%;
-  height: 3px;
-  background: linear-gradient(90deg, transparent, #10b981, transparent);
-  box-shadow: 0 0 10px #10b981;
-  animation: laserScan 2.2s infinite ease-in-out alternate;
-  z-index: 10;
-  pointer-events: none;
+.upi-sub-switch button {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-@keyframes laserScan {
-  0% { top: 95px; }
-  100% { top: 320px; }
+.upi-sub-switch button.active {
+  background: #ffffff;
+  color: var(--phonepe-brand);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
 }
 
-.qr-inner-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+/* MODERN PHONEPE STAGE */
+.phonepe-modern-stage {
+  background: #000000;
+  color: #ffffff;
+  border-radius: 20px;
+  padding: 28px 20px;
   text-align: center;
-  background: #ffffff;
-  border-radius: 12px;
-  width: 100%;
+  box-shadow: 0 12px 32px rgba(95, 37, 159, 0.35);
+  max-width: 460px;
+  margin: 0 auto;
 }
 
-.qr-brand-header {
+.phonepe-brand-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   margin-bottom: 8px;
 }
 
-.navi-logo-txt {
-  font-size: 26px;
-  font-weight: 800;
-  color: #1e1e24;
+.phonepe-chip {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--phonepe-brand);
+  color: #ffffff;
+  font-size: 1.4rem;
+  font-weight: 900;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
 }
 
-.navi-n {
-  color: #00d09c;
-  font-size: 28px;
+.brand-name {
+  font-size: 1.55rem;
+  font-weight: 900;
+  color: #ffffff;
+}
+
+.verified-tag {
+  font-size: 0.7rem;
+  font-weight: 800;
+  background: rgba(255, 255, 255, 0.15);
+  color: #d8b4fe;
+  padding: 3px 8px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
 }
 
 .qr-tagline {
-  font-size: 13px;
-  font-weight: 600;
-  color: #374151;
-  display: block;
-  margin-top: 2px;
+  font-size: 0.82rem;
+  color: #c4b5fd;
+  margin: 0 0 16px 0;
 }
 
-.apps-icon-strip {
-  display: flex;
-  gap: 8px;
-  margin: 10px 0 14px;
-}
-
-.apps-icon-strip span {
-  font-size: 11px;
-  font-weight: 700;
-  padding: 4px 8px;
-  border-radius: 4px;
-  border: 1px solid #e5e7eb;
-}
-
-.chip-gpay { color: #4285f4; }
-.chip-phonepe { color: #5f259f; }
-.chip-paytm { color: #00b9f5; }
-.chip-navi { color: #00d09c; font-weight: 800; }
-
-.qr-image-display {
-  padding: 10px;
-  border: 1px solid #edf0f2;
-  border-radius: 12px;
+.modern-qr-chassis {
+  width: 240px;
+  height: 240px;
+  margin: 0 auto 16px;
   background: #ffffff;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+  border-radius: 16px;
+  padding: 8px;
+  position: relative;
   display: flex;
+  align-items: center;
   justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(255, 255, 255, 0.12);
+}
+
+.qr-svg-matrix {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.laser-scanner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3.5px;
+  background: #a855f7;
+  box-shadow: 0 0 16px 4px #c084fc;
+  animation: scanLaser 2.2s infinite ease-in-out alternate;
+  z-index: 5;
+}
+
+@keyframes scanLaser {
+  0% { top: 6%; }
+  100% { top: 92%; }
+}
+
+.merchant-name-chip {
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+}
+
+.copy-vpa-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  padding: 6px 14px;
+  max-width: 320px;
+  margin: 0 auto 20px;
+}
+
+.vpa-text {
+  font-size: 0.88rem;
+  color: #e2e8f0;
+}
+
+.btn-copy-vpa {
+  background: var(--phonepe-brand);
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+/* INTENT APPS GRID */
+.intent-apps-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.intent-card {
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.intent-card:hover, .intent-card.selected {
+  border-color: var(--phonepe-brand);
+  background: #fcf9ff;
+  transform: translateY(-2px);
+}
+
+.intent-badge {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 900;
+  color: #ffffff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.phonepe-gradient { background: linear-gradient(135deg, #7c3aed, #5f259f); }
+.gpay-gradient { background: linear-gradient(135deg, #4285f4, #1a73e8); }
+.paytm-gradient { background: linear-gradient(135deg, #00b9f1, #002e6e); }
+.bhim-gradient { background: linear-gradient(135deg, #00796b, #004d40); }
+
+.intent-name {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--text-headline);
+}
+
+.intent-status {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+/* VIRTUAL CREDIT CARD CANVAS */
+.virtual-card-canvas {
+  height: 190px;
+  border-radius: 16px;
+  padding: 22px;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
+  transition: background 0.3s ease;
+}
+
+.virtual-card-canvas.visa { background: linear-gradient(135deg, #1e3a8a, #0284c7); }
+.virtual-card-canvas.mastercard { background: linear-gradient(135deg, #374151, #111827); }
+.virtual-card-canvas.rupay { background: linear-gradient(135deg, #065f46, #047857); }
+
+.card-chip-mesh {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
 }
 
-.actual-qr-img {
-  width: 220px;
-  height: 220px;
-  border-radius: 8px;
-  display: block;
+.chip-graphic {
+  width: 42px;
+  height: 30px;
+  background: linear-gradient(135deg, #fbbf24, #d97706);
+  border-radius: 6px;
 }
 
-.qr-beneficiary-footer {
+.contactless-icon {
+  font-size: 1.2rem;
+  font-weight: 900;
+  letter-spacing: -2px;
+  opacity: 0.8;
+}
+
+.virtual-card-number {
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  font-family: monospace;
+}
+
+.virtual-card-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.v-sub { display: block; font-size: 0.65rem; opacity: 0.75; letter-spacing: 0.5px; }
+.v-main { font-size: 0.85rem; font-weight: 800; letter-spacing: 1px; }
+.v-network-logo { font-size: 1.15rem; font-weight: 900; letter-spacing: 1px; }
+
+/* MODERN INPUT FIELDS */
+.modern-field-group {
+  margin-bottom: 14px;
+}
+
+.field-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  letter-spacing: 0.5px;
+}
+
+.field-input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--border-light);
+  border-radius: 10px;
+  font-size: 0.95rem;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+}
+
+.field-input:focus {
+  border-color: var(--phonepe-brand);
+}
+
+.form-dual-row {
+  display: flex;
+  gap: 14px;
+}
+
+.flex-1 { flex: 1; }
+
+.pci-compliance-banner {
+  font-size: 0.78rem;
+  color: var(--success-color);
+  font-weight: 700;
+  margin-top: 10px;
+}
+
+/* NETBANKING GRID */
+.netbanking-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
   margin-top: 14px;
+}
+
+.bank-pill-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1.5px solid var(--border-light);
+  border-radius: 12px;
+  padding: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.bank-pill-card:hover, .bank-pill-card.selected {
+  border-color: var(--phonepe-brand);
+  background: #fbf8ff;
+}
+
+.bank-badge {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 900;
+  color: #ffffff;
+}
+
+.sbi-bg { background: #280071; }
+.hdfc-bg { background: #004c8f; }
+.icici-bg { background: #f37e20; }
+.axis-bg { background: #97144d; }
+
+.bank-title {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: var(--text-headline);
+}
+
+/* WALLET LIST */
+.wallets-deck {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.wallet-select-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border: 1.5px solid var(--border-light);
+  border-radius: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.wallet-select-row:hover, .wallet-select-row.selected {
+  border-color: var(--phonepe-brand);
+  background: #fbf8ff;
+}
+
+.wallet-icon-symbol {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 1.2rem;
+  color: #ffffff;
+}
+
+.amazon-sym { background: #ff9900; color: #111; }
+.paytm-sym { background: #00b9f1; }
+.mobikwik-sym { background: #0073ea; }
+
+.wallet-meta {
+  flex: 1;
   display: flex;
   flex-direction: column;
 }
 
-.payee-name {
-  font-size: 15px;
-  font-weight: 800;
-  letter-spacing: 0.8px;
-  color: #111827;
+.wallet-meta strong { font-size: 0.95rem; color: var(--text-headline); }
+.wallet-meta span { font-size: 0.78rem; color: var(--text-muted); }
+
+.radio-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #cbd5e1;
 }
 
-.payee-vpa {
-  font-size: 12px;
-  font-weight: 600;
-  color: #6b7280;
-  margin-top: 3px;
+.wallet-select-row.selected .radio-dot {
+  border-color: var(--phonepe-brand);
+  background: var(--phonepe-brand);
 }
 
-.scan-cta-banner {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 16px;
-  font-size: 11px;
-  font-weight: 700;
-  color: #059669;
-  background: #ecfdf5;
-  padding: 6px 14px;
-  border-radius: 9999px;
-}
-
-.blink-dot {
-  width: 8px;
-  height: 8px;
-  background: #10b981;
-  border-radius: 9999px;
-  animation: blink 1s infinite alternate;
-}
-
-@keyframes blink {
-  from { opacity: 0.3; }
-  to { opacity: 1; }
-}
-
-.btn-done-scan {
-  margin-top: 16px;
-  background: #111827;
+/* ACTION BUTTONS */
+.btn-pay-action {
+  width: 100%;
+  background: var(--phonepe-brand);
   color: #ffffff;
   border: none;
-  font-size: 12px;
-  font-weight: 700;
-  padding: 10px 20px;
-  border-radius: 6px;
+  border-radius: 12px;
+  padding: 16px;
+  font-size: 1.05rem;
+  font-weight: 900;
   cursor: pointer;
-  transition: all 0.15s ease;
+  box-shadow: 0 4px 16px rgba(95, 37, 159, 0.3);
+  transition: background 0.2s ease, transform 0.1s ease;
 }
 
-.btn-done-scan:hover {
-  background: #374151;
+.btn-pay-action:hover {
+  background: var(--phonepe-dark);
 }
 
-/* Divider Line */
-.divider-text-line {
-  text-align: center;
-  border-bottom: 1px solid #e5e7eb;
-  line-height: 0.1em;
-  margin: 24px 0 20px;
+.btn-pay-action:active {
+  transform: scale(0.99);
 }
 
-.divider-text-line span {
-  background: #ffffff;
-  padding: 0 12px;
-  font-size: 10px;
+.mt-3 { margin-top: 14px; }
+.mt-4 { margin-top: 20px; }
+
+/* RIGHT COLUMN: PERFORATED TICKET CARD */
+.summary-desk-card {
+  padding: 24px;
+  position: sticky;
+  top: 24px;
+}
+
+.summary-top-tag {
+  margin-bottom: 12px;
+}
+
+.tag-live {
+  background: #ecfdf5;
+  color: #065f46;
+  font-size: 0.7rem;
   font-weight: 800;
-  color: #9ca3af;
+  padding: 3px 8px;
+  border-radius: 6px;
   letter-spacing: 0.5px;
 }
 
-/* Form Inputs */
-.form-field-group {
+.from-to-title {
+  font-size: 1.3rem;
+  font-weight: 900;
+  color: var(--text-headline);
+  margin-bottom: 4px;
+}
+
+.bus-subname {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+}
+
+/* JOURNEY TIMELINE */
+.trip-timeline-box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+}
+
+.point-item {
+  display: flex;
+  gap: 12px;
+}
+
+.dot-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #10b981;
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+
+.red-dot { background: #ef4444; }
+
+.point-data {
+  display: flex;
+  flex-direction: column;
+}
+
+.p-time { font-size: 0.95rem; font-weight: 800; color: var(--text-headline); }
+.p-city { font-size: 0.85rem; font-weight: 700; color: var(--text-muted); }
+.p-address { font-size: 0.75rem; color: #94a3b8; }
+
+.vertical-dash-line {
+  width: 2px;
+  height: 24px;
+  border-left: 2px dashed #cbd5e1;
+  margin-left: 4px;
+}
+
+.perforated-ticket-line {
+  border: 0;
+  border-top: 2px dashed #e2e8f0;
+  margin: 20px 0;
+}
+
+.fare-spec-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+
+.fare-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.free-text { color: var(--success-color); font-weight: 800; }
+.text-accent { color: var(--primary-brand); font-weight: 800; }
+
+.grand-total-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f8fafc;
+  padding: 14px 16px;
+  border-radius: 12px;
+  margin-top: 18px;
+}
+
+.total-label { display: block; font-size: 0.85rem; font-weight: 700; color: var(--text-muted); }
+.inclusive-text { font-size: 0.7rem; color: #94a3b8; }
+.grand-price { font-size: 1.6rem; font-weight: 900; color: var(--primary-brand); }
+
+.guarantee-shield {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 14px;
+}
+
+/* SUCCESS MODAL */
+.success-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  padding: 16px;
+}
+
+.modern-ticket-card {
+  background: #ffffff;
+  border-radius: 24px;
+  max-width: 480px;
+  width: 100%;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+}
+
+.ticket-status-ribbon {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #ffffff;
+  padding: 24px;
+  text-align: center;
+}
+
+.pulse-check {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #059669;
+  font-size: 1.8rem;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 10px;
+}
+
+.ticket-status-ribbon h2 { font-size: 1.45rem; font-weight: 900; margin: 0 0 4px; }
+.ticket-status-ribbon p { font-size: 0.85rem; opacity: 0.9; margin: 0; }
+
+.ticket-body { padding: 24px; }
+
+.ticket-route-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 14px;
+  margin-bottom: 16px;
+}
+
+.route-city { display: block; font-size: 1.15rem; font-weight: 900; color: var(--text-headline); }
+.route-time { font-size: 0.85rem; color: var(--text-muted); }
+.route-arrow { font-size: 1.2rem; color: #cbd5e1; }
+
+.ticket-grid-details {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.detail-cell { display: flex; flex-direction: column; }
+.cell-label { font-size: 0.7rem; font-weight: 800; color: #94a3b8; }
+.cell-val { font-size: 0.9rem; font-weight: 800; color: var(--text-headline); }
+
+.ticket-station-points {
+  background: #f8fafc;
+  border-radius: 10px;
+  padding: 10px 12px;
   margin-bottom: 16px;
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
-.form-field-group label {
-  font-size: 11px;
-  font-weight: 700;
-  color: #6b7280;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-}
+.point-row { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; }
+.point-badge { font-size: 0.65rem; font-weight: 800; padding: 2px 6px; border-radius: 4px; color: #ffffff; }
+.bg-green { background: #10b981; }
+.bg-red { background: #ef4444; }
 
-.form-field-group input {
-  padding: 10px 14px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 13px;
-  font-family: inherit;
-  outline: none;
-  transition: border-color 0.15s ease;
-}
-
-.form-field-group input:focus {
-  border-color: #d84e55;
-  box-shadow: 0 0 0 3px rgba(216, 78, 85, 0.1);
-}
-
-.upi-input-container {
+.ticket-amount-banner {
   display: flex;
-  gap: 8px;
-}
-
-.verified-vpa-input {
-  background: #f9fafb !important;
-  font-weight: 700 !important;
-  color: #111827 !important;
-}
-
-.upi-input-container input {
-  flex: 1;
-}
-
-.btn-verify-vpa {
-  background: #f3f4f6;
-  border: 1px solid #d1d5db;
-  font-size: 12px;
-  font-weight: 700;
-  color: #374151;
-  padding: 0 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.btn-verify-vpa:hover {
-  background: #d84e55;
-  color: #ffffff;
-  border-color: #d84e55;
-}
-
-.form-split-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-
-/* Bank Grid */
-.bank-options-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 24px;
-}
-
-.bank-selection-card {
-  border: 1.5px solid #e5e7eb;
-  border-radius: 8px;
-  padding: 14px;
-  display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 10px;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  background: #ffffff;
+  border-top: 1px dashed #cbd5e1;
+  padding-top: 14px;
 }
 
-.bank-selection-card:hover {
-  border-color: #d84e55;
+.paid-method-lbl { display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-muted); }
+.badge-verified { font-size: 0.68rem; font-weight: 800; color: #10b981; }
+.paid-price { font-size: 1.45rem; font-weight: 900; color: #10b981; }
+
+.ticket-footer {
+  padding: 0 24px 24px;
 }
 
-.bank-selection-card.selected {
-  border-color: #d84e55;
-  background: #fef2f2;
-}
-
-.bank-selection-card.selected .bank-title {
-  color: #d84e55;
-  font-weight: 700;
-}
-
-.bank-mark {
-  font-size: 18px;
-}
-
-.bank-title {
-  font-size: 13px;
-  font-weight: 600;
-  color: #374151;
-}
-
-/* Primary Pay Button */
-.btn-primary-pay {
+.btn-primary-glow {
   width: 100%;
-  background: #d84e55;
+  background: var(--phonepe-brand);
   color: #ffffff;
   border: none;
-  font-size: 14px;
-  font-weight: 800;
-  padding: 13px 0;
-  border-radius: 8px;
-  cursor: pointer;
-  letter-spacing: 0.4px;
-  transition: all 0.15s ease;
-  margin-top: 8px;
-}
-
-.btn-primary-pay:hover:not(:disabled) {
-  background: #ba383e;
-  box-shadow: 0 4px 14px rgba(216, 78, 85, 0.35);
-}
-
-.btn-primary-pay:disabled {
-  background: #fca5a5;
-  cursor: not-allowed;
-}
-
-/* Right Summary Sidebar */
-.payment-summary-card {
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 22px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
-}
-
-.summary-headline {
-  margin: 0 0 16px;
-  font-size: 15px;
-  font-weight: 800;
-  color: #111827;
-  border-bottom: 1px solid #f0f2f5;
-  padding-bottom: 10px;
-}
-
-.operator-profile .bus-company {
-  font-size: 16px;
-  font-weight: 800;
-  color: #111827;
-  display: block;
-}
-
-.operator-profile .bus-category {
-  font-size: 12px;
-  color: #6b7280;
-  display: block;
-  margin-top: 2px;
-}
-
-.timeline-itinerary {
-  margin: 18px 0;
   padding: 14px;
-  background: #fafafc;
-  border-radius: 8px;
-  border: 1px solid #edf0f2;
-}
-
-.itinerary-node {
-  display: flex;
-  gap: 12px;
-  font-size: 12px;
-}
-
-.node-time {
+  border-radius: 12px;
+  font-size: 0.95rem;
   font-weight: 800;
-  color: #111827;
-  min-width: 44px;
-}
-
-.node-meta strong {
-  display: block;
-  color: #111827;
-}
-
-.node-meta span {
-  display: block;
-  font-size: 11px;
-  color: #6b7280;
-}
-
-.itinerary-transit {
-  text-align: center;
-  font-size: 10px;
-  color: #9ca3af;
-  margin: 6px 0;
-  font-weight: 600;
-}
-
-.passenger-seat-strip {
-  display: flex;
-  justify-content: space-between;
-  border-top: 1px dashed #e5e7eb;
-  border-bottom: 1px dashed #e5e7eb;
-  padding: 12px 0;
-  margin-bottom: 16px;
-}
-
-.seat-info-col label {
-  font-size: 10px;
-  font-weight: 700;
-  color: #9ca3af;
-  text-transform: uppercase;
-  display: block;
-}
-
-.seat-info-col strong {
-  font-size: 12px;
-  color: #111827;
-}
-
-.highlight-seats {
-  color: #d84e55 !important;
-}
-
-.fare-receipt {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.receipt-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  color: #4b5563;
-}
-
-.waived-badge {
-  color: #059669;
-  font-weight: 700;
-}
-
-.receipt-row.final-payable {
-  border-top: 1px solid #f0f2f5;
-  padding-top: 10px;
-  margin-top: 4px;
-  font-size: 14px;
-  font-weight: 800;
-  color: #111827;
-}
-
-.final-amt {
-  color: #d84e55;
-  font-size: 18px;
-}
-
-/* Success Ticket Modal */
-.payment-confirmed-overlay {
-  max-width: 500px;
-  margin: 40px auto;
-  padding: 0 20px;
-}
-
-.ticket-pass-card {
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 32px 28px;
-  text-align: center;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-}
-
-.stamp-icon-wrap {
-  width: 58px;
-  height: 58px;
-  background: #ecfdf5;
-  border-radius: 9999px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 16px;
-}
-
-.congrats-title {
-  margin: 0;
-  font-size: 22px;
-  font-weight: 800;
-  color: #111827;
-}
-
-.congrats-sub {
-  font-size: 12px;
-  color: #6b7280;
-  margin: 6px 0 24px;
-}
-
-.e-ticket-receipt {
-  background: #fafafc;
-  border: 1.5px dashed #d1d5db;
-  border-radius: 10px;
-  padding: 16px;
-  text-align: left;
-  margin-bottom: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.e-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  color: #4b5563;
-}
-
-.e-row strong {
-  color: #111827;
-}
-
-.e-seats {
-  color: #d84e55 !important;
-}
-
-.e-row.total-paid {
-  border-top: 1px solid #e5e7eb;
-  padding-top: 10px;
-  margin-top: 4px;
-}
-
-.e-fare {
-  color: #059669 !important;
-  font-size: 15px;
-}
-
-.btn-return-home {
-  background: #d84e55;
-  color: #ffffff;
-  border: none;
-  font-size: 13px;
-  font-weight: 800;
-  padding: 12px 32px;
-  border-radius: 8px;
   cursor: pointer;
-  transition: all 0.15s ease;
 }
 
-.btn-return-home:hover {
-  background: #ba383e;
+@media (max-width: 991px) {
+  .layout-grid { grid-template-columns: 1fr; }
+  .method-nav-tabs { grid-template-columns: repeat(2, 1fr); }
+  .intent-apps-grid { grid-template-columns: 1fr; }
 }

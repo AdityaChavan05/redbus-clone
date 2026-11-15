@@ -1,282 +1,367 @@
-.planner-page {
-  max-width: 1220px;
-  margin: 24px auto 60px;
-  padding: 0 20px;
+:host {
+  display: block;
 }
 
-.planner-header {
-  margin-bottom: 24px;
+.planner-page-wrap {
+  background-color: var(--bg-page);
+  min-height: calc(100vh - 70px);
+  padding-bottom: 70px;
+  font-family: inherit;
+  color: var(--text-main);
 }
 
-.planner-header h2 {
-  margin: 0;
-  font-size: 24px;
+.container {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* HEADER BANNER */
+.planner-header-banner {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  color: #ffffff;
+  padding: 36px 0;
+  border-bottom: 3px solid var(--brand-red, #d84e55);
+  margin-bottom: 28px;
+}
+
+.banner-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sub-kicker {
+  font-size: 0.75rem;
   font-weight: 800;
-  color: var(--text-primary);
+  letter-spacing: 1.5px;
+  color: #fca5a5;
+  display: block;
+  margin-bottom: 4px;
 }
 
-.planner-header p {
-  margin: 4px 0 0;
-  font-size: 13px;
-  color: var(--text-muted);
+.main-title {
+  font-size: 2.1rem;
+  font-weight: 900;
+  margin: 0 0 6px 0;
+  letter-spacing: -0.5px;
+  color: #ffffff;
 }
 
-.planner-grid {
+.main-sub {
+  font-size: 0.95rem;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.header-action-pill {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+/* MAIN CONTENT GRID */
+.main-content-row {
   display: grid;
-  grid-template-columns: 340px 1fr;
-  gap: 24px;
+  grid-template-columns: 420px 1fr;
+  gap: 28px;
   align-items: flex-start;
 }
 
-.planner-controls-card {
+/* CARDS */
+.control-card, .gps-stage-card {
   background: var(--bg-surface);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: var(--elevated-shadow);
+  border: 1.5px solid var(--border-color);
+  border-radius: 16px;
+  box-shadow: var(--shadow-sm);
 }
 
-.planner-controls-card h4 {
-  margin: 0 0 16px;
-  font-size: 16px;
-  font-weight: 800;
-  color: var(--text-primary);
+.control-card {
+  padding: 24px;
+  margin-bottom: 24px;
 }
 
-.input-pair {
-  margin-bottom: 14px;
+.card-head {
+  font-size: 1.2rem;
+  font-weight: 900;
+  margin: 0 0 16px 0;
+  color: var(--text-main);
+}
+
+/* INPUT SLOTS */
+.form-slot {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.input-pair label, .waypoints-block label {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text-muted);
-  text-transform: uppercase;
-}
-
-.input-pair input {
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  padding: 8px 12px;
-  font-size: 13px;
-  font-family: inherit;
-  outline: none;
-}
-
-.waypoints-block {
-  margin-bottom: 14px;
-}
-
-.waypoint-pill {
-  display: flex;
-  justify-content: space-between;
   align-items: center;
-  background: var(--pill-bg);
-  padding: 6px 10px;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  margin-top: 6px;
+  gap: 12px;
+  background: var(--bg-subtle);
+  border: 1.5px solid var(--border-color);
+  border-radius: 10px;
+  padding: 10px 14px;
 }
 
-.waypoint-pill button {
-  background: none;
-  border: none;
-  color: #dc2626;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.add-waypoint-row {
+.slot-marker {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
   display: flex;
-  gap: 6px;
-  margin-top: 8px;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 900;
+  color: #ffffff;
+  flex-shrink: 0;
 }
 
-.add-waypoint-row input {
-  flex: 1;
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  padding: 6px 10px;
-  font-size: 12px;
-  outline: none;
-}
+.green-marker { background: #10b981; }
+.red-marker { background: var(--brand-red, #d84e55); }
+.purple-marker { background: #7c3aed; }
 
-.btn-add-wp {
-  background: var(--bg-surface);
-  border: 1px solid var(--border-color);
-  color: var(--text-primary);
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  padding: 0 10px;
-}
+.slot-body { flex: 1; }
+.slot-lbl { display: block; font-size: 0.68rem; font-weight: 800; color: var(--text-muted); }
+.slot-input { width: 100%; border: none; background: transparent; font-size: 0.95rem; font-weight: 800; color: var(--text-main); outline: none; }
+.slot-select { cursor: pointer; }
 
-.planner-actions {
+/* WAYPOINT ROW */
+.waypoints-chain {
+  margin: 8px 0;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-top: 18px;
+  padding-left: 14px;
+  border-left: 2px dashed var(--border-color);
+  margin-left: 13px;
 }
 
-.btn-calculate {
-  background: var(--accent-red);
-  color: #ffffff;
-  border: none;
-  padding: 10px 0;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 800;
-  cursor: pointer;
-}
-
-.btn-save-route {
-  background: var(--pill-bg);
-  color: var(--text-primary);
-  border: 1px solid var(--border-color);
-  padding: 8px 0;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.saved-routes-tray {
-  margin-top: 20px;
-  border-top: 1px solid var(--border-color);
-  padding-top: 14px;
-}
-
-.saved-routes-tray h5 {
-  margin: 0 0 8px;
-  font-size: 13px;
-  color: var(--text-primary);
-}
-
-.saved-routes-tray ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.saved-routes-tray li {
+.waypoint-row {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  font-size: 11px;
-  padding: 6px 0;
-  color: var(--text-secondary);
-  border-bottom: 1px dashed var(--border-color);
-}
-
-.saved-routes-tray li button {
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-/* Map Frame */
-.map-view-card {
+  gap: 10px;
   background: var(--bg-surface);
+  border: 1.5px solid var(--border-color);
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
+.stop-name { font-size: 0.9rem; font-weight: 800; color: var(--text-main); }
+.btn-remove-stop { background: transparent; border: none; color: var(--text-muted); font-size: 0.9rem; font-weight: 800; cursor: pointer; }
+.btn-remove-stop:hover { color: var(--brand-red, #d84e55); }
+
+.add-stop-row { display: flex; gap: 8px; margin-top: 10px; }
+.input-add-stop { flex: 1; padding: 8px 12px; border: 1.5px dashed var(--border-color); border-radius: 8px; font-size: 0.85rem; background: var(--bg-elevated); color: var(--text-main); outline: none; }
+.input-add-stop:focus { border-color: var(--brand-red, #d84e55); border-style: solid; }
+.btn-add-action { background: var(--bg-subtle); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; padding: 0 14px; font-weight: 800; font-size: 0.85rem; cursor: pointer; }
+
+.mt-3 { margin-top: 14px; }
+.mt-4 { margin-top: 20px; }
+
+/* BUTTONS */
+.button-dual-row { display: flex; gap: 10px; margin-top: 20px; }
+.btn-calculate { flex: 1.2; background: var(--brand-red, #d84e55); color: #ffffff; border: none; border-radius: 10px; padding: 12px; font-weight: 800; font-size: 0.92rem; cursor: pointer; }
+.btn-calculate:hover { background: var(--brand-red-dark, #b32e35); }
+.btn-save { flex: 0.8; background: var(--bg-surface); border: 1.5px solid var(--border-color); border-radius: 10px; padding: 12px; font-weight: 800; font-size: 0.88rem; color: var(--text-main); cursor: pointer; }
+.btn-save.saved { border-color: #10b981; color: #10b981; background: rgba(16, 185, 129, 0.1); }
+
+/* SAVED ROUTES */
+.saved-item { padding: 8px 0; border-bottom: 1px solid var(--border-color); cursor: pointer; }
+.saved-cities { font-weight: 800; font-size: 0.88rem; color: var(--text-main); }
+.saved-meta { font-size: 0.75rem; color: var(--text-muted); }
+
+/* ROUTE SELECTION CARDS */
+.section-subhead { font-size: 1.05rem; font-weight: 800; margin: 0 0 14px 0; color: var(--text-main); }
+.route-select-card { background: var(--bg-surface); border: 1.5px solid var(--border-color); border-radius: 12px; padding: 16px; margin-bottom: 12px; cursor: pointer; transition: all 0.2s ease; }
+.route-select-card:hover { border-color: var(--brand-red, #d84e55); transform: translateY(-2px); }
+.route-select-card.active { border: 2px solid var(--brand-red, #d84e55); background: var(--brand-red-soft, rgba(216, 78, 85, 0.08)); }
+.route-card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.route-badge { font-size: 0.72rem; font-weight: 800; color: var(--text-muted); background: var(--bg-subtle); padding: 2px 8px; border-radius: 4px; }
+.fastest-badge { background: #fee2e2; color: #dc2626; }
+.traffic-tag { font-size: 0.72rem; font-weight: 800; }
+.traffic-tag.low { color: #10b981; }
+.traffic-tag.moderate { color: #f59e0b; }
+.route-name { font-size: 1.05rem; font-weight: 900; margin-bottom: 12px; color: var(--text-main); }
+.metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--border-color); padding-top: 10px; }
+.m-lbl { display: block; font-size: 0.68rem; color: var(--text-muted); }
+.m-val { font-size: 0.95rem; font-weight: 800; color: var(--text-main); }
+.text-brand { color: var(--brand-red, #d84e55); }
+
+/* DIRECTIONS TIMELINE */
+.directions-timeline { display: flex; flex-direction: column; gap: 8px; }
+.direction-step { display: flex; gap: 10px; align-items: flex-start; background: var(--bg-subtle); padding: 8px 12px; border-radius: 8px; font-size: 0.85rem; color: var(--text-main); }
+.dir-icon { color: var(--brand-red, #d84e55); font-weight: 900; }
+.dir-text { flex: 1; display: flex; justify-content: space-between; }
+.dir-dist { color: var(--text-muted); }
+
+/* RIGHT STAGE */
+.gps-stage-card { padding: 24px; }
+.stage-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 18px; }
+.gps-live-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(59, 130, 246, 0.15); color: #3b82f6; font-size: 0.72rem; font-weight: 800; padding: 4px 10px; border-radius: 20px; margin-bottom: 6px; }
+.pulse-ring { width: 7px; height: 7px; border-radius: 50%; background: #3b82f6; }
+.active-corridor-title { font-size: 1.45rem; font-weight: 900; margin: 0; color: var(--text-main); }
+.coverage-stat { display: block; font-size: 1.35rem; font-weight: 900; color: var(--brand-red, #d84e55); }
+.time-stat { font-size: 0.88rem; font-weight: 700; color: var(--text-muted); }
+
+/* MAP CONTAINER & DARK TILE FILTERING */
+.real-map-wrapper {
+  position: relative;
+  width: 100%;
+  height: 420px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1.5px solid var(--border-color);
+  box-shadow: var(--shadow-md);
+  margin-bottom: 24px;
+}
+
+#real-route-map { width: 100%; height: 100%; }
+
+/* Map Tile Inversion in Dark Mode */
+body.dark-mode #real-route-map .leaflet-tile-pane {
+  filter: brightness(0.65) invert(1) contrast(2.8) hue-rotate(200deg) saturate(0.35) brightness(0.85);
+}
+
+.map-highway-tag {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: rgba(15, 23, 42, 0.88);
+  color: #ffffff;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.map-legend-overlay {
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  background: var(--bg-surface);
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+  padding: 6px 12px;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  display: flex;
+  gap: 12px;
+  z-index: 1000;
+  box-shadow: var(--shadow-sm);
+}
+
+.blue-line {
+  display: inline-block;
+  width: 20px;
+  height: 4px;
+  background: #1d4ed8;
+  border-radius: 2px;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+/* CUSTOM MAP PIN BUBBLES */
+::ng-deep .custom-map-pin {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: auto;
+}
+
+::ng-deep .pin-bubble {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  color: #ffffff;
+  font-weight: 900;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #ffffff;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+}
+
+::ng-deep .green-bubble { background: #10b981; }
+::ng-deep .red-bubble { background: #d84e55; }
+::ng-deep .purple-bubble { background: #7c3aed; }
+
+::ng-deep .pin-title {
+  background: #0f172a;
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-top: 4px;
+  white-space: nowrap;
+}
+
+::ng-deep .custom-food-pin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+::ng-deep .food-bubble {
+  width: 32px;
+  height: 32px;
+  background: #ffffff;
+  border: 2px solid #ea580c;
+  border-radius: 50%;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(234, 88, 12, 0.4);
+}
+
+/* TRAFFIC STATUS BANNER */
+.traffic-status-banner {
+  background: var(--bg-subtle);
   border: 1px solid var(--border-color);
   border-radius: 12px;
-  overflow: hidden;
-  box-shadow: var(--elevated-shadow);
-  margin-bottom: 24px;
-  position: relative;
-}
-
-.map-header-overlay {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px 16px;
-  background: var(--bg-surface);
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text-secondary);
-  border-bottom: 1px solid var(--border-color);
-}
-
-.osm-embedded-frame {
-  width: 100%;
-  height: 320px;
-  border: none;
-}
-
-/* Route Cards */
-.routes-comparison-tray h4 {
-  margin: 0 0 14px;
-  font-size: 18px;
-  font-weight: 800;
-  color: var(--text-primary);
-}
-
-.route-comparison-card {
-  background: var(--bg-surface);
-  border: 1px solid var(--border-color);
-  border-radius: 10px;
-  padding: 16px;
-  margin-bottom: 12px;
-  box-shadow: var(--elevated-shadow);
-}
-
-.route-comparison-card.highlighted {
-  border-color: var(--accent-red);
-}
-
-.route-card-title-row {
+  padding: 16px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 24px;
 }
 
-.fastest-badge {
-  background: #ecfdf5;
-  color: #059669;
-  font-size: 10px;
-  font-weight: 800;
-  padding: 3px 6px;
-  border-radius: 4px;
-  margin-right: 8px;
+.status-left { display: flex; align-items: center; gap: 12px; }
+.status-icon { font-size: 1.8rem; }
+.status-title { font-size: 0.95rem; color: var(--text-main); }
+.status-desc { font-size: 0.8rem; color: var(--text-muted); margin: 2px 0 0 0; }
+.toll-tag-pill { background: var(--bg-elevated); border: 1px solid var(--border-color); color: var(--text-main); padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; }
+
+/* FOOD STOPS SECTION */
+.food-stops-section {
+  background: var(--bg-subtle);
+  border: 1.5px solid var(--border-color);
+  border-radius: 14px;
+  padding: 20px;
 }
 
-.traffic-tag {
-  font-size: 11px;
-  font-weight: 700;
-  padding: 4px 8px;
-  border-radius: 4px;
-}
+.food-section-head { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; }
+.food-icon { font-size: 2rem; }
+.food-title { font-size: 1.15rem; font-weight: 900; color: var(--text-main); margin: 0; }
+.food-sub { font-size: 0.82rem; color: var(--text-muted); margin: 2px 0 0; }
+.food-cards-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.food-card { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; }
+.food-card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+.food-name { font-size: 0.92rem; color: var(--text-main); }
+.food-time-tag { font-size: 0.75rem; font-weight: 800; color: #ea580c; }
+.food-location { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 4px; }
+.food-operator { font-size: 0.78rem; color: var(--text-main); margin-bottom: 4px; }
+.food-amenities { font-size: 0.74rem; color: #10b981; font-weight: 600; }
 
-.traffic-low { background: #ecfdf5; color: #059669; }
-.traffic-mid { background: #fffbeb; color: #d97706; }
-.traffic-heavy { background: #fef2f2; color: #dc2626; }
+.node-list-title { font-size: 1.1rem; font-weight: 800; margin: 0 0 10px 0; color: var(--text-main); }
+.corridor-summary-text { font-size: 0.88rem; line-height: 1.5; color: var(--text-muted); background: var(--bg-subtle); padding: 12px 16px; border-radius: 8px; margin: 0; }
 
-.route-stats-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  background: var(--pill-bg);
-  padding: 10px 14px;
-  border-radius: 8px;
-}
-
-.stat-box span {
-  display: block;
-  font-size: 10px;
-  color: var(--text-muted);
-  text-transform: uppercase;
-}
-
-.stat-box strong {
-  font-size: 13px;
-  color: var(--text-primary);
+@media (max-width: 991px) {
+  .main-content-row { grid-template-columns: 1fr; }
+  .food-cards-grid { grid-template-columns: 1fr; }
 }
