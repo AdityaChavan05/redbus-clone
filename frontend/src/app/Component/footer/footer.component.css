@@ -1,0 +1,98 @@
+.rb-modern-footer {
+  background: #0f172a;
+  color: #cbd5e1;
+  border-top: 1px solid #1e293b;
+  padding: 40px 24px 20px;
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.rb-footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr 1fr;
+  gap: 28px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid #1e293b;
+}
+
+.rb-footer-logo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+
+.logo-red {
+  color: #d84e55;
+}
+
+.logo-white {
+  color: #ffffff;
+}
+
+.logo-badge {
+  background: #d84e55;
+  color: #ffffff;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.6px;
+}
+
+.rb-footer-tagline {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.rb-footer-col h4 {
+  color: #f8fafc;
+  font-size: 14px;
+  font-weight: 800;
+  margin: 0 0 12px;
+}
+
+.rb-footer-col ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rb-footer-col li {
+  font-size: 12.5px;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.rb-footer-col li:hover {
+  color: #f8fafc;
+}
+
+.rb-footer-bottom {
+  max-width: 1200px;
+  margin: 16px auto 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: #64748b;
+}
+
+@media (max-width: 860px) {
+  .rb-footer-inner {
+    grid-template-columns: 1fr 1fr;
+  }
+  .rb-footer-bottom {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+}

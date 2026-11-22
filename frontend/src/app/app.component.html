@@ -1,69 +1,102 @@
+<!-- Global Top Navigation Bar -->
 <app-navbar></app-navbar>
 
-<router-outlet></router-outlet>
+<!-- Sleek Private Intercity Fleet Bar (Replaces the oversized cartoon bus on every page) -->
+<div class="global-fleet-strip">
+  <div class="global-fleet-inner">
+    <span class="fleet-strip-label">OUR PREMIUM FLEET:</span>
 
+    <div class="fleet-chip-list">
+      <div class="fleet-chip-card">
+        <img src="assets/vrl-photos/front.png" alt="VRL Travels Volvo 9600" />
+        <div class="fleet-chip-text">
+          <strong>VRL Travels</strong>
+          <span>Volvo 9600 2+1 Sleeper</span>
+        </div>
+      </div>
+
+      <div class="fleet-chip-card">
+        <img src="assets/vrl-photos/shy1.jpg" alt="Shyamoli Paribahan Starz" />
+        <div class="fleet-chip-text">
+          <strong>Shyamoli Paribahan</strong>
+          <span>Volvo 9600s Multi-Axle</span>
+        </div>
+      </div>
+
+      <div class="fleet-chip-card">
+        <img src="assets/vrl-photos/inter1.jpg" alt="IntrCity SmartBus" />
+        <div class="fleet-chip-text">
+          <strong>IntrCity SmartBus</strong>
+          <span>BharatBenz Washroom Coach</span>
+        </div>
+      </div>
+
+      <div class="fleet-chip-card">
+        <img src="assets/vrl-photos/eicher1.jpeg" alt="Eicher Executive Sleeper" />
+        <div class="fleet-chip-text">
+          <strong>Eicher Executive</strong>
+          <span>2+1 A/C Night Sleeper</span>
+        </div>
+      </div>
+
+      <div class="fleet-chip-card">
+        <img src="assets/vrl-photos/tata1.jpg" alt="TATA Magna Luxury" />
+        <div class="fleet-chip-text">
+          <strong>TATA Magna</strong>
+          <span>Executive Luxury Coach</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Active Route Page Content -->
+<main class="app-main-content">
+  <router-outlet></router-outlet>
+</main>
+
+<!-- Global Footer -->
 <app-footer></app-footer>
 
-<!-- redBus-style Login / Sign-up Overlay Modal -->
-<div *ngIf="showLoginModal" class="login-modal-overlay">
-  <div class="login-modal-card">
-    <button type="button" class="close-btn" (click)="closeLoginModal()">✕</button>
-
-    <div class="login-header">
-      <div class="redbus-brand-badge">redBus</div>
-      <h3>Sign in to book faster</h3>
-      <p>Save passenger details and track your tickets seamlessly</p>
+<!-- Account / Login Modal -->
+<div *ngIf="showLoginModal" class="login-modal-overlay" (click)="closeLoginModal()">
+  <div class="login-modal-card" (click)="$event.stopPropagation()">
+    <div class="login-modal-header">
+      <div>
+        <span class="login-badge">redBus Account</span>
+        <h3>Sign in to manage bookings</h3>
+      </div>
+      <button type="button" class="btn-close-login" (click)="closeLoginModal()">✕</button>
     </div>
 
-    <!-- Mobile Number OTP Flow -->
-    <div class="login-body">
-      <div class="phone-input-group">
-        <span class="country-code">+91</span>
-        <input 
-          type="tel" 
-          maxlength="10" 
-          [(ngModel)]="mobileNumber" 
-          placeholder="Enter 10-digit mobile number" 
-          class="login-input" />
+    <div class="login-modal-body" *ngIf="!currentUser">
+      <div class="login-field">
+        <label>Full Name</label>
+        <input type="text" [(ngModel)]="loginName" placeholder="Enter your name" />
       </div>
+      <div class="login-field">
+        <label>Mobile Number</label>
+        <input type="tel" [(ngModel)]="loginPhone" placeholder="Enter 10-digit mobile number" maxlength="10" />
+      </div>
+      <div class="login-field" *ngIf="otpSent">
+        <label>Enter OTP (Any 4 digits)</label>
+        <input type="text" [(ngModel)]="loginOtp" placeholder="e.g. 1234" maxlength="6" />
+      </div>
+      <p class="login-error-text" *ngIf="loginError">{{ loginError }}</p>
 
-      <button 
-        type="button" 
-        class="btn-send-otp" 
-        (click)="loginWithPhone()">
+      <button type="button" class="btn-login-primary" *ngIf="!otpSent" (click)="sendOtp()">
         GENERATE OTP
       </button>
+      <button type="button" class="btn-login-primary" *ngIf="otpSent" (click)="verifyOtpAndLogin()">
+        VERIFY & SIGN IN
+      </button>
+    </div>
 
-      <div class="auth-divider">
-        <span>OR SIGN IN WITH</span>
-      </div>
-
-      <!-- Third-Party Social Logins -->
-      <div class="social-login-grid">
-        <button type="button" class="btn-social" (click)="loginWithSocial('Google')">
-          <svg class="social-icon" viewBox="0 0 24 24">
-            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-          </svg>
-          Google
-        </button>
-
-        <button type="button" class="btn-social" (click)="loginWithSocial('Microsoft')">
-          <svg class="social-icon" viewBox="0 0 23 23">
-            <path fill="#f35325" d="M1 1h10v10H1z"/>
-            <path fill="#81bc06" d="M12 1h10v10H12z"/>
-            <path fill="#05a6f0" d="M1 12h10v10H1z"/>
-            <path fill="#ffba08" d="M12 12h10v10H12z"/>
-          </svg>
-          Microsoft
-        </button>
-      </div>
-
-      <div class="disclaimer">
-        By continuing, you agree to our <a href="#">Terms and Conditions</a> and <a href="#">Privacy Policy</a>.
-      </div>
+    <div class="login-modal-body" *ngIf="currentUser">
+      <p>Signed in as <strong>{{ currentUser.name }}</strong> ({{ currentUser.phone }})</p>
+      <button type="button" class="btn-login-primary" (click)="logoutUser(); closeLoginModal()">
+        LOGOUT
+      </button>
     </div>
   </div>
 </div>

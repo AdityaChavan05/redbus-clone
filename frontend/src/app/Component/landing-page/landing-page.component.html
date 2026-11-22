@@ -1,165 +1,205 @@
-﻿<div class="landing-page-root" [class.dark-theme]="isDarkMode">
+﻿<div class="landing-wrapper" [class.dark-theme]="isDarkMode">
 
-  <!-- ================= HERO SEARCH SECTION ================= -->
-  <section class="hero-search-section">
-    <div class="hero-content-wrapper">
+  <!-- Toast Feedback -->
+  <div class="landing-toast" *ngIf="toastMessage">{{ toastMessage }}</div>
+
+  <!-- HERO & SEARCH SECTION -->
+  <section class="hero-banner-section">
+    <div class="hero-inner-container">
       <h1 class="hero-main-title">{{ t('hero_title') }}</h1>
       <p class="hero-sub-title">{{ t('hero_subtitle') }}</p>
 
-      <div class="search-floating-card">
-        
-        <!-- SOURCE CITY PILL -->
-        <div class="search-input-pill">
-          <span class="pill-icon">🚏</span>
-          <div class="pill-text-block">
-            <label class="pill-label">{{ t('label_from') }}</label>
-            <input 
-              type="text" 
-              class="pill-native-input" 
-              [placeholder]="t('placeholder_origin')"
+      <div class="search-widget-card">
+        <!-- FROM INPUT -->
+        <div class="search-field-group">
+          <span class="field-icon">🚌</span>
+          <div class="field-input-wrap">
+            <label>{{ t('label_from') }}</label>
+            <input
+              type="text"
               [(ngModel)]="sourceCity"
               (input)="filterSourceCities()"
-              (focus)="filterSourceCities()" />
+              (focus)="filterSourceCities()"
+              [placeholder]="t('placeholder_from')"
+              autocomplete="off" />
           </div>
+          <button
+            type="button"
+            class="btn-clear-city"
+            *ngIf="sourceCity"
+            (click)="sourceCity = ''; filterSourceCities()"
+            title="Clear source">✕</button>
 
-          <!-- Autocomplete Dropdown -->
           <div class="modern-dropdown-menu" *ngIf="showSourceDropdown && filteredSources.length > 0">
-            <div 
-              *ngFor="let city of filteredSources" 
-              class="dropdown-item" 
-              (click)="selectSourceCity(city)">
-              <span class="drop-icon">📍</span>
-              <span class="drop-text">{{ city }}</span>
+            <div
+              class="dropdown-city-item"
+              *ngFor="let city of filteredSources"
+              (mousedown)="selectSource(city)">
+              <span>📍 {{ city }}</span>
             </div>
           </div>
         </div>
 
-        <!-- SWAP CITIES BUTTON -->
+        <!-- SWAP BUTTON -->
         <button type="button" class="btn-swap-cities" (click)="swapCities($event)" title="Swap Cities">
           ⇄
         </button>
 
-        <!-- DESTINATION CITY PILL -->
-        <div class="search-input-pill">
-          <span class="pill-icon">📍</span>
-          <div class="pill-text-block">
-            <label class="pill-label">{{ t('label_to') }}</label>
-            <input 
-              type="text" 
-              class="pill-native-input" 
-              [placeholder]="t('placeholder_destination')"
+        <!-- TO INPUT -->
+        <div class="search-field-group">
+          <span class="field-icon">📍</span>
+          <div class="field-input-wrap">
+            <label>{{ t('label_to') }}</label>
+            <input
+              type="text"
               [(ngModel)]="destinationCity"
               (input)="filterDestinationCities()"
-              (focus)="filterDestinationCities()" />
+              (focus)="filterDestinationCities()"
+              [placeholder]="t('placeholder_to')"
+              autocomplete="off" />
           </div>
+          <button
+            type="button"
+            class="btn-clear-city"
+            *ngIf="destinationCity"
+            (click)="destinationCity = ''; filterDestinationCities()"
+            title="Clear destination">✕</button>
 
-          <!-- Autocomplete Dropdown -->
           <div class="modern-dropdown-menu" *ngIf="showDestinationDropdown && filteredDestinations.length > 0">
-            <div 
-              *ngFor="let city of filteredDestinations" 
-              class="dropdown-item" 
-              (click)="selectDestinationCity(city)">
-              <span class="drop-icon">📍</span>
-              <span class="drop-text">{{ city }}</span>
+            <div
+              class="dropdown-city-item"
+              *ngFor="let city of filteredDestinations"
+              (mousedown)="selectDestination(city)">
+              <span>📍 {{ city }}</span>
             </div>
           </div>
         </div>
 
-        <!-- DATE SELECTOR WITH QUICK CHIPS -->
-        <div class="search-input-pill date-pill">
-          <span class="pill-icon">📅</span>
-          <div class="pill-text-block">
-            <label class="pill-label">{{ t('label_date') }}</label>
-            <input type="date" [(ngModel)]="journeyDate" class="pill-native-input" />
+        <!-- DATE INPUT -->
+        <div class="search-field-group date-field-group">
+          <span class="field-icon">📅</span>
+          <div class="field-input-wrap">
+            <label>{{ t('label_date') }}</label>
+            <input type="date" [(ngModel)]="journeyDate" />
           </div>
-
-          <div class="quick-date-chips">
+          <div class="date-quick-chips">
             <button type="button" (click)="setDateOffset(0)" class="chip-btn">{{ t('chip_today') }}</button>
             <button type="button" (click)="setDateOffset(1)" class="chip-btn">{{ t('chip_tomorrow') }}</button>
           </div>
         </div>
 
-        <!-- SEARCH BUTTON -->
-        <button type="button" class="btn-search-red" (click)="searchBuses()">
-          <span>{{ t('btn_search') }}</span>
+        <!-- SEARCH CTA -->
+        <button type="button" class="btn-search-buses" (click)="searchBuses()">
+          {{ t('btn_search') }}
         </button>
-
       </div>
     </div>
   </section>
 
-  <!-- ================= TRENDING OFFERS SECTION ================= -->
-  <section class="offers-section">
-    <div class="section-header-wrap">
-      <span class="trending-badge">{{ t('offers_badge') }}</span>
-      <h2 class="section-heading">{{ t('offers_title') }}</h2>
-      <p class="section-sub">{{ t('offers_subtitle') }}</p>
+  <!-- TRENDING OFFERS SECTION -->
+  <section class="offers-section-container">
+    <div class="section-header-block">
+      <span class="section-pill-badge">{{ t('offers_badge') }}</span>
+      <h2>{{ t('offers_title') }}</h2>
+      <p>{{ t('offers_subtitle') }}</p>
     </div>
 
-    <div class="offers-carousel-track">
-      <div *ngFor="let offer of offers" class="offer-card-item">
-        <div class="card-top-strip">
-          <span class="offer-badge">{{ t(offer.badgeKey) }}</span>
-          <span class="coupon-chip">%</span>
+    <div class="offers-horizontal-grid">
+      <div *ngFor="let offer of offers" class="offer-card-item" [ngClass]="'offer-accent-' + offer.badgeColor">
+        <div class="offer-card-top">
+          <img
+            [src]="offer.operatorThumb"
+            [alt]="offer.name"
+            class="offer-bus-thumb"
+            (error)="handleOfferImgError($event)" />
+          <div class="offer-top-meta">
+            <span class="offer-route-tag">{{ offer.tag }}</span>
+            <h3 class="offer-card-name">{{ offer.name }}</h3>
+            <span class="offer-code-pill">{{ offer.code }} • {{ offer.discountBadge }}</span>
+          </div>
         </div>
-        <h3 class="offer-title">{{ offer.code }}</h3>
-        <p class="offer-desc">{{ t(offer.shortDescKey) }}</p>
-        <div class="card-footer-strip">
-          <span class="view-terms-link" (click)="openOfferModal(offer.code)">{{ t('view_details') }}</span>
-          <button type="button" class="btn-copy-code" (click)="copyCode(offer.code)">
-            {{ copiedCode === offer.code ? t('btn_copied') : t('btn_copy') }}
+
+        <p class="offer-card-desc">{{ offer.description }}</p>
+
+        <div class="offer-card-footer">
+          <button type="button" class="btn-view-details" (click)="openOfferModal(offer)">
+            {{ t('view_details') }}
+          </button>
+          <button
+            type="button"
+            class="btn-copy-code"
+            [class.copied]="copiedCouponCode === offer.code"
+            (click)="copyCouponCode(offer.code, $event)">
+            {{ copiedCouponCode === offer.code ? '✓ Copied' : t('btn_copy') }}
           </button>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ================= POPULAR ROUTES SECTION ================= -->
+  <!-- POPULAR ROUTES WITH BUS NAME & SMALL PHOTO THUMBNAIL -->
   <section class="popular-routes-section">
-    <h2 class="section-heading">{{ t('routes_heading') }}</h2>
-    <p class="section-sub">{{ t('routes_subtitle') }}</p>
+    <div class="section-header-block">
+      <h2>{{ t('routes_heading') }}</h2>
+      <p>{{ t('routes_subtitle') }}</p>
+    </div>
 
-    <div class="routes-grid">
-      <div 
-        *ngFor="let route of popularRoutes" 
-        class="route-card" 
-        (click)="selectPopularRoute(route)">
-        <span class="route-city-line">{{ t(route.fromKey) }} ➔ {{ t(route.toKey) }}</span>
-        <span class="route-fare">{{ t(route.fareTextKey) }}</span>
+    <div class="popular-routes-grid">
+      <div
+        class="route-card-item"
+        *ngFor="let route of popularRoutes"
+        (click)="selectQuickRoute(route)">
+        <div class="route-thumb-box">
+          <img
+            [src]="route.thumbUrl"
+            [alt]="route.busName"
+            class="route-bus-photo"
+            (error)="handleOfferImgError($event)" />
+          <span class="route-badge-tag">{{ route.badge }}</span>
+        </div>
+
+        <div class="route-info-box">
+          <div class="route-cities-row">
+            <span class="city-name">{{ route.source }}</span>
+            <span class="route-arrow">→</span>
+            <span class="city-name">{{ route.destination }}</span>
+          </div>
+          <div class="route-bus-operator">{{ route.busName }}</div>
+          <div class="route-sub-meta">
+            <span>{{ route.busType }}</span>
+            <span class="route-fare-pill">From ₹{{ route.startingFare }}</span>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- ================= TERMS & CONDITIONS POPUP MODAL ================= -->
+  <!-- OFFER DETAILS MODAL -->
   <div class="offer-modal-backdrop" *ngIf="selectedModalOffer" (click)="closeOfferModal()">
-    <div class="offer-modal-card" (click)="$event.stopPropagation()">
-      <div class="modal-header-row">
-        <h3 class="modal-title">{{ t('modal_title') }}</h3>
+    <div class="offer-modal-box" (click)="$event.stopPropagation()">
+      <div class="offer-modal-header">
+        <div>
+          <span class="offer-route-tag">{{ selectedModalOffer.tag }}</span>
+          <h3>{{ selectedModalOffer.name }}</h3>
+        </div>
         <button type="button" class="btn-close-modal" (click)="closeOfferModal()">✕</button>
       </div>
-
-      <div class="coupon-ticket-header">
-        <div class="pct-circle">%</div>
-        <div class="coupon-title-wrap">
-          <div class="dashed-coupon-code">{{ selectedModalOffer.code }}</div>
-          <p class="coupon-short-desc">{{ t(selectedModalOffer.shortDescKey) }}</p>
+      <div class="offer-modal-body">
+        <img
+          [src]="selectedModalOffer.operatorThumb"
+          [alt]="selectedModalOffer.name"
+          class="offer-modal-banner"
+          (error)="handleOfferImgError($event)" />
+        <p class="modal-desc">{{ selectedModalOffer.description }}</p>
+        <div class="modal-code-box">
+          <span>Promo Code: <strong>{{ selectedModalOffer.code }}</strong></span>
+          <button type="button" class="btn-copy-code" (click)="copyCouponCode(selectedModalOffer.code)">
+            {{ copiedCouponCode === selectedModalOffer.code ? '✓ Copied' : t('btn_copy') }}
+          </button>
         </div>
-        <button type="button" class="btn-copy-ticket" (click)="copyCode(selectedModalOffer.code)">
-          {{ copiedCode === selectedModalOffer.code ? t('btn_copied') : t('btn_copy') }}
-        </button>
-      </div>
-
-      <div class="modal-terms-content">
-        <h4 class="terms-heading">{{ t('modal_terms_title') }}</h4>
-        <ul class="terms-bullet-list">
+        <ul class="modal-terms-list">
           <li *ngFor="let term of selectedModalOffer.terms">{{ term }}</li>
         </ul>
-      </div>
-
-      <div class="modal-footer-action">
-        <button type="button" class="btn-red-copy-main" (click)="copyCode(selectedModalOffer.code)">
-          {{ copiedCode === selectedModalOffer.code ? t('btn_copied_clipboard') : t('btn_copy_offer_code') }}
-        </button>
       </div>
     </div>
   </div>

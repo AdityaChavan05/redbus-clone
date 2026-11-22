@@ -1,40 +1,104 @@
-/* ================= GLOBAL ROOT THEME VARIABLES ================= */
-:root {
-  --rb-page-bg: #f3f4f6;
-  --rb-card-bg: #ffffff;
-  --rb-card-inner: #f8fafc;
-  --rb-border: #e5e7eb;
-  --rb-border-subtle: #cbd5e1;
-  --rb-text-main: #111827;
-  --rb-text-muted: #64748b;
-  --rb-text-subtle: #94a3b8;
-  --rb-primary-red: #d84e55;
-}
+/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
 
-body.dark-mode {
-  --rb-page-bg: #0b1120;
-  --rb-card-bg: #0f172a;
-  --rb-card-inner: #1e293b;
-  --rb-border: #1e293b;
-  --rb-border-subtle: #334155;
-  --rb-text-main: #f8fafc;
-  --rb-text-muted: #cbd5e1;
-  --rb-text-subtle: #94a3b8;
-  --rb-primary-red: #ef4444;
+* {
+  box-sizing: border-box;
 }
 
 html, body {
   margin: 0;
   padding: 0;
-  width: 100%;
-  min-height: 100vh;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  background-color: var(--rb-page-bg) !important;
-  color: var(--rb-text-main) !important;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: #f8fafc;
+  color: #1e293b;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
-/* PREVENT ANY ELEMENT COLLISION */
-* {
-  box-sizing: border-box;
+/* =========================================================
+   GLOBAL DARK MODE ACROSS ALL PAGES & COMPONENTS
+   ========================================================= */
+body.dark-mode,
+body.dark-theme {
+  background-color: #0b1120 !important;
+  color: #f1f5f9 !important;
+}
+
+body.dark-mode main,
+body.dark-mode .page-container,
+body.dark-mode .selectbus-container,
+body.dark-mode .selectbus-page-wrapper,
+body.dark-mode .route-planner-wrapper,
+body.dark-mode .route-planner-container,
+body.dark-mode .community-wrapper,
+body.dark-mode .community-container,
+body.dark-mode .reviews-wrapper,
+body.dark-mode .reviews-container,
+body.dark-mode .landing-wrapper {
+  background-color: #0b1120 !important;
+  color: #f1f5f9 !important;
+}
+
+/* Cards, Sidebars & Drawers in Dark Mode */
+body.dark-mode .bus-card,
+body.dark-mode .filter-sidebar,
+body.dark-mode .left-filter-panel,
+body.dark-mode .summary-card,
+body.dark-mode .planner-card,
+body.dark-mode .review-card,
+body.dark-mode .post-card,
+body.dark-mode .offer-card-item,
+body.dark-mode .route-card-item,
+body.dark-mode .offer-modal-box,
+body.dark-mode .seat-drawer-panel,
+body.dark-mode .modal-content {
+  background-color: #162033 !important;
+  border-color: #293548 !important;
+  color: #f1f5f9 !important;
+}
+
+/* Headings & Text in Dark Mode */
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4 {
+  color: #f8fafc !important;
+}
+
+body.dark-mode p,
+body.dark-mode span,
+body.dark-mode label {
+  color: inherit;
+}
+
+/* Inputs, Selects & Textareas in Dark Mode */
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+  border-color: #334155 !important;
+}
+
+body.dark-mode input::placeholder,
+body.dark-mode textarea::placeholder {
+  color: #64748b !important;
+}
+
+/* Scrollbar Polish */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border-radius: 999px;
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb {
+  background: #334155;
 }

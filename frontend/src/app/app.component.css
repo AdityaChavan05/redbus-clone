@@ -1,166 +1,191 @@
+/* Sleek Partner Fleet Strip */
+.global-fleet-strip {
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 10px 24px;
+  transition: background-color 0.25s ease, border-color 0.25s ease;
+}
+
+.global-fleet-inner {
+  max-width: 1240px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  overflow-x: auto;
+}
+
+.fleet-strip-label {
+  font-size: 11px;
+  font-weight: 800;
+  color: #d84e55;
+  white-space: nowrap;
+  letter-spacing: 0.4px;
+}
+
+.fleet-chip-list {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.fleet-chip-card {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 5px 10px 5px 6px;
+  white-space: nowrap;
+}
+
+.fleet-chip-card img {
+  width: 44px;
+  height: 32px;
+  border-radius: 6px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.fleet-chip-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.fleet-chip-text strong {
+  font-size: 12px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.fleet-chip-text span {
+  font-size: 10px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+/* Dark Mode for Global Fleet Strip */
+:host-context(body.dark-mode) .global-fleet-strip {
+  background: #0f172a;
+  border-bottom-color: #1e293b;
+}
+
+:host-context(body.dark-mode) .fleet-chip-card {
+  background: #162033;
+  border-color: #293548;
+}
+
+:host-context(body.dark-mode) .fleet-chip-text strong {
+  color: #f8fafc;
+}
+
+:host-context(body.dark-mode) .fleet-chip-text span {
+  color: #94a3b8;
+}
+
+/* Login Modal Overlay */
 .login-modal-overlay {
   position: fixed;
   inset: 0;
   background: rgba(15, 23, 42, 0.65);
-  backdrop-filter: blur(2px);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 9999;
+  z-index: 10000;
+  padding: 16px;
 }
 
 .login-modal-card {
   background: #ffffff;
-  width: 100%;
-  max-width: 420px;
   border-radius: 16px;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
-  position: relative;
-  overflow: hidden;
-  font-family: inherit;
+  max-width: 400px;
+  width: 100%;
+  padding: 22px;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.25);
 }
 
-.close-btn {
-  position: absolute;
-  top: 14px;
-  right: 16px;
-  background: none;
-  border: none;
-  font-size: 18px;
-  color: #64748b;
-  cursor: pointer;
+:host-context(body.dark-mode) .login-modal-card {
+  background: #162033;
+  color: #f8fafc;
+  border: 1px solid #293548;
 }
 
-.login-header {
-  padding: 24px 24px 16px;
-  text-align: center;
-  background: #fffafa;
-  border-bottom: 1px solid #fee2e2;
-}
-
-.redbus-brand-badge {
-  display: inline-block;
-  background: #d84e55;
-  color: #ffffff;
-  font-weight: 900;
-  padding: 3px 12px;
-  border-radius: 6px;
-  font-size: 14px;
-  letter-spacing: 0.5px;
-  margin-bottom: 8px;
-}
-
-.login-header h3 {
-  margin: 4px 0;
-  font-size: 16px;
-  font-weight: 700;
-  color: #1e293b;
-}
-
-.login-header p {
-  margin: 0;
-  font-size: 12px;
-  color: #64748b;
-}
-
-.login-body {
-  padding: 20px 24px 24px;
-}
-
-.phone-input-group {
+.login-modal-header {
   display: flex;
-  border: 1.5px solid #cbd5e1;
-  border-radius: 8px;
-  overflow: hidden;
-  margin-bottom: 14px;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
 }
 
-.country-code {
+.login-badge {
+  font-size: 11px;
+  font-weight: 800;
+  color: #d84e55;
+  text-transform: uppercase;
+}
+
+.login-modal-header h3 {
+  margin: 4px 0 0;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.btn-close-login {
+  border: none;
   background: #f1f5f9;
-  padding: 10px 12px;
-  font-size: 13px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+:host-context(body.dark-mode) .btn-close-login {
+  background: #1e293b;
+  color: #e2e8f0;
+}
+
+.login-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 12px;
+}
+
+.login-field label {
+  font-size: 12px;
   font-weight: 700;
   color: #475569;
-  border-right: 1px solid #cbd5e1;
 }
 
-.login-input {
-  flex: 1;
+:host-context(body.dark-mode) .login-field label {
+  color: #94a3b8;
+}
+
+.login-field input {
   padding: 10px 12px;
-  border: none;
-  outline: none;
-  font-size: 13px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  font-size: 14px;
 }
 
-.btn-send-otp {
+.login-error-text {
+  color: #dc2626;
+  font-size: 12px;
+  font-weight: 600;
+  margin: 0 0 10px;
+}
+
+.btn-login-primary {
   width: 100%;
-  padding: 12px;
   background: #d84e55;
   color: #ffffff;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
+  padding: 12px;
   font-size: 13px;
   font-weight: 800;
   cursor: pointer;
-}
-
-.auth-divider {
-  display: flex;
-  align-items: center;
-  margin: 18px 0;
-  color: #94a3b8;
-  font-size: 11px;
-  font-weight: 700;
-}
-
-.auth-divider::before, .auth-divider::after {
-  content: "";
-  flex: 1;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.auth-divider span {
-  padding: 0 10px;
-}
-
-.social-login-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.btn-social {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  background: #ffffff;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 10px;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.btn-social:hover {
-  background: #f8fafc;
-}
-
-.social-icon {
-  width: 16px;
-  height: 16px;
-}
-
-.disclaimer {
-  font-size: 11px;
-  color: #94a3b8;
-  text-align: center;
-  margin-top: 16px;
-  line-height: 1.4;
-}
-
-.disclaimer a {
-  color: #64748b;
-  text-decoration: underline;
 }
