@@ -86,6 +86,7 @@
   border-radius: 50%;
   border: 1px solid var(--rb-border-subtle, #d1d5db);
   background: var(--rb-card-bg, #ffffff);
+  color: var(--rb-text-main, #111827);
   cursor: pointer;
 }
 
@@ -115,7 +116,7 @@
   cursor: pointer;
 }
 
-/* ================= MAIN ARENA ================= */
+/* ================= MAIN ARENA & STICKY FILTER SIDEBAR ================= */
 .selectbus-content-arena {
   max-width: 1280px;
   margin: 20px auto;
@@ -127,6 +128,12 @@
   grid-template-columns: 270px 1fr;
   gap: 20px;
   align-items: start;
+}
+
+.filters-sidebar {
+  position: sticky;
+  top: 76px;
+  align-self: start;
 }
 
 /* ================= SPECIAL HIGHLIGHT BANNER: BOOKING FOR WOMEN ================= */
@@ -274,6 +281,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
 }
 
 .promo-card.vrl-gold {
@@ -327,7 +335,6 @@
   border-radius: 6px;
 }
 
-/* Modern Feature Tiles (Women's Deal, Free Cancellation, Flexi Ticket) */
 .promo-card.modern-feature-tile {
   background: var(--rb-card-bg, #ffffff);
   border: 1.5px solid var(--rb-border, #e2e8f0);
@@ -425,7 +432,7 @@
   margin-bottom: 14px;
 }
 
-/* ================= SPECIAL OFFERS COUPON CARDS WITH OPERATOR PHOTOS ================= */
+/* ================= SPECIAL OFFERS COUPON CARDS ================= */
 .special-offers-box {
   background: var(--rb-card-bg, #ffffff);
   border: 1px solid var(--rb-border, #e5e7eb);
@@ -457,26 +464,10 @@
   border-radius: 20px;
 }
 
-.offers-cards-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
 .offers-cards-row.three-cols {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 14px;
-}
-
-.offer-coupon-card {
-  background: #ecfdf5;
-  border: 1px dashed #10b981;
-  border-radius: 12px;
-  padding: 10px 14px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
 }
 
 .offer-coupon-card.modern-coupon {
@@ -536,6 +527,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
 }
 
 .thumb-mini-badge {
@@ -644,7 +636,7 @@
   color: #ffffff;
 }
 
-/* ================= BUS CARDS ================= */
+/* ================= BUS CARDS WITH LIVE COACH THUMBNAILS ================= */
 .buses-list-stack {
   display: flex;
   flex-direction: column;
@@ -660,6 +652,11 @@
   transition: all 0.2s ease;
 }
 
+.bus-card-item:hover {
+  border-color: #d84e55;
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+}
+
 .bus-card-item.women-partner-card {
   border: 1.5px solid #f472b6;
   box-shadow: 0 4px 16px rgba(219, 39, 119, 0.09);
@@ -667,9 +664,56 @@
 
 .bus-card-main-row {
   display: grid;
-  grid-template-columns: 1.5fr 0.4fr 1.2fr 0.9fr;
+  grid-template-columns: 1.65fr 0.4fr 1.15fr 0.85fr;
   align-items: center;
   gap: 16px;
+}
+
+.bus-operator-with-photo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.bus-card-thumb-box {
+  position: relative;
+  width: 96px;
+  height: 76px;
+  border-radius: 12px;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 1px solid var(--rb-border, #e2e8f0);
+  background: #0f172a;
+  cursor: pointer;
+}
+
+.bus-card-thumb-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.2s ease;
+}
+
+.bus-card-thumb-box:hover img {
+  transform: scale(1.06);
+}
+
+.photo-count-pill {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  background: rgba(15, 23, 42, 0.85);
+  color: #ffffff;
+  font-size: 9.5px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+.bus-operator-block {
+  min-width: 0;
 }
 
 .operator-title-row {
@@ -792,6 +836,7 @@
   border-top: 1px solid var(--rb-border, #f3f4f6);
   display: flex;
   gap: 20px;
+  flex-wrap: wrap;
 }
 
 .bus-card-quick-links a {
@@ -799,6 +844,11 @@
   font-weight: 700;
   color: #4f46e5;
   cursor: pointer;
+}
+
+.empty-filter-card {
+  text-align: center;
+  padding: 36px 20px;
 }
 
 /* ================= FLOATING MODAL & SIDE-BY-SIDE DECKS ================= */
@@ -956,7 +1006,6 @@
   cursor: pointer;
 }
 
-/* ================= ADJACENT FEMALE-ONLY SEAT NOTE BANNER ================= */
 .female-adjacent-note-banner {
   width: 100%;
   max-width: 448px;
@@ -968,18 +1017,6 @@
   align-items: center;
   gap: 10px;
   box-shadow: 0 4px 12px rgba(236, 72, 153, 0.15);
-  animation: fadeInNote 0.2s ease-out;
-}
-
-@keyframes fadeInNote {
-  from {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 .fan-icon {
@@ -1111,7 +1148,6 @@
   background: #fdf2f8;
 }
 
-/* Distinct visual difference between Sold Female seat vs Available Female-Only adjacent seat */
 .rb-sleeper-rect.sold.female {
   background: #fce7f3;
   border-color: #f472b6;
@@ -1128,10 +1164,6 @@
   background: #15803d !important;
   border-color: #15803d !important;
   color: #ffffff;
-}
-
-.rb-sleeper-rect.selected .bottom-pillow-bar {
-  background: rgba(255, 255, 255, 0.6);
 }
 
 .gender-emoji-badge {
@@ -1269,6 +1301,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
 }
 
 .ten-tabs-nav-bar {
@@ -1594,12 +1627,7 @@
   box-shadow: 0 4px 14px rgba(216, 78, 85, 0.35);
 }
 
-.btn-red-pill-cta.full-w {
-  width: 100%;
-  margin-top: 12px;
-}
-
-/* ================= STEP 2 & STEP 3 CONTAINERS ================= */
+/* ================= STEP 2, 3, 4 & TICKET MODAL ================= */
 .board-drop-step-container,
 .passenger-step-container,
 .payment-gateway-container {
@@ -1623,8 +1651,14 @@
   padding: 0 20px;
 }
 
+.passenger-two-col-grid,
+.payment-two-col-grid {
+  grid-template-columns: 1.45fr 1fr;
+}
+
 .bd-column-card,
-.p-white-card {
+.p-white-card,
+.pay-section-card {
   background: var(--rb-card-bg, #ffffff);
   border: 1px solid var(--rb-border, #e5e7eb);
   border-radius: 16px;
@@ -1636,7 +1670,12 @@
   box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
 }
 
-.bd-col-head {
+.bd-col-head,
+.card-head-with-badge,
+.mp-card-top,
+.addon-hero-header,
+.summary-op-header,
+.upi-header-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1651,16 +1690,19 @@
   border-radius: 12px;
 }
 
-.bd-radio-list {
+.bd-radio-list,
+.radio-choice-stack {
   display: flex;
   flex-direction: column;
   gap: 10px;
   margin-top: 12px;
 }
 
-.bd-radio-row {
+.bd-radio-row,
+.video-radio-option {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: space-between;
   gap: 14px;
   padding: 12px;
   border: 1.5px solid var(--rb-border, #e5e7eb);
@@ -1668,7 +1710,8 @@
   cursor: pointer;
 }
 
-.bd-radio-row.selected {
+.bd-radio-row.selected,
+.video-radio-option.selected {
   border-color: #d84e55;
   background: #fff1f2;
 }
@@ -1677,42 +1720,17 @@
   flex: 1;
 }
 
-.bd-details strong {
+.bd-details strong,
+.video-radio-option strong {
   display: block;
   font-size: 0.85rem;
 }
 
-.bd-details span {
+.bd-details span,
+.video-radio-option span,
+.p-sub {
   font-size: 0.74rem;
   color: var(--rb-text-muted, #6b7280);
-}
-
-/* ================= STEP 3: PASSENGER INFO & ADDON CARDS ================= */
-.passenger-two-col-grid {
-  grid-template-columns: 1.45fr 1fr;
-}
-
-.card-head-with-badge {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-}
-
-.btn-edit-link {
-  background: transparent;
-  border: none;
-  color: #4f46e5;
-  font-weight: 800;
-  font-size: 0.82rem;
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-.p-sub {
-  font-size: 0.75rem;
-  color: var(--rb-text-muted, #6b7280);
-  display: block;
-  margin-bottom: 10px;
 }
 
 .p-input-grid {
@@ -1737,7 +1755,8 @@
   color: var(--rb-text-muted, #6b7280);
 }
 
-.p-field input {
+.p-field input,
+.modern-state-select {
   border: none;
   outline: none;
   width: 100%;
@@ -1765,18 +1784,6 @@
   margin-top: 4px;
 }
 
-.modern-state-select {
-  width: 100%;
-  border: none;
-  outline: none;
-  background: transparent;
-  font-weight: 700;
-  font-size: 0.88rem;
-  color: var(--rb-text-main, #111827);
-  margin-top: 3px;
-  cursor: pointer;
-}
-
 .whatsapp-mint-bar {
   background: #dcfce7;
   color: #14532d;
@@ -1789,21 +1796,6 @@
   font-weight: 700;
   margin-top: 8px;
   cursor: pointer;
-}
-
-.wm-left {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.seat-count-chip {
-  background: #f1f5f9;
-  color: #334155;
-  font-size: 0.72rem;
-  font-weight: 800;
-  padding: 4px 10px;
-  border-radius: 20px;
 }
 
 .pink-add-passenger-bar {
@@ -1823,21 +1815,6 @@
   border-radius: 16px;
   padding: 18px;
   margin-top: 14px;
-  transition: all 0.2s ease;
-}
-
-.modern-passenger-card.invalid-card {
-  border-color: #fca5a5;
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
-}
-
-.mp-card-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 14px;
-  padding-bottom: 12px;
-  border-bottom: 1px dashed var(--rb-border-subtle, #cbd5e1);
 }
 
 .mp-avatar-group {
@@ -1855,93 +1832,20 @@
   align-items: center;
   justify-content: center;
   font-size: 1.6rem;
-  transition: all 0.2s ease;
-}
-
-.mp-dynamic-avatar.male-av {
-  background: linear-gradient(135deg, #dbeafe, #bfdbfe);
-  border: 2px solid #3b82f6;
-}
-
-.mp-dynamic-avatar.female-av {
-  background: linear-gradient(135deg, #fce7f3, #fbcfe8);
-  border: 2px solid #ec4899;
-}
-
-.mp-dynamic-avatar.other-av {
-  background: linear-gradient(135deg, #f3e8ff, #e9d5ff);
-  border: 2px solid #a855f7;
-}
-
-.mp-title {
-  display: block;
-  font-size: 0.95rem;
-  font-weight: 800;
-  color: var(--rb-text-main, #0f172a);
-}
-
-.mp-gender-status {
-  font-size: 0.74rem;
-  font-weight: 700;
-  color: #16a34a;
-}
-
-.mp-gender-status.muted {
-  color: var(--rb-text-muted, #64748b);
-}
-
-.mp-seat-badges {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.women-seat-pill {
-  background: #fdf2f8;
-  border: 1px solid #f472b6;
-  color: #be185d;
-  font-size: 0.72rem;
-  font-weight: 800;
-  padding: 4px 10px;
-  border-radius: 8px;
 }
 
 .mp-inputs-row {
   display: grid;
   grid-template-columns: 1fr 130px;
   gap: 12px;
-  margin-bottom: 12px;
-}
-
-.mp-inputs-row .p-field {
-  background: var(--rb-card-bg, #ffffff);
-  margin-bottom: 0;
-}
-
-.mp-gender-section {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.gender-sec-lbl {
-  font-size: 0.72rem;
-  font-weight: 800;
-  color: var(--rb-text-muted, #64748b);
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-}
-
-.female-lock-note {
-  color: #db2777;
-  text-transform: none;
-  margin-left: 6px;
+  margin: 12px 0;
 }
 
 .gender-pills-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 10px;
+  margin-top: 6px;
 }
 
 .gender-choice-pill {
@@ -1957,221 +1861,12 @@
   font-weight: 800;
   font-size: 0.82rem;
   color: var(--rb-text-main, #1e293b);
-  transition: all 0.15s ease;
 }
 
-.gender-choice-pill:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-
-.gender-choice-pill .g-emoji {
-  font-size: 1.2rem;
-}
-
-.gender-choice-pill.male-pill.active {
-  background: #eff6ff;
-  border-color: #2563eb;
-  color: #1d4ed8;
-}
-
-.gender-choice-pill.female-pill.active {
-  background: #fdf2f8;
-  border-color: #db2777;
-  color: #be185d;
-}
-
-.gender-choice-pill.other-pill.active {
-  background: #faf5ff;
-  border-color: #9333ea;
-  color: #7e22ce;
-}
-
-.social-proof-strip {
-  background: #eff6ff;
-  color: #1d4ed8;
-  font-size: 0.72rem;
-  font-weight: 700;
-  padding: 5px 12px;
-  border-radius: 8px;
-  margin-bottom: 10px;
-}
-
-.addon-hero-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.addon-shield-badge {
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.25rem;
-}
-
-.addon-shield-badge.pink {
-  background: #fce7f3;
-}
-
-.addon-shield-badge.red {
-  background: #fee2e2;
-}
-
-.refund-highlight-banner {
-  background: linear-gradient(180deg, #f0fdf4 0%, #dcfce7 100%);
-  border: 1px solid #bbf7d0;
-  border-radius: 12px;
-  padding: 16px;
-  text-align: center;
-  margin: 10px 0;
-}
-
-.big-green-pct {
-  display: block;
-  font-size: 1.45rem;
-  font-weight: 900;
-  color: #15803d;
-}
-
-.refund-highlight-banner span {
-  font-size: 0.78rem;
-  color: #166534;
-  font-weight: 700;
-}
-
-.addon-footnote,
-.addon-sub-line {
-  font-size: 0.76rem;
-  color: var(--rb-text-muted, #64748b);
-  margin: 6px 0 10px;
-}
-
-.trip-guarantee-equation-box {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 12px;
-  text-align: center;
-  margin-bottom: 10px;
-}
-
-.eq-caption {
-  font-size: 0.72rem;
-  color: #64748b;
-  display: block;
-  margin-bottom: 8px;
-}
-
-.eq-row {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 24px;
-}
-
-.eq-col strong {
-  display: block;
-  font-size: 1.05rem;
-  font-weight: 900;
-  color: #0f172a;
-}
-
-.eq-col span {
-  font-size: 0.7rem;
-  color: #64748b;
-}
-
-.eq-plus {
-  font-size: 1.2rem;
-  font-weight: 900;
-  color: #94a3b8;
-}
-
-.acko-logo-badge {
-  background: #0f172a;
-  color: #ffffff;
-  font-weight: 900;
-  font-size: 0.72rem;
-  padding: 4px 10px;
-  border-radius: 6px;
-  letter-spacing: 0.8px;
-}
-
-.acko-benefits-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin: 10px 0 12px;
-}
-
-.acko-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.78rem;
-  padding: 6px 10px;
-  background: var(--rb-card-inner, #f8fafc);
-  border-radius: 8px;
-}
-
-.radio-choice-stack {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.video-radio-option {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 14px;
-  border: 1.5px solid var(--rb-border, #e2e8f0);
-  border-radius: 12px;
-  cursor: pointer;
-}
-
-.video-radio-option.selected {
+.gender-choice-pill.active {
   border-color: #d84e55;
   background: #fff1f2;
-}
-
-.video-radio-option strong {
-  display: block;
-  font-size: 0.84rem;
-}
-
-.video-radio-option span {
-  font-size: 0.74rem;
-  color: var(--rb-text-muted, #64748b);
-}
-
-.gst-toggle-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
-}
-
-.gst-fields-drawer {
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px dashed var(--rb-border, #e2e8f0);
-}
-
-.terms-footnote {
-  text-align: center;
-  font-size: 0.74rem;
-  color: var(--rb-text-muted, #64748b);
-  margin: 4px 0 18px;
-}
-
-.terms-footnote a {
-  color: #4f46e5;
-  text-decoration: underline;
-  cursor: pointer;
+  color: #be123c;
 }
 
 .primo-sidebar-card {
@@ -2194,26 +1889,6 @@
   border-radius: 6px;
 }
 
-.primo-sidebar-card strong {
-  display: block;
-  font-size: 0.88rem;
-}
-
-.primo-sidebar-card span {
-  font-size: 0.72rem;
-  opacity: 0.85;
-}
-
-.women-offer-banner-mini {
-  background: #fdf2f8;
-  border: 1px dashed #ec4899;
-  color: #9d174d;
-  font-size: 0.76rem;
-  padding: 8px 12px;
-  border-radius: 10px;
-  margin-top: 8px;
-}
-
 .seat-tag-pill,
 .g-pill {
   background: #dcfce7;
@@ -2224,12 +1899,6 @@
   border-radius: 8px;
   display: inline-block;
   margin-top: 4px;
-}
-
-.summary-op-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 }
 
 .trip-timeline-mini {
@@ -2246,13 +1915,6 @@
   display: flex;
   gap: 12px;
   font-size: 0.8rem;
-  align-items: flex-start;
-}
-
-.tt-duration-tag {
-  font-size: 0.68rem;
-  color: var(--rb-text-muted, #64748b);
-  padding-left: 56px;
 }
 
 .tt-dot {
@@ -2260,7 +1922,6 @@
   height: 10px;
   border-radius: 50%;
   margin-top: 4px;
-  flex-shrink: 0;
 }
 
 .tt-dot.green {
@@ -2280,7 +1941,6 @@
   padding: 5px;
 }
 
-/* ================= STEP 4: PAYMENT GATEWAY & WOMEN10 COUPON ================= */
 .payment-top-bar {
   background: var(--rb-card-bg, #ffffff);
   padding: 14px 32px;
@@ -2296,12 +1956,6 @@
   gap: 14px;
 }
 
-.pay-route-sub {
-  display: block;
-  font-size: 0.74rem;
-  color: var(--rb-text-muted, #6b7280);
-}
-
 .pay-timer-pill {
   background: #fef2f2;
   border: 1.5px solid #fecaca;
@@ -2310,194 +1964,11 @@
   padding: 6px 16px;
   border-radius: 24px;
   font-size: 0.84rem;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.pulse-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #ef4444;
-  animation: pulseDot 1.2s infinite;
-}
-
-@keyframes pulseDot {
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.4);
-    opacity: 0.5;
-  }
-}
-
-.payment-two-col-grid {
-  grid-template-columns: 1.45fr 1fr;
-}
-
-.trust-badges-strip {
-  display: flex;
-  justify-content: space-between;
-  background: var(--rb-card-bg, #ffffff);
-  padding: 10px 16px;
-  border-radius: 12px;
-  border: 1px solid var(--rb-border, #e5e7eb);
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--rb-text-muted, #6b7280);
-  margin-bottom: 12px;
-}
-
-.pay-option-card,
-.pay-section-card {
-  background: var(--rb-card-bg, #ffffff);
-  border: 1px solid var(--rb-border, #e5e7eb);
-  border-radius: 16px;
-  padding: 16px 20px;
-  margin-bottom: 14px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.po-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.po-ico {
-  font-size: 1.3rem;
-}
-
-.po-left strong {
-  display: block;
-  font-size: 0.88rem;
-}
-
-.po-left span {
-  font-size: 0.74rem;
-  color: var(--rb-text-muted, #6b7280);
-}
-
-.coupon-inline-in {
-  border: none;
-  outline: none;
-  font-weight: 700;
-  font-size: 0.85rem;
-  width: 100%;
-  background: transparent;
-  color: var(--rb-text-main, #111827);
-}
-
-.btn-apply-cpn {
-  background: #111827;
-  color: #ffffff;
-  border: none;
-  border-radius: 8px;
-  padding: 7px 16px;
-  font-weight: 800;
-  font-size: 0.78rem;
-  cursor: pointer;
-}
-
-.payment-coupons-strip {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px dashed var(--rb-border, #e5e7eb);
-}
-
-.pay-cpn-chip {
-  background: #f8fafc;
-  border: 1px dashed #94a3b8;
-  border-radius: 8px;
-  padding: 6px 12px;
-  font-size: 0.74rem;
-  color: #334155;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.pay-cpn-chip.women-cpn {
-  background: #fdf2f8;
-  border-color: #ec4899;
-  color: #9d174d;
-}
-
-.pay-cpn-chip.applied {
-  background: #dcfce7;
-  border-color: #16a34a;
-  color: #15803d;
-  font-weight: 800;
-}
-
-.pay-section-card {
-  flex-direction: column;
-  align-items: stretch;
-}
-
-.upi-header-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.upi-header-row h5 {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 900;
-}
-
-.upi-sub {
-  font-size: 0.72rem;
-  color: #16a34a;
-  font-weight: 700;
-}
-
-.upi-apps-badges {
-  display: flex;
-  gap: 6px;
-}
-
-.app-pill {
-  background: #f1f5f9;
-  color: #334155;
-  font-size: 0.68rem;
-  font-weight: 800;
-  padding: 3px 8px;
-  border-radius: 6px;
-}
-
-.pay-method-row,
-.bank-row-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 14px;
-  border: 1.5px solid var(--rb-border, #e5e7eb);
-  border-radius: 12px;
-  cursor: pointer;
-  font-weight: 700;
-  font-size: 0.85rem;
-}
-
-.pay-method-row.selected {
-  border-color: #d84e55;
-  background: #fff1f2;
-  color: #9f1239;
 }
 
 .custom-qr-showcase-panel {
   margin-top: 12px;
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  background: #f8fafc;
   border: 1.5px dashed #94a3b8;
   border-radius: 16px;
   padding: 20px;
@@ -2516,9 +1987,6 @@
   padding: 10px;
   position: relative;
   overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .qr-code-img {
@@ -2527,63 +1995,8 @@
   object-fit: contain;
 }
 
-.scan-laser-line {
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: #ef4444;
-  box-shadow: 0 0 8px #ef4444;
-  animation: scanLaser 2.4s infinite ease-in-out;
-}
-
-@keyframes scanLaser {
-  0%,
-  100% {
-    top: 10%;
-  }
-  50% {
-    top: 90%;
-  }
-}
-
-.qr-instructions-col {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.qr-amount-badge {
-  align-self: flex-start;
-  background: #dcfce7;
-  color: #15803d;
-  font-size: 0.75rem;
-  font-weight: 900;
-  padding: 4px 10px;
-  border-radius: 20px;
-}
-
-.qr-instructions-col h4 {
-  margin: 0;
-  font-size: 0.95rem;
-  font-weight: 800;
-  color: #0f172a;
-}
-
-.qr-instructions-col p {
-  margin: 0;
-  font-size: 0.78rem;
-  color: #475569;
-  line-height: 1.45;
-}
-
-.qr-timer-note {
-  font-size: 0.75rem;
-  color: #b91c1c;
-}
-
 .btn-verify-qr-pay {
-  margin-top: 6px;
+  margin-top: 8px;
   background: linear-gradient(135deg, #16a34a, #15803d);
   color: #ffffff;
   border: none;
@@ -2594,28 +2007,6 @@
   cursor: pointer;
 }
 
-.upi-id-entry-row {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.upi-id-entry-row input {
-  flex: 1;
-  border: 1.5px solid #cbd5e1;
-  border-radius: 10px;
-  padding: 10px 14px;
-  font-weight: 700;
-}
-
-.banks-list-stack {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  max-height: 320px;
-  overflow-y: auto;
-}
-
 .fare-row {
   display: flex;
   justify-content: space-between;
@@ -2623,39 +2014,18 @@
   font-size: 0.85rem;
 }
 
-.fare-row.green {
-  color: #16a34a;
-}
-
 .fare-row.total {
-  border-top: 1.5px dashed var(--rb-border, #cbd5e1);
+  border-top: 1.5px dashed #cbd5e1;
   font-size: 1.1rem;
   font-weight: 900;
   margin-top: 8px;
   padding-top: 12px;
 }
 
-.pm-line {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 6px;
-  font-size: 0.82rem;
-  font-weight: 700;
-}
-
-.ticket-phone-note {
-  font-size: 0.74rem;
-  color: var(--rb-text-muted, #6b7280);
-  margin-top: 10px;
-}
-
-/* ================= FULL-SCREEN BOOKING CONFIRMED CELEBRATION OVERLAY ================= */
 .booking-celebration-overlay {
   position: fixed;
   inset: 0;
   background: rgba(15, 23, 42, 0.85);
-  backdrop-filter: blur(8px);
   z-index: 999999;
   display: flex;
   align-items: center;
@@ -2666,14 +2036,10 @@
 .confirmed-ticket-modal-card {
   width: 100%;
   max-width: 740px;
-  max-height: 92vh;
   background: #ffffff;
   color: #0f172a;
   border-radius: 20px;
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.55);
 }
 
 .ticket-celebration-banner {
@@ -2682,7 +2048,6 @@
   text-align: center;
   padding: 18px 24px;
   position: relative;
-  flex-shrink: 0;
 }
 
 .btn-ticket-top-exit {
@@ -2699,237 +2064,17 @@
   cursor: pointer;
 }
 
-.btn-ticket-top-exit:hover {
-  background: rgba(255, 255, 255, 0.35);
-}
-
-.check-glow-circle {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: #ffffff;
-  color: #16a34a;
-  font-size: 1.5rem;
-  font-weight: 900;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 8px;
-}
-
-.ticket-celebration-banner h2 {
-  margin: 0;
-  font-size: 1.35rem;
-  font-weight: 900;
-}
-
-.ticket-celebration-banner p {
-  margin: 4px 0 0;
-  font-size: 0.8rem;
-  opacity: 0.95;
-}
-
 .perforated-ticket-body {
   padding: 18px 24px;
-  overflow-y: auto;
-  flex: 1;
 }
 
 .rb-ticket-ids-bar {
   display: flex;
   justify-content: space-between;
-  align-items: center;
   background: #f8fafc;
   border: 1px solid #e2e8f0;
   border-radius: 10px;
   padding: 10px 14px;
-  margin-bottom: 14px;
-}
-
-.tin-val {
-  font-size: 0.92rem;
-  font-weight: 900;
-  color: #0f172a;
-}
-
-.t-sub-dark {
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: #334155;
-}
-
-.ticket-top-meta {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  padding-bottom: 12px;
-  border-bottom: 2px dashed #e2e8f0;
-}
-
-.t-lbl {
-  display: block;
-  font-size: 0.65rem;
-  font-weight: 800;
-  color: #64748b;
-  letter-spacing: 0.4px;
-}
-
-.t-val {
-  font-size: 1.05rem;
-  font-weight: 900;
-  display: block;
-}
-
-.pnr-code {
-  font-size: 1.05rem;
-  font-weight: 900;
-  color: #dc2626;
-}
-
-.ticket-route-ribbon {
-  display: grid;
-  grid-template-columns: 1fr 110px 1fr;
-  align-items: flex-start;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 14px 16px;
-  margin: 14px 0;
-  gap: 10px;
-}
-
-.tr-col.right {
-  text-align: right;
-}
-
-.tr-time {
-  display: block;
-  font-size: 1.15rem;
-  font-weight: 900;
-  color: #0f172a;
-}
-
-.tr-rep-pill {
-  display: inline-block;
-  background: #fef3c7;
-  color: #92400e;
-  font-size: 0.68rem;
-  font-weight: 800;
-  padding: 2px 8px;
-  border-radius: 6px;
-  margin: 3px 0;
-}
-
-.tr-rep-pill.arrival {
-  background: #e0f2fe;
-  color: #075985;
-}
-
-.tr-place {
-  display: block;
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: #1e293b;
-}
-
-.tr-landmark {
-  display: block;
-  font-size: 0.7rem;
-  color: #64748b;
-}
-
-.tr-arrow {
-  text-align: center;
-  font-size: 0.72rem;
-  color: #64748b;
-  padding-top: 10px;
-}
-
-.tr-line {
-  font-size: 1rem;
-  font-weight: 900;
-  color: #d84e55;
-  margin: 3px 0;
-}
-
-.rb-ticket-pax-table {
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  overflow: hidden;
-  margin-bottom: 12px;
-}
-
-.pax-tbl-head,
-.pax-tbl-row {
-  display: grid;
-  grid-template-columns: 1.5fr 1fr 1fr;
-  padding: 8px 14px;
-  font-size: 0.8rem;
-  align-items: center;
-}
-
-.pax-tbl-head {
-  background: #f1f5f9;
-  font-size: 0.68rem;
-  font-weight: 800;
-  color: #475569;
-}
-
-.pax-tbl-row {
-  border-top: 1px solid #e2e8f0;
-}
-
-.seat-badge-red {
-  font-weight: 800;
-  color: #d84e55;
-}
-
-.ticket-passenger-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-.tp-cell {
-  background: #f8fafc;
-  padding: 10px 14px;
-  border-radius: 10px;
-  font-size: 0.82rem;
-}
-
-.green-txt {
-  color: #15803d;
-}
-
-.mticket-info-strip {
-  margin-top: 12px;
-  background: #ecfdf5;
-  border: 1px solid #a7f3d0;
-  color: #065f46;
-  padding: 8px 12px;
-  border-radius: 8px;
-  font-size: 0.74rem;
-}
-
-.ticket-barcode-strip {
-  margin-top: 12px;
-  padding-top: 10px;
-  border-top: 2px dashed #e2e8f0;
-  text-align: center;
-}
-
-.mock-barcode {
-  font-family: monospace;
-  font-size: 1.25rem;
-  letter-spacing: 3px;
-  color: #334155;
-  font-weight: 900;
-}
-
-.ticket-barcode-strip span {
-  display: block;
-  font-size: 0.68rem;
-  color: #64748b;
 }
 
 .ticket-actions-footer {
@@ -2939,7 +2084,6 @@
   display: flex;
   justify-content: flex-end;
   gap: 12px;
-  flex-shrink: 0;
 }
 
 .btn-download-ticket {
@@ -2949,18 +2093,6 @@
   padding: 10px 20px;
   border-radius: 10px;
   font-weight: 800;
-  font-size: 0.84rem;
-  cursor: pointer;
-}
-
-.btn-print-ticket {
-  background: #0f172a;
-  color: #ffffff;
-  border: none;
-  padding: 10px 18px;
-  border-radius: 10px;
-  font-weight: 800;
-  font-size: 0.84rem;
   cursor: pointer;
 }
 
@@ -2971,7 +2103,6 @@
   padding: 10px 18px;
   border-radius: 10px;
   font-weight: 800;
-  font-size: 0.84rem;
   cursor: pointer;
 }
 
@@ -2985,39 +2116,6 @@ body.dark-mode {
   --rb-border-subtle: #374151;
   --rb-text-main: #f9fafb;
   --rb-text-muted: #9ca3af;
-}
-
-body.dark-mode .custom-qr-showcase-panel {
-  background: #1f2937;
-  border-color: #374151;
-}
-
-body.dark-mode .qr-instructions-col h4,
-body.dark-mode .qr-instructions-col p {
-  color: #f9fafb;
-}
-
-body.dark-mode .modern-state-select option {
-  background: #1f2937;
-  color: #f9fafb;
-}
-
-body.dark-mode .gender-choice-pill.male-pill.active {
-  background: rgba(37, 99, 235, 0.25);
-  border-color: #60a5fa;
-  color: #93c5fd;
-}
-
-body.dark-mode .gender-choice-pill.female-pill.active {
-  background: rgba(219, 39, 119, 0.25);
-  border-color: #f472b6;
-  color: #fbcfe8;
-}
-
-body.dark-mode .gender-choice-pill.other-pill.active {
-  background: rgba(147, 51, 234, 0.25);
-  border-color: #c084fc;
-  color: #e9d5ff;
 }
 
 body.dark-mode .promo-card.women-promo-card,
