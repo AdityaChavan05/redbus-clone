@@ -1,99 +1,129 @@
-<div class="filters-card">
-  <div class="filter-header-row">
-    <h3 class="filter-title">Filter buses</h3>
-    <button type="button" class="clear-all-link">Clear All</button>
-  </div>
+<div class="left-filter-container">
+  <!-- MAIN FILTER CARD -->
+  <div class="filter-box-card">
+    <div class="filter-header-row">
+      <div class="fh-title-wrap">
+        <h3>Filter buses</h3>
+        <span class="active-count-badge" *ngIf="activeFilterCount > 0">{{ activeFilterCount }}</span>
+      </div>
+      <button type="button" class="btn-clear-filters" (click)="clearAllFilters()">Clear All</button>
+    </div>
 
-  <!-- AI Smart Filter -->
-  <div class="smart-search-box">
-    <span class="sparkle">✦</span>
-    <input type="text" placeholder='Try "Morning bus under ₹1500"' class="smart-input" />
-    <span class="mic-ico">🎙️</span>
-  </div>
+    <!-- Smart Suggestion Pill -->
+    <button type="button" class="smart-tip-banner" (click)="applyQuickTip()">
+      <span>✦ Try 'Top rated AC coaches'</span>
+      <span>🏷️</span>
+    </button>
 
-  <!-- Red outlined quick pill chips from Screenshot 226 -->
-  <div class="filter-pill-grid">
-    <button type="button" class="feature-pill-btn">
-      <span class="pill-ico">★</span> Primo Bus (9)
-    </button>
-    <button type="button" class="feature-pill-btn red-highlight active">
-      <span class="pill-ico">❄</span> AC (30)
-    </button>
-    <button type="button" class="feature-pill-btn red-highlight">
-      <span class="pill-ico">🛏</span> SLEEPER (32)
-    </button>
-    <button type="button" class="feature-pill-btn">
-      <span class="pill-ico">💺</span> Single Seats (11)
-    </button>
-    <button type="button" class="feature-pill-btn">
-      <span class="pill-ico">⏱</span> 18:00-24:00 (18)
-    </button>
-    <button type="button" class="feature-pill-btn">
-      <span class="pill-ico">★</span> High Rated Buses (6)
-    </button>
-    <button type="button" class="feature-pill-btn">
-      <span class="pill-ico">📍</span> Live Tracking (10)
-    </button>
-    <button type="button" class="feature-pill-btn">
-      <span class="pill-ico">✓</span> Volvo Buses (10)
-    </button>
-  </div>
+    <!-- Quick Tag Pills -->
+    <div class="filter-pills-stack">
+      <button type="button" class="filter-pill-btn" [class.active]="filters.primo" (click)="toggleFilter('primo')">
+        <span>★ Primo Bus</span>
+        <span class="pill-check" *ngIf="filters.primo">✓</span>
+      </button>
 
-  <hr class="filter-divider" />
+      <button type="button" class="filter-pill-btn" [class.active]="filters.ac" (click)="toggleFilter('ac')">
+        <span>❄️ AC</span>
+        <span class="pill-check" *ngIf="filters.ac">✓</span>
+      </button>
 
-  <!-- DEPARTURE TIME CHECKBOXES -->
-  <div class="filter-group">
-    <label class="filter-group-lbl">DEPARTURE TIME</label>
-    <div class="filter-checkbox-list">
-      <label class="custom-chk-row">
-        <input type="checkbox" />
-        <span class="time-ico">🌅</span>
-        <span class="time-txt">Before 6 AM</span>
+      <button type="button" class="filter-pill-btn" [class.active]="filters.sleeper" (click)="toggleFilter('sleeper')">
+        <span>🛏️ SLEEPER</span>
+        <span class="pill-check" *ngIf="filters.sleeper">✓</span>
+      </button>
+
+      <button type="button" class="filter-pill-btn" [class.active]="filters.singleSeats" (click)="toggleFilter('singleSeats')">
+        <span>💺 Single Seats</span>
+        <span class="pill-check" *ngIf="filters.singleSeats">✓</span>
+      </button>
+
+      <button type="button" class="filter-pill-btn" [class.active]="filters.evening18to24" (click)="toggleFilter('evening18to24')">
+        <span>🌙 18:00-24:00</span>
+        <span class="pill-check" *ngIf="filters.evening18to24">✓</span>
+      </button>
+
+      <button type="button" class="filter-pill-btn" [class.active]="filters.highRated" (click)="toggleFilter('highRated')">
+        <span>⭐ High Rated Buses</span>
+        <span class="pill-check" *ngIf="filters.highRated">✓</span>
+      </button>
+
+      <button type="button" class="filter-pill-btn" [class.active]="filters.liveTracking" (click)="toggleFilter('liveTracking')">
+        <span>📍 Live Tracking</span>
+        <span class="pill-check" *ngIf="filters.liveTracking">✓</span>
+      </button>
+
+      <button type="button" class="filter-pill-btn" [class.active]="filters.volvo" (click)="toggleFilter('volvo')">
+        <span>🚌 Volvo Buses</span>
+        <span class="pill-check" *ngIf="filters.volvo">✓</span>
+      </button>
+    </div>
+
+    <!-- Departure Time Checkboxes -->
+    <div class="dep-time-section">
+      <h4>DEPARTURE TIME</h4>
+
+      <label class="dep-check-row" [class.checked]="filters.depBefore6AM">
+        <input type="checkbox" [(ngModel)]="filters.depBefore6AM" (change)="onCheckboxChange()" />
+        <span>🌅 Before 6 AM</span>
       </label>
-      <label class="custom-chk-row">
-        <input type="checkbox" />
-        <span class="time-ico">☀️</span>
-        <span class="time-txt">6 AM to 12 PM</span>
+
+      <label class="dep-check-row" [class.checked]="filters.dep6AMto12PM">
+        <input type="checkbox" [(ngModel)]="filters.dep6AMto12PM" (change)="onCheckboxChange()" />
+        <span>☀️ 6 AM to 12 PM</span>
       </label>
-      <label class="custom-chk-row">
-        <input type="checkbox" />
-        <span class="time-ico">🌤️</span>
-        <span class="time-txt">12 PM to 6 PM</span>
+
+      <label class="dep-check-row" [class.checked]="filters.dep12PMto6PM">
+        <input type="checkbox" [(ngModel)]="filters.dep12PMto6PM" (change)="onCheckboxChange()" />
+        <span>🌤️ 12 PM to 6 PM</span>
       </label>
-      <label class="custom-chk-row">
-        <input type="checkbox" />
-        <span class="time-ico">🌙</span>
-        <span class="time-txt">After 6 PM</span>
+
+      <label class="dep-check-row" [class.checked]="filters.depAfter6PM">
+        <input type="checkbox" [(ngModel)]="filters.depAfter6PM" (change)="onCheckboxChange()" />
+        <span>🌃 After 6 PM</span>
       </label>
     </div>
   </div>
 
-  <hr class="filter-divider" />
-
-  <!-- BUS TYPES CHECKBOXES -->
-  <div class="filter-group">
-    <label class="filter-group-lbl">BUS TYPES</label>
-    <div class="filter-checkbox-list">
-      <label class="custom-chk-row">
-        <input type="checkbox" />
-        <span class="bus-ico">💺</span>
-        <span class="type-txt">Seater</span>
-      </label>
-      <label class="custom-chk-row">
-        <input type="checkbox" />
-        <span class="bus-ico">🛏️</span>
-        <span class="type-txt">Sleeper</span>
-      </label>
-      <label class="custom-chk-row">
-        <input type="checkbox" />
-        <span class="bus-ico">❄️</span>
-        <span class="type-txt">AC</span>
-      </label>
-      <label class="custom-chk-row">
-        <input type="checkbox" />
-        <span class="bus-ico">🚌</span>
-        <span class="type-txt">Non-AC</span>
-      </label>
+  <!-- AESTHETIC WIDGET 1: LIVE CORRIDOR TELEMETRY CARD -->
+  <div class="aesthetic-sidebar-card route-telemetry-card">
+    <div class="asc-header">
+      <span class="asc-badge">LIVE ROUTE INSIGHT</span>
+      <span class="asc-pulse">● On-Time</span>
     </div>
+    <h4>{{ fromCity }} → {{ toCity }}</h4>
+    <div class="telemetry-stats-grid">
+      <div class="t-stat">
+        <span>Distance</span>
+        <strong>{{ distanceKm }} km</strong>
+      </div>
+      <div class="t-stat">
+        <span>Showing</span>
+        <strong>{{ totalFilteredCount }} Coaches</strong>
+      </div>
+    </div>
+    <p class="asc-note">Express NH corridor with verified rest stops &amp; live GPS telemetry.</p>
+  </div>
+
+  <!-- AESTHETIC WIDGET 2: WOMEN PRIORITY SAFETY SHIELD -->
+  <div class="aesthetic-sidebar-card women-shield-card">
+    <div class="wsc-top">
+      <span class="wsc-icon">👩</span>
+      <div>
+        <strong>Women Priority Shield</strong>
+        <span>Code: WOMEN10 • 10% OFF</span>
+      </div>
+    </div>
+    <p>Adjacent berths beside female travelers are auto-locked for women only, with 24×7 live SOS tracking.</p>
+  </div>
+
+  <!-- AESTHETIC WIDGET 3: PRIVATE FLEET ASSURANCE -->
+  <div class="aesthetic-sidebar-card fleet-assurance-card">
+    <h5>✨ Primo Fleet Assurance</h5>
+    <ul>
+      <li>🧼 Sanitized linens, pillows &amp; blankets</li>
+      <li>🔌 Dual USB-C &amp; AC charging ports</li>
+      <li>🛰️ Live bus GPS shared on WhatsApp</li>
+      <li>💸 Zero hidden convenience charges</li>
+    </ul>
   </div>
 </div>

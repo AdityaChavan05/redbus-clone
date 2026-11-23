@@ -1,5 +1,6 @@
 ﻿import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { BusFilterCriteria } from './left/left.component';
 
 export type SupportedLanguage = 'en' | 'hi' | 'kn';
 
@@ -90,7 +91,7 @@ export class SelectbusPageComponent implements OnInit, OnDestroy {
 
   fromCity: string = 'Bengaluru';
   toCity: string = 'Mumbai';
-  journeyDate: string = '14 Nov, 2026';
+  journeyDate: string = '23 Nov, 2026';
 
   // Special Feature: Booking for Women Mode & Adjacency Note
   isWomenBookingMode: boolean = false;
@@ -98,6 +99,8 @@ export class SelectbusPageComponent implements OnInit, OnDestroy {
 
   activeBoardingFilter: string = 'ALL';
   busesList: BusItem[] = [];
+  filteredBusesList: BusItem[] = [];
+  activeBusFilters: BusFilterCriteria | null = null;
 
   // Modal & Multi-Step State
   floatingSelectedBus: BusItem | null = null;
@@ -181,11 +184,13 @@ export class SelectbusPageComponent implements OnInit, OnDestroy {
 
   // Operator photos for Promo Strip & Special Offer Coupon Cards
   promoOperatorPhotos: Record<string, BusPhoto> = {
-    vrl: { baseName: 'front', url: 'assets/vrl-photos/front.png', title: 'VRL SuperBus', category: 'Exterior', tryIndex: 0 },
-    airavat: { baseName: 'airavat1', url: 'assets/vrl-photos/airavat1.png', title: 'KSRTC Airavat', category: 'Exterior', tryIndex: 0 },
-    intrcity: { baseName: 'inter1', url: 'assets/vrl-photos/inter1.png', title: 'IntrCity SmartBus', category: 'Exterior', tryIndex: 0 },
-    eicher: { baseName: 'eicher1', url: 'assets/vrl-photos/eicher1.png', title: 'Executive Sleeper', category: 'Exterior', tryIndex: 0 },
-    shyamoli: { baseName: 'shy1', url: 'assets/vrl-photos/shy1.jpg', title: 'Shyamoli Paribahan', category: 'Exterior', tryIndex: 0 }
+    vrl: { baseName: 'front', url: 'assets/vrl-photos/front.jpg', title: 'VRL SuperBus', category: 'Exterior', tryIndex: -1 },
+    orange: { baseName: 'ore1', url: 'assets/vrl-photos/ore1.jpg', title: 'Orange Tours & Travels', category: 'Exterior', tryIndex: -1 },
+    airavat: { baseName: 'ore1', url: 'assets/vrl-photos/ore1.jpg', title: 'Orange Luxury Coach', category: 'Exterior', tryIndex: -1 },
+    intrcity: { baseName: 'inter1', url: 'assets/vrl-photos/inter1.jpg', title: 'IntrCity SmartBus', category: 'Exterior', tryIndex: -1 },
+    eicher: { baseName: 'eicher1', url: 'assets/vrl-photos/eicher1.jpg', title: 'Executive Sleeper', category: 'Exterior', tryIndex: -1 },
+    shyamoli: { baseName: 'shy1', url: 'assets/vrl-photos/shy1.jpg', title: 'Shyamoli Paribahan', category: 'Exterior', tryIndex: -1 },
+    srs: { baseName: 'srs1', url: 'assets/vrl-photos/srs1.jpg', title: 'S.R.S. Travels', category: 'Exterior', tryIndex: -1 }
   };
 
   fallbackBusPhoto: string = 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800&auto=format&fit=crop&q=80';
@@ -233,7 +238,6 @@ export class SelectbusPageComponent implements OnInit, OnDestroy {
 
   cityPointsDirectory: Record<string, { name: string; landmark: string }[]> = {
     'bengaluru': [
-      { name: 'Majestic Kempegowda Bus Stand', landmark: 'Opposite Platform 14, Main Terminal' },
       { name: 'Anand Rao Circle Terminal', landmark: 'Near Race Course Flyover Bridge' },
       { name: 'Yeshwantpur Govardhan Theater', landmark: 'Beside Metro Station Pillar 42' },
       { name: 'Goraguntepalya Signal', landmark: 'Near Taj Vivanta Service Road' },
@@ -271,10 +275,10 @@ export class SelectbusPageComponent implements OnInit, OnDestroy {
       { name: 'Central Railway Station Gate', landmark: 'Poonamallee High Road Terminal' }
     ],
     'goa': [
-      { name: 'Madgaon KTC Bus Stand', landmark: 'Main Intercity Platform' },
+      { name: 'Madgaon Intercity Bus Plaza', landmark: 'Main Private Coach Bay' },
       { name: 'Ponda Bypass Circle', landmark: 'Near Almeida High School' },
-      { name: 'Panaji KTC Bus Terminus', landmark: 'Patto Plaza Bridge Entry' },
-      { name: 'Mapusa New Bus Stand', landmark: 'Near Severina Gardens NH66' }
+      { name: 'Panaji Patto Plaza Terminal', landmark: 'Patto Bridge Entry' },
+      { name: 'Mapusa Highway Junction', landmark: 'Near Severina Gardens NH66' }
     ],
     'humnabad': [
       { name: 'Humnabad Old Bus Stand', landmark: 'Main Bazar Road Circle' },
@@ -282,12 +286,12 @@ export class SelectbusPageComponent implements OnInit, OnDestroy {
       { name: 'Humnabad Industrial Gate', landmark: 'Bidar-Solapur Highway Junction' }
     ],
     'kalaburagi': [
-      { name: 'Kalaburagi Central Bus Stand', landmark: 'Opposite KSRTC Depot' },
+      { name: 'Kalaburagi Central Plaza', landmark: 'Opposite Ring Road Bus Bay' },
       { name: 'Jewargi Cross Flyover', landmark: 'Ring Road Highway Circle' },
       { name: 'Humnabad Ring Road Checkpost', landmark: 'Near Ram Mandir Circle' }
     ],
     'bidar': [
-      { name: 'Bidar New Central Bus Stand', landmark: 'Near Deputy Commissioner Office' },
+      { name: 'Bidar New Central Plaza', landmark: 'Near Deputy Commissioner Office' },
       { name: 'Naubad Industrial Cross', landmark: 'Humnabad Highway Road' },
       { name: 'Bhalki Cross Ring Road', landmark: 'Main Bypass Circle' }
     ]
@@ -338,27 +342,93 @@ export class SelectbusPageComponent implements OnInit, OnDestroy {
     return this.dictionary[key]?.[this.currentLang] || this.dictionary[key]?.['en'] || key;
   }
 
-  // Multi-format & multi-folder photo resolver (.jpg, .png, .jpeg, .webp, .avif, .jfif + uppercase & assets/ root)
+  applyBusFilters(criteria: BusFilterCriteria | null): void {
+    this.activeBusFilters = criteria;
+    if (!criteria) {
+      this.filteredBusesList = [...this.busesList];
+      return;
+    }
+
+    this.filteredBusesList = this.busesList.filter(bus => {
+      const fullDesc = `${bus.operatorname} ${bus.busname} ${bus.bustypename} ${bus.superBusBadge || ''}`.toLowerCase();
+
+      if (criteria.primo && !fullDesc.includes('primo') && bus.avgrating < 4.7) {
+        return false;
+      }
+      if (criteria.ac && (fullDesc.includes('non-a/c') || fullDesc.includes('non ac'))) {
+        return false;
+      }
+      if (criteria.sleeper && !fullDesc.includes('sleeper')) {
+        return false;
+      }
+      if (criteria.singleSeats && bus.singleSeats < 10) {
+        return false;
+      }
+      if (criteria.highRated && bus.avgrating < 4.6) {
+        return false;
+      }
+      if (criteria.liveTracking && bus.livetracking !== 1) {
+        return false;
+      }
+      if (criteria.volvo && !fullDesc.includes('volvo') && !fullDesc.includes('multi-axle')) {
+        return false;
+      }
+
+      const depHour = this.parseHour24(bus.busdeparturetime);
+      if (criteria.evening18to24 && !(depHour >= 18 && depHour <= 23)) {
+        return false;
+      }
+
+      const anyTimeCheckbox =
+        criteria.depBefore6AM ||
+        criteria.dep6AMto12PM ||
+        criteria.dep12PMto6PM ||
+        criteria.depAfter6PM;
+
+      if (anyTimeCheckbox) {
+        const matchBefore6 = criteria.depBefore6AM && depHour < 6;
+        const match6to12 = criteria.dep6AMto12PM && depHour >= 6 && depHour < 12;
+        const match12to18 = criteria.dep12PMto6PM && depHour >= 12 && depHour < 18;
+        const matchAfter18 = criteria.depAfter6PM && depHour >= 18;
+        if (!(matchBefore6 || match6to12 || match12to18 || matchAfter18)) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+  }
+
+  private parseHour24(timeStr: string): number {
+    const match = (timeStr || '').match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+    if (!match) return 20;
+    let hrs = parseInt(match[1], 10);
+    const period = match[3].toUpperCase();
+    if (period === 'PM' && hrs !== 12) hrs += 12;
+    if (period === 'AM' && hrs === 12) hrs = 0;
+    return hrs;
+  }
+
+  // Multi-format & multi-folder image resolver (.jpg, .png, .jpeg, .webp, .avif, .jfif)
   handleImageError(event: Event, photo: BusPhoto): void {
     const img = event.target as HTMLImageElement;
     const candidateUrls = [
-      `assets/vrl-photos/${photo.baseName}.jpg`,
       `assets/vrl-photos/${photo.baseName}.png`,
       `assets/vrl-photos/${photo.baseName}.jpeg`,
+      `assets/vrl-photos/${photo.baseName}.jpg`,
       `assets/vrl-photos/${photo.baseName}.webp`,
       `assets/vrl-photos/${photo.baseName}.avif`,
       `assets/vrl-photos/${photo.baseName}.jfif`,
       `assets/vrl-photos/${photo.baseName}.JPG`,
       `assets/vrl-photos/${photo.baseName}.PNG`,
       `assets/vrl-photos/${photo.baseName}.JPEG`,
-      `assets/vrl-photos/${photo.baseName}.WEBP`,
       `assets/${photo.baseName}.jpg`,
       `assets/${photo.baseName}.png`,
       `assets/${photo.baseName}.jpeg`,
       `assets/${photo.baseName}.webp`
     ];
 
-    photo.tryIndex = (photo.tryIndex ?? 0) + 1;
+    photo.tryIndex = (photo.tryIndex ?? -1) + 1;
 
     if (photo.tryIndex < candidateUrls.length) {
       img.src = candidateUrls[photo.tryIndex];
@@ -382,14 +452,14 @@ export class SelectbusPageComponent implements OnInit, OnDestroy {
     }
   }
 
-  buildPhotoSet(prefix: string, names?: string[], defaultExt: string = 'png'): BusPhoto[] {
+  buildPhotoSet(prefix: string, names?: string[], defaultExt: string = 'jpg'): BusPhoto[] {
     if (names && names.length > 0) {
       return names.map((n, i) => ({
         baseName: n,
         url: `assets/vrl-photos/${n}.${defaultExt}`,
         title: `Coach View ${i + 1}`,
         category: i === 0 ? 'Exterior' : 'Interior',
-        tryIndex: 0
+        tryIndex: -1
       }));
     }
     const list: BusPhoto[] = [];
@@ -399,7 +469,7 @@ export class SelectbusPageComponent implements OnInit, OnDestroy {
         url: `assets/vrl-photos/${prefix}${i}.${defaultExt}`,
         title: `${prefix.toUpperCase()} View ${i}`,
         category: i <= 6 ? 'Exterior' : 'Interior',
-        tryIndex: 0
+        tryIndex: -1
       });
     }
     return list;
@@ -455,7 +525,7 @@ export class SelectbusPageComponent implements OnInit, OnDestroy {
     }
 
     const rawOriginStops = this.cityPointsDirectory[oKey] || [
-      { name: `${o} Central Bus Terminus`, landmark: `Main Intercity Platform 1, ${o}` },
+      { name: `${o} Central Bus Plaza`, landmark: `Main Intercity Platform 1, ${o}` },
       { name: `${o} City Railway Junction Circle`, landmark: `Opposite Main Station Gate, ${o}` },
       { name: `${o} Commercial Ring Road Square`, landmark: `Near Metro / Flyover Pillar, ${o}` },
       { name: `${o} National Highway Bypass`, landmark: `Near Highway Petrol Pump, ${o}` },
@@ -467,7 +537,7 @@ export class SelectbusPageComponent implements OnInit, OnDestroy {
       { name: `${d} Industrial Corridor Flyover`, landmark: `Main Highway Service Road, ${d}` },
       { name: `${d} City Center Circle`, landmark: `Opposite Central Mall / Metro, ${d}` },
       { name: `${d} Railway Station Road`, landmark: `Near Main Overbridge, ${d}` },
-      { name: `${d} Main Intercity Bus Stand`, landmark: `Final Terminus Platform, ${d}` }
+      { name: `${d} Main Intercity Bus Plaza`, landmark: `Final Terminus Platform, ${d}` }
     ];
 
     const boardingTimes = ['04:04 PM', '08:00 PM', '08:20 PM', '08:45 PM', '09:10 PM', '09:30 PM'];
@@ -475,14 +545,14 @@ export class SelectbusPageComponent implements OnInit, OnDestroy {
 
     const boardingPoints: BoardingStop[] = rawOriginStops.map((st, idx) => ({
       time: boardingTimes[idx % boardingTimes.length],
-      date: this.journeyDate.split(',')[0] || '14 Nov',
+      date: this.journeyDate.split(',')[0] || '23 Nov',
       name: st.name,
       landmark: st.landmark
     }));
 
     const droppingPoints: BoardingStop[] = rawDestStops.map((st, idx) => ({
       time: droppingTimes[idx % droppingTimes.length],
-      date: '15 Nov',
+      date: '24 Nov',
       name: st.name,
       landmark: st.landmark
     }));
@@ -490,9 +560,6 @@ export class SelectbusPageComponent implements OnInit, OnDestroy {
     return { duration, distanceKm, avgBaseFare, viaRoute, boardingPoints, droppingPoints };
   }
 
-  // Enforces the exact 2-sleeper adjacency rule:
-  // Whenever one seat in a 2-sleeper pair (right-1 or right-2) is booked by a Female ('F'),
-  // the available seat beside it is automatically restricted to Female passengers only.
   generateSeats(layout: string, baseFare: number): BusSeat[] {
     const list: BusSeat[] = [];
     const rows = layout === 'volvo-42' ? 7 : (layout === 'sleeper-30' ? 5 : 6);
@@ -635,8 +702,10 @@ export class SelectbusPageComponent implements OnInit, OnDestroy {
     const eicherPhotos = this.buildPhotoSet('eicher');
     const tataPhotos = this.buildPhotoSet('tata');
     const interPhotos = this.buildPhotoSet('inter');
-    // Shyamoli Paribahan uploaded photos: shy1.jpg to shy10.jpg
     const shyamoliPhotos = this.buildPhotoSet('shy', ['shy1', 'shy2', 'shy3', 'shy4', 'shy5', 'shy6', 'shy7', 'shy8', 'shy9', 'shy10'], 'jpg');
+    const srsPhotos = this.buildPhotoSet('srs', ['srs1', 'srs2', 'srs3', 'srs4', 'srs5', 'srs6', 'srs7', 'srs8', 'srs9', 'srs10'], 'jpg');
+    // Newly uploaded Orange Tours & Travels photos: ore1.jpg to ore10.jpg
+    const orangePhotos = this.buildPhotoSet('ore', ['ore1', 'ore2', 'ore3', 'ore4', 'ore5', 'ore6', 'ore7', 'ore8', 'ore9', 'ore10'], 'jpg');
 
     const defaultAmenities: BusAmenity[] = [
       { icon: '🛏️', name: 'Blankets' },
@@ -658,19 +727,27 @@ export class SelectbusPageComponent implements OnInit, OnDestroy {
     this.busesList = [
       {
         _id: 'VRL-SB-01', operatorname: 'VRL Travels', busname: 'Volvo 9600 Multi-Axle',
-        bustypename: 'Volvo 9600 Multi-Axle A/C Sleeper (2+1)', superBusBadge: 'Business Class',
+        bustypename: 'Volvo 9600 Multi-Axle A/C Sleeper (2+1)', superBusBadge: 'Business Class • Primo',
         busdeparturetime: '09:00 PM', busarrivaltime: '08:30 AM', seatprivce: pVolvo, avgrating: 4.9, totalreview: 4820,
         livetracking: 1, reschedulable: 1, availableSeats: 34, singleSeats: 11, totalSeats: 42,
         hasWomenOffer: true, womenDiscountPct: 10, layoutType: 'volvo-42',
         routedetails: dynamicRoute, amenities: defaultAmenities, photos: vrlVolvoPhotos, seats: this.generateSeats('volvo-42', pVolvo)
       },
       {
-        _id: 'KSRTC-01', operatorname: 'KSRTC Airavat Club Class 2.0', busname: 'Airavat Club Class 2.0',
-        bustypename: 'Volvo 9600 Multi-Axle AC Semi-Sleeper (2+2)', superBusBadge: 'Primo • Top Rated',
+        _id: 'SRS-07', operatorname: 'S.R.S. Travels', busname: 'Volvo Multi-Axle A/C Sleeper',
+        bustypename: 'Multi-Axle Volvo A/C Sleeper (2+1)', superBusBadge: 'Primo • 36 Berths',
+        busdeparturetime: '08:30 PM', busarrivaltime: '08:00 AM', seatprivce: pVolvo - 20, avgrating: 4.8, totalreview: 3690,
+        livetracking: 1, reschedulable: 1, availableSeats: 30, singleSeats: 10, totalSeats: 36,
+        hasWomenOffer: true, womenDiscountPct: 10, layoutType: 'sleeper-36',
+        routedetails: dynamicRoute, amenities: defaultAmenities, photos: srsPhotos, seats: this.generateSeats('sleeper-36', pVolvo - 20)
+      },
+      {
+        _id: 'ORANGE-CLUB-02', operatorname: 'Orange Tours & Travels', busname: 'Mercedes-Benz Multi-Axle Sleeper',
+        bustypename: 'Mercedes-Benz Multi-Axle A/C Sleeper (2+1)', superBusBadge: 'Primo • Travel with the Star',
         busdeparturetime: '10:00 PM', busarrivaltime: '09:15 AM', seatprivce: pClub, avgrating: 4.8, totalreview: 5210,
-        livetracking: 1, reschedulable: 1, availableSeats: 39, singleSeats: 13, totalSeats: 51,
-        hasWomenOffer: true, womenDiscountPct: 10, layoutType: 'semi-51',
-        routedetails: dynamicRoute, amenities: defaultAmenities, photos: airavatPhotos, seats: this.generateSeats('volvo-42', pClub)
+        livetracking: 1, reschedulable: 1, availableSeats: 39, singleSeats: 13, totalSeats: 42,
+        hasWomenOffer: true, womenDiscountPct: 10, layoutType: 'volvo-42',
+        routedetails: dynamicRoute, amenities: defaultAmenities, photos: orangePhotos, seats: this.generateSeats('volvo-42', pClub)
       },
       {
         _id: 'VRL-EICH-03', operatorname: 'VRL Travels', busname: 'Eicher AC Sleeper',
@@ -698,32 +775,24 @@ export class SelectbusPageComponent implements OnInit, OnDestroy {
       },
       {
         _id: 'INTRCITY-06', operatorname: 'IntrCity SmartBus', busname: 'SmartBus BharatBenz',
-        bustypename: 'BharatBenz AC Sleeper with Washroom (2+1)', superBusBadge: 'Onboard Washroom',
+        bustypename: 'BharatBenz AC Sleeper with Washroom (2+1)', superBusBadge: 'Primo • Onboard Washroom',
         busdeparturetime: '09:00 PM', busarrivaltime: '06:40 AM', seatprivce: pSmart, avgrating: 4.8, totalreview: 3140,
         livetracking: 1, reschedulable: 1, availableSeats: 28, singleSeats: 9, totalSeats: 36,
         hasWomenOffer: true, womenDiscountPct: 10, layoutType: 'sleeper-36',
         routedetails: dynamicRoute, amenities: defaultAmenities, photos: interPhotos, seats: this.generateSeats('sleeper-36', pSmart)
       },
       {
-        _id: 'SRS-07', operatorname: 'SRS Travels', busname: 'SRS Volvo Multi-Axle',
-        bustypename: 'AC Sleeper (2+1)', superBusBadge: '36 Berths',
-        busdeparturetime: '06:15 PM', busarrivaltime: '06:30 AM', seatprivce: pAcSleeper - 40, avgrating: 4.5, totalreview: 2890,
-        livetracking: 1, reschedulable: 1, availableSeats: 28, singleSeats: 9, totalSeats: 36,
-        hasWomenOffer: false, layoutType: 'sleeper-36',
-        routedetails: dynamicRoute, amenities: defaultAmenities, photos: vrlVolvoPhotos, seats: this.generateSeats('sleeper-36', pAcSleeper - 40)
-      },
-      {
         _id: 'ORANGE-08', operatorname: 'Orange Travels', busname: 'Orange Mercedes Coach',
-        bustypename: 'AC Sleeper (2+1)', superBusBadge: '36 Berths',
+        bustypename: 'Mercedes-Benz AC Sleeper (2+1)', superBusBadge: '36 Berths',
         busdeparturetime: '08:45 PM', busarrivaltime: '08:15 AM', seatprivce: pSmart - 50, avgrating: 4.6, totalreview: 1820,
         livetracking: 1, reschedulable: 1, availableSeats: 30, singleSeats: 10, totalSeats: 36,
         hasWomenOffer: true, womenDiscountPct: 10, layoutType: 'sleeper-36',
-        routedetails: dynamicRoute, amenities: defaultAmenities, photos: vrlVolvoPhotos, seats: this.generateSeats('sleeper-36', pSmart - 50)
+        routedetails: dynamicRoute, amenities: defaultAmenities, photos: orangePhotos, seats: this.generateSeats('sleeper-36', pSmart - 50)
       },
       {
         _id: 'KALLADA-09', operatorname: 'Kallada Travels', busname: 'Kallada Luxury Coach',
         bustypename: 'AC Sleeper (2+1)', superBusBadge: '30 Berths',
-        busdeparturetime: '05:30 PM', busarrivaltime: '06:00 AM', seatprivce: pAcSleeper - 20, avgrating: 4.4, totalreview: 1450,
+        busdeparturetime: '02:15 PM', busarrivaltime: '02:45 AM', seatprivce: pAcSleeper - 20, avgrating: 4.4, totalreview: 1450,
         livetracking: 1, reschedulable: 1, availableSeats: 24, singleSeats: 8, totalSeats: 30,
         hasWomenOffer: false, layoutType: 'sleeper-30',
         routedetails: dynamicRoute, amenities: defaultAmenities, photos: eicherPhotos, seats: this.generateSeats('sleeper-30', pAcSleeper - 20)
@@ -731,7 +800,7 @@ export class SelectbusPageComponent implements OnInit, OnDestroy {
       {
         _id: 'JABBAR-10', operatorname: 'Jabbar Travels', busname: 'Jabbar Express',
         bustypename: 'AC Seater (2+2)', superBusBadge: '45 Seats',
-        busdeparturetime: '06:00 PM', busarrivaltime: '06:15 AM', seatprivce: pSeater, avgrating: 4.2, totalreview: 980,
+        busdeparturetime: '09:30 AM', busarrivaltime: '09:45 PM', seatprivce: pSeater, avgrating: 4.2, totalreview: 980,
         livetracking: 1, reschedulable: 1, availableSeats: 36, singleSeats: 12, totalSeats: 45,
         hasWomenOffer: false, layoutType: 'seater-45',
         routedetails: dynamicRoute, amenities: defaultAmenities, photos: airavatPhotos, seats: this.generateSeats('sleeper-36', pSeater)
@@ -746,7 +815,7 @@ export class SelectbusPageComponent implements OnInit, OnDestroy {
       },
       {
         _id: 'NAT-12', operatorname: 'National Travels', busname: 'National Bharat Benz',
-        bustypename: 'AC Sleeper (2+1)', superBusBadge: '36 Berths',
+        bustypename: 'AC Sleeper (2+1)', superBusBadge: 'Primo • 36 Berths',
         busdeparturetime: '11:00 PM', busarrivaltime: '09:45 AM', seatprivce: pVolvo - 50, avgrating: 4.9, totalreview: 3890,
         livetracking: 1, reschedulable: 1, availableSeats: 30, singleSeats: 10, totalSeats: 36,
         hasWomenOffer: true, womenDiscountPct: 10, layoutType: 'sleeper-36',
@@ -762,8 +831,8 @@ export class SelectbusPageComponent implements OnInit, OnDestroy {
       },
       {
         _id: 'BHARATHI-14', operatorname: 'Bharathi Travels', busname: 'Bharathi Multi-Axle',
-        bustypename: 'AC Seater (2+2)', superBusBadge: '45 Seats',
-        busdeparturetime: '07:15 PM', busarrivaltime: '07:45 AM', seatprivce: pSeater + 40, avgrating: 4.3, totalreview: 870,
+        bustypename: 'Volvo Multi-Axle AC Seater (2+2)', superBusBadge: '45 Seats',
+        busdeparturetime: '05:15 AM', busarrivaltime: '05:45 PM', seatprivce: pSeater + 40, avgrating: 4.3, totalreview: 870,
         livetracking: 1, reschedulable: 1, availableSeats: 37, singleSeats: 12, totalSeats: 45,
         hasWomenOffer: false, layoutType: 'seater-45',
         routedetails: dynamicRoute, amenities: defaultAmenities, photos: airavatPhotos, seats: this.generateSeats('sleeper-36', pSeater + 40)
@@ -802,7 +871,7 @@ export class SelectbusPageComponent implements OnInit, OnDestroy {
       },
       {
         _id: 'ZINGBUS-19', operatorname: 'Zingbus', busname: 'Zingbus Premium',
-        bustypename: 'AC Sleeper (2+1)', superBusBadge: '36 Berths',
+        bustypename: 'AC Sleeper (2+1)', superBusBadge: 'Primo • 36 Berths',
         busdeparturetime: '08:15 PM', busarrivaltime: '08:45 AM', seatprivce: pSmart - 30, avgrating: 4.8, totalreview: 2840,
         livetracking: 1, reschedulable: 1, availableSeats: 29, singleSeats: 10, totalSeats: 36,
         hasWomenOffer: true, womenDiscountPct: 10, layoutType: 'sleeper-36',
@@ -818,13 +887,15 @@ export class SelectbusPageComponent implements OnInit, OnDestroy {
       },
       {
         _id: 'PTC-21', operatorname: 'PTC SkyBus', busname: 'PTC Volvo Eicher',
-        bustypename: 'AC Sleeper-Seater', superBusBadge: '40 Berths/Seats',
+        bustypename: 'Volvo Eicher AC Sleeper-Seater', superBusBadge: '40 Berths/Seats',
         busdeparturetime: '07:15 PM', busarrivaltime: '07:45 AM', seatprivce: pHybrid, avgrating: 4.5, totalreview: 1190,
         livetracking: 1, reschedulable: 1, availableSeats: 31, singleSeats: 10, totalSeats: 40,
         hasWomenOffer: false, layoutType: 'hybrid-40',
         routedetails: dynamicRoute, amenities: defaultAmenities, photos: eicherPhotos, seats: this.generateSeats('sleeper-36', pHybrid)
       }
     ];
+
+    this.applyBusFilters(this.activeBusFilters);
   }
 
   openFloatingSeatDrawer(bus: BusItem, initialTab: string = 'highlights'): void {
@@ -1430,7 +1501,7 @@ export class SelectbusPageComponent implements OnInit, OnDestroy {
 
     <div class="terms-box">
       <strong>Important Terms & Conditions:</strong><br/>
-      1. Passengers must carry a valid government-issued photo ID (Aadhaar Card, Voter ID, Passport, or Driving License) matching the ticket name.<br/>
+      1. Passengers must carry a valid government-issued photo ID (Voter ID, Passport, or Driving License) matching the ticket name.<br/>
       2. Baggage Allowance: Up to 20 kg per passenger in underbay storage. Excess luggage may incur operator charges.<br/>
       3. Cancellation Policy: 75% refund before 24 hrs of departure; 50% refund between 12–24 hrs; 0% refund within 12 hrs (unless Free Cancellation add-on was purchased).
     </div>
